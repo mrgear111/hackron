@@ -2,9 +2,19 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function GithubLoginButton() {
+  const [isClient, setIsClient] = useState(false);
   const { user, signInWithGithub, logout } = useAuth();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // or a loading state
+  }
 
   return (
     <motion.button

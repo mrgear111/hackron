@@ -2,10 +2,9 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, GithubAuthProvider } from 'firebase/auth';
-import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
+import { getDatabase } from 'firebase/database';
 import { getAnalytics } from 'firebase/analytics';
 
-// Update the firebase config to use environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -17,18 +16,23 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Realtime Database with direct URL
-export const db = getDatabase(app);
-
-// Only initialize analytics on the client side
+let app;
+let db;
+let auth;
 let analytics;
+let githubProvider;
+
+// Only initialize Firebase on the client side
 if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    auth = getAuth(app);
+    analytics = getAnalytics(app);
+    githubProvider = new GithubAuthProvider();
+  } catch (error) {
+    console.error('Firebase initialization error:', error);
+  }
 }
 
-export const auth = getAuth(app);
-export const githubProvider = new GithubAuthProvider();
-export { analytics }; 
+export { app, db, auth, analytics, githubProvider }; 

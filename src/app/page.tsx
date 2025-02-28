@@ -5,7 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/utils/animations";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export default function Home() {
   const eventDetails = {
@@ -40,6 +40,10 @@ export default function Home() {
   // Parallax effect for background elements
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.1, 0]);
+
+  useEffect(() => {
+    // Initialize any Firebase-dependent code here
+  }, []);
 
   return (
     <div className="bg-gray-900 min-h-screen overflow-hidden">
