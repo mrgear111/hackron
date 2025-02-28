@@ -109,7 +109,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               exit={{ scale: 0.95, opacity: 0 }}
               className="w-full max-w-[400px]"
             >
-              <div className="relative bg-black/90 backdrop-blur-sm border border-cyan-500/20 rounded-lg p-6 shadow-xl">
+              <div className="relative bg-gray-900/70 backdrop-blur-sm border border-cyan-500/20 rounded-lg p-6 shadow-xl">
                 {/* Terminal Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           name="teamName"
                           value={formData.teamName}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-300 font-mono
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-100 font-mono
                             focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                           placeholder="enter_team_name"
                           required={!isLoginMode}
@@ -161,7 +161,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-300 font-mono
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-100 font-mono
                           focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                         placeholder="enter_email"
                         required
@@ -182,7 +182,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         value={formData.password}
                         onChange={handleChange}
                         autoComplete="new-password"
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-300 font-mono
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-100 font-mono
                           focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                         placeholder="enter_password"
                         required
@@ -240,7 +240,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-300 font-mono
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-100 font-mono
                             focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                           placeholder="confirm_password"
                           required={!isLoginMode}

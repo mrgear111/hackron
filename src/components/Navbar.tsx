@@ -54,7 +54,7 @@ const Navbar = () => {
         className="w-full fixed top-0 z-50"
       >
         {/* Animated Border */}
-        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm border-b border-cyan-500/20">
+        <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm border-b border-cyan-500/30">
           <div className="absolute inset-x-0 bottom-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
         </div>
 

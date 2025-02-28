@@ -3,44 +3,58 @@
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/utils/animations";
+import { useRef } from "react";
 
 export default function Home() {
-  const features = [
-    {
-      title: "For Teams",
-      color: "cyan",
-      icon: "/globe.svg",
-      text: "Join the revolution. Build the future. Win big.",
-      gradient: "from-cyan-500/20 to-blue-500/20"
-    },
-    {
-      title: "For Admins",
-      color: "purple",
-      icon: "/globe.svg",
-      text: "Control the matrix. Monitor submissions. Lead innovation.",
-      gradient: "from-purple-500/20 to-pink-500/20"
-    },
-    {
-      title: "Easy Submission",
-      color: "emerald",
-      icon: "/globe.svg",
-      text: "Upload. Share. Conquer. Simple as binary.",
-      gradient: "from-emerald-500/20 to-teal-500/20"
-    }
-  ];
+  const eventDetails = {
+    mainInfo: [
+      { icon: "🚀", label: "24'Hrs Hackathon", value: "Non-Stop Coding" },
+      { icon: "📅", label: "Date", value: "5th March" },
+      { icon: "📍", label: "Venue", value: "Lab 1 & 2" },
+      { icon: "👥", label: "Participants", value: "UG students" },
+      { icon: "💰", label: "Prize Pool", value: "80k" },
+    ],
+    timeline: [
+      { time: "07:00 AM", event: "Participant Reporting", desc: "Check-in & Registration" },
+      { time: "08:30 AM", event: "Briefing Session", desc: "Rules, Guidelines & Problem Statements" },
+      { time: "09:00 AM", event: "Hackathon Begins", desc: "🔥" },
+      { time: "12:30 PM", event: "Lunch", desc: "Coupon Distribution 🍱" },
+      { time: "05:30 PM", event: "Snacks", desc: "Coupon Distribution ☕" },
+      { time: "07:45 PM", event: "Dinner", desc: "Coupon Distribution 🍽️" },
+      { time: "09:30 PM", event: "Security Check", desc: "Campus Attendance" },
+    ],
+    judgingCriteria: [
+      { title: "Problem Statement", desc: "Complexity & Relevance" },
+      { title: "Approach & Implementation", desc: "Logical Thinking & Execution" },
+      { title: "Solution Analysis", desc: "Code Quality & Efficiency" },
+      { title: "Presentation", desc: "Clarity & Communication" },
+      { title: "Innovation", desc: "Creativity & Uniqueness" },
+    ]
+  };
+
+  const scrollRef = useRef(null);
+  const { scrollYProgress } = useScroll();
+
+  // Parallax effect for background elements
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.1, 0]);
 
   return (
-    <div className="bg-black min-h-screen overflow-hidden">
-      <div className="fixed inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none"></div>
+    <div className="bg-gray-900 min-h-screen overflow-hidden">
+      {/* Animated Background Elements */}
+      <motion.div 
+        className="fixed inset-0 bg-grid-pattern pointer-events-none"
+        style={{ opacity: gridOpacity, y: bgY }}
+      />
       <div className="fixed inset-0 bg-gradient-to-b from-black via-black/50 to-black pointer-events-none"></div>
       
       <Navbar />
       
-      <main>
+      <main ref={scrollRef}>
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
           {/* Video Background with Effects */}
           <div className="absolute inset-0">
             <video
@@ -49,210 +63,272 @@ export default function Home() {
               muted
               playsInline
               preload="auto"
-              className="absolute w-full h-full object-cover"
-              style={{ opacity: 0.6 }}
+              className="absolute w-full h-full object-cover opacity-40"
             >
               <source src="/bg.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             
-            {/* Darker overlay for better text visibility */}
-            <div className="absolute inset-0 bg-black/50"></div>
-            
-            {/* Gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.15)_0%,transparent_50%)]"></div>
-            
-            {/* Matrix Rain Effect */}
-            <div className="absolute inset-0 matrix-bg"></div>
-            
-            {/* Moving Grid Overlay */}
-            <motion.div 
-              animate={{ 
-                backgroundPosition: ["0px 0px", "100px 100px"],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 20, 
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute inset-0 bg-grid-pattern opacity-20"
-            />
-            
-            {/* Animated Scan Line */}
-            <motion.div
-              initial={{ y: "-100%" }}
-              animate={{ y: "100%" }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute w-full h-1 bg-cyan-500/20 blur-sm"
-            />
+            {/* Enhanced overlay effects */}
+            <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/50 to-gray-900/80"></div>
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4">
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+            {/* Glowing Accent Line */}
             <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="text-center space-y-12"
-            >
-              {/* Glitch Effect Title */}
-              <motion.div variants={fadeInUp} className="space-y-6">
-                <h2 className="text-cyan-400 font-mono text-xl tracking-[0.2em] glitch-text">
-                  &lt;SYSTEM_BREACH_INITIATED&gt;
-                </h2>
-                <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter glitch">
-                  <span className="relative inline-block">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-                      HACK
-                    </span>
-                    <motion.span
-                      animate={{
-                        opacity: [1, 0.5, 1],
-                        x: [0, 2, -2, 0],
-                      }}
-                      transition={{
-                        duration: 0.5,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                      }}
-                      className="absolute top-0 left-0 w-full h-full bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
-                    >
-                      HACK
-                    </motion.span>
-                  </span>
-                  <span className="relative">
-                    <span className="text-white">RON</span>
-                    <span className="absolute -inset-2 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 blur-xl opacity-50"></span>
-                  </span>
-                </h1>
-                <motion.p 
-                  className="text-gray-400 text-xl max-w-2xl mx-auto leading-relaxed font-mono"
-                  animate={{
-                    textShadow: ["0 0 8px rgba(0,255,255,0.5)", "0 0 16px rgba(0,255,255,0.2)"],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                  }}
-                >
-                  &gt; 24 Hours_
-                  <motion.span
-                    animate={{ opacity: [0, 1] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                  >|</motion.span>
-                </motion.p>
-              </motion.div>
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1.5 }}
+              className="h-px w-48 mx-auto mb-8 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"
+            />
 
-              {/* Prize Pool with Terminal Effect */}
-              <motion.div variants={fadeInUp} className="space-y-4">
-                <div className="inline-block relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg blur-xl"></div>
-                  <div className="relative px-8 py-4 bg-black/50 border border-cyan-500/30 rounded-lg backdrop-blur-sm">
-                    <div className="font-mono text-cyan-400 text-lg">&gt; PRIZE_POOL.exe</div>
-                    <motion.div 
-                      className="text-4xl font-bold text-purple-400"
-                      animate={{
-                        textShadow: ["0 0 10px rgba(147,51,234,0.5)", "0 0 20px rgba(147,51,234,0.2)"],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                      }}
-                    >
-                      ₹80,000
-                    </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-6xl font-bold mb-6 font-mono"
+            >
+              <span className="text-cyan-400">&gt; </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                HACKRON_2024
+              </span>
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="text-cyan-400 ml-2"
+              >
+                |
+              </motion.span>
+            </motion.h1>
+
+            {/* Animated Subtitle */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="relative"
+            >
+              <div className="text-gray-300 text-lg md:text-xl mb-12 font-mono">
+                <span className="text-cyan-400">$</span> Initialize_Innovation.exe
+              </div>
+              <motion.div
+                className="h-[1px] w-full bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.5, duration: 1 }}
+              />
+            </motion.div>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative px-8 py-3 bg-cyan-500/10 border border-cyan-500/30
+                  rounded-md text-cyan-400 hover:bg-cyan-500/20 font-mono overflow-hidden"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 opacity-0 
+                    group-hover:opacity-100 transition-opacity duration-300"
+                />
+                {`> Register_Now`}
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative px-8 py-3 bg-purple-500/10 border border-purple-500/30
+                  rounded-md text-purple-400 hover:bg-purple-500/20 font-mono overflow-hidden"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 
+                    group-hover:opacity-100 transition-opacity duration-300"
+                />
+                {`> Learn_More`}
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* Corner Decorations */}
+          <div className="absolute top-4 left-4 font-mono text-cyan-500/50 text-sm">
+            <motion.span
+              animate={{
+                opacity: [1, 0.5, 1],
+                textShadow: [
+                  "0 0 5px rgba(0,255,255,0.5)",
+                  "0 0 10px rgba(0,255,255,0.3)",
+                  "0 0 5px rgba(0,255,255,0.5)",
+                ],
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              [sys.hack.init]
+            </motion.span>
+          </div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            className="absolute bottom-12 left-1/2 -translate-x-1/2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex flex-col items-center"
+            >
+              <div className="text-cyan-400/70 font-mono text-sm mb-2">scroll_down</div>
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-1 h-8 bg-gradient-to-b from-cyan-400/50 to-transparent"
+              />
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Event Details Section */}
+        <motion.section
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="relative py-20 px-4 sm:px-6 lg:px-8"
+        >
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-gray-900/0 via-gray-900 to-gray-900"
+            style={{
+              opacity: useTransform(scrollYProgress, [0, 0.2], [0, 1])
+            }}
+          />
+          <div className="max-w-7xl mx-auto">
+            {/* Section Title */}
+            <motion.div variants={fadeInUp} className="mb-12 text-center">
+              <h2 className="text-3xl font-mono">
+                <span className="text-cyan-400">&gt; </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                  24'Hrs Hackathon Event
+                </span>
+              </h2>
+            </motion.div>
+
+            {/* Event Card */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-black/50 backdrop-blur-sm border border-cyan-500/20 rounded-lg p-8 mb-12"
+            >
+              {/* Main Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Date</div>
+                  <div className="text-gray-300 font-mono">📅 5th March</div>
+                </div>
+                <div>
+                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Venue</div>
+                  <div className="text-gray-300 font-mono">📍 Lab 1 & 2</div>
+                </div>
+                <div>
+                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Participants</div>
+                  <div className="text-gray-300 font-mono">👥 UG students</div>
+                </div>
+                <div>
+                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Prize_Pool</div>
+                  <div className="text-gray-300 font-mono">💰 80k</div>
+                </div>
+              </div>
+
+              {/* Timeline */}
+              <div className="mb-8">
+                <div className="text-xl font-mono text-cyan-400 mb-4">&gt; Event_Timeline</div>
+                <div className="space-y-3 font-mono">
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">07:00 AM</div>
+                    <div className="text-gray-300">Participant Reporting</div>
+                    <div className="text-gray-500 text-sm">Check-in & Registration</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">08:30 AM</div>
+                    <div className="text-gray-300">Briefing Session</div>
+                    <div className="text-gray-500 text-sm">Rules, Guidelines & Problem Statements</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">09:00 AM</div>
+                    <div className="text-gray-300">Hackathon Begins</div>
+                    <div className="text-emerald-400">🔥</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">12:30 PM</div>
+                    <div className="text-gray-300">Lunch Break</div>
+                    <div className="text-gray-500 text-sm">🍱</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">05:30 PM</div>
+                    <div className="text-gray-300">Snacks Break</div>
+                    <div className="text-gray-500 text-sm">☕</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">07:45 PM</div>
+                    <div className="text-gray-300">Dinner Break</div>
+                    <div className="text-gray-500 text-sm">🍽️</div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="text-purple-400 w-24">09:30 PM</div>
+                    <div className="text-gray-300">Security Check</div>
+                    <div className="text-gray-500 text-sm">Campus Attendance</div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              {/* CTA Button with Cyber Effect */}
-              <motion.div variants={fadeInUp}>
-                <Link
-                  href="/register"
-                  className="group relative inline-flex items-center gap-2 px-8 py-4 
-                  bg-gradient-to-r from-cyan-500 to-blue-500 
-                  rounded-lg text-white font-mono text-lg 
-                  overflow-hidden transition-all duration-300
-                  hover:shadow-[0_0_30px_rgba(0,183,255,0.3)] hover:scale-105
-                  border border-cyan-400/30"
-                >
-                  <span className="relative z-10">&gt; Initialize_Hack</span>
-                  <motion.span
-                    animate={{ x: [-20, 0] }}
-                    transition={{ 
-                      duration: 0.6,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                  >
-                    _
-                  </motion.span>
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Terminal-style Corner Decorations */}
-          <div className="absolute top-4 left-4 font-mono text-cyan-500/50 text-sm">[sys.hack.init]</div>
-          <div className="absolute top-4 right-4 font-mono text-cyan-500/50 text-sm">
-            <motion.span
-              animate={{ opacity: [0, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              ●
-            </motion.span>
-            {" "}LIVE
-          </div>
-        </section>
-
-        {/* Features Grid */}
-        <section className="relative z-10 py-32">
-          <div className="max-w-7xl mx-auto px-4">
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            >
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                  viewport={{ once: true }}
-                  className={`group relative p-8 rounded-2xl border border-gray-800 
-                    bg-gradient-to-b ${feature.gradient} backdrop-blur-sm
-                    hover:border-gray-700 transition-all duration-500 
-                    hover:shadow-[0_0_30px_rgba(0,255,255,0.1)]`}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 rounded-2xl"></div>
-                  <div className="relative z-10">
-                    <Image
-                      src={feature.icon}
-                      alt={feature.title}
-                      width={40}
-                      height={40}
-                      className={`mb-6 text-${feature.color}-400 group-hover:scale-110 transition-transform duration-300`}
-                    />
-                    <h3 className={`text-2xl font-bold mb-4 text-${feature.color}-400 group-hover:text-${feature.color}-300`}>
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-400 group-hover:text-gray-300">{feature.text}</p>
+              {/* Judging Criteria */}
+              <div>
+                <div className="text-xl font-mono text-cyan-400 mb-4">&gt; Judging_Criteria</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono">
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400">01</span>
+                    <div>
+                      <div className="text-gray-300">Problem Statement</div>
+                      <div className="text-gray-500 text-sm">Complexity & Relevance</div>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400">02</span>
+                    <div>
+                      <div className="text-gray-300">Approach & Implementation</div>
+                      <div className="text-gray-500 text-sm">Logical Thinking & Execution</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400">03</span>
+                    <div>
+                      <div className="text-gray-300">Solution Analysis</div>
+                      <div className="text-gray-500 text-sm">Code Quality & Efficiency</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400">04</span>
+                    <div>
+                      <div className="text-gray-300">Presentation</div>
+                      <div className="text-gray-500 text-sm">Clarity & Communication</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400">05</span>
+                    <div>
+                      <div className="text-gray-300">Innovation</div>
+                      <div className="text-gray-500 text-sm">Creativity & Uniqueness</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
-        </section>
+        </motion.section>
       </main>
     </div>
   );
