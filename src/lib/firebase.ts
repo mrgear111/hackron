@@ -1,9 +1,9 @@
 'use client';
 
 import { initializeApp } from 'firebase/app';
-import { getAuth, GithubAuthProvider } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
-import { getAnalytics } from 'firebase/analytics';
+import { getAuth, GithubAuthProvider, Auth } from 'firebase/auth';
+import { getDatabase, Database } from 'firebase/database';
+import { getAnalytics, Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,11 +16,11 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-let app;
-let db;
-let auth;
-let analytics;
-let githubProvider;
+let app: ReturnType<typeof initializeApp>;
+let db: Database;
+let auth: Auth;
+let analytics: Analytics;
+let githubProvider: GithubAuthProvider;
 
 // Only initialize Firebase on the client side
 if (typeof window !== 'undefined') {
