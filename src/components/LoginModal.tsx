@@ -78,6 +78,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     });
   };
 
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    return strength;
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -171,6 +181,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        autoComplete="new-password"
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 text-gray-300 font-mono
                           focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50"
                         placeholder="enter_password"
@@ -179,6 +190,44 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-md pointer-events-none"></div>
                     </div>
                   </div>
+
+                  {!isLoginMode && (
+                    <div className="mt-1 flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                            i < getPasswordStrength(formData.password)
+                              ? 'bg-cyan-500'
+                              : 'bg-gray-700'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {!isLoginMode && (
+                    <div className="mt-2 text-xs font-mono text-gray-500">
+                      {`> Password must contain:`}
+                      <ul className="ml-4 mt-1 space-y-1">
+                        <li className={`${/[A-Z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
+                          • Uppercase letter
+                        </li>
+                        <li className={`${/[a-z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
+                          • Lowercase letter
+                        </li>
+                        <li className={`${/[0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
+                          • Number
+                        </li>
+                        <li className={`${/[^A-Za-z0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
+                          • Special character
+                        </li>
+                        <li className={`${formData.password.length >= 8 ? 'text-cyan-400' : ''}`}>
+                          • Min 8 characters
+                        </li>
+                      </ul>
+                    </div>
+                  )}
 
                   {!isLoginMode && (
                     <div>

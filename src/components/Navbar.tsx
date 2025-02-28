@@ -2,12 +2,48 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
+import { auth, db } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { ref, onValue } from 'firebase/database';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
+  const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [teamName, setTeamName] = useState<string>('');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        // Fetch team name
+        const teamRef = ref(db, `teams/${currentUser.uid}`);
+        onValue(teamRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setTeamName(data.teamName);
+          }
+        });
+      } else {
+        setTeamName('');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <>
@@ -62,74 +98,127 @@ const Navbar = () => {
             {/* Navigation Links */}
             <div className="hidden md:block">
               <div className="flex items-center space-x-4">
-                {['Projects', 'Teams'].map((item) => (
-                  <motion.div
-                    key={item}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Link
-                      href={`/${item.toLowerCase()}`}
-                      className="relative group px-3 py-2 text-sm font-medium text-gray-300 hover:text-cyan-400 transition-colors duration-300"
-                    >
-                      <span className="relative z-10">&gt; {item}</span>
-                      <motion.span
-                        className="absolute inset-0 bg-cyan-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        whileHover={{
-                          boxShadow: "0 0 20px rgba(0,255,255,0.2)",
-                        }}
-                      />
-                    </Link>
-                  </motion.div>
-                ))}
-
-                {/* Login Buttons */}
-                <div className="flex space-x-2">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <button
-                      onClick={() => setIsLoginModalOpen(true)}
-                      className="relative group px-4 py-2 text-sm font-mono"
-                    >
-                      <span className="relative z-10 text-cyan-400">&gt; Team_Login</span>
+                {/* Login/User Status */}
+                <div className="flex items-center space-x-4">
+                  {user ? (
+                    <>
+                      {/* User Status */}
                       <motion.div
-                        className="absolute inset-0 border border-cyan-500/30 rounded-md"
-                        animate={{
-                          boxShadow: [
-                            "0 0 10px rgba(0,255,255,0.2)",
-                            "0 0 20px rgba(0,255,255,0.1)",
-                            "0 0 10px rgba(0,255,255,0.2)",
-                          ],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                        }}
-                      />
-                    </button>
-                  </motion.div>
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="text-gray-400 font-mono text-sm">
+                          <motion.span
+                            animate={{ opacity: [0, 1] }}
+                            transition={{ duration: 0.8, repeat: Infinity }}
+                            className="text-cyan-400"
+                          >
+                            ●
+                          </motion.span>
+                          {` ${teamName}_Connected`}
+                        </span>
+                      </motion.div>
 
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link
-                      href="/admin"
-                      className="relative group px-4 py-2 text-sm font-mono"
-                    >
-                      <span className="relative z-10 text-purple-400">&gt; Admin_Access</span>
-                      <motion.div
-                        className="absolute inset-0 border border-purple-500/30 rounded-md"
-                        animate={{
-                          boxShadow: [
-                            "0 0 10px rgba(147,51,234,0.2)",
-                            "0 0 20px rgba(147,51,234,0.1)",
-                            "0 0 10px rgba(147,51,234,0.2)",
-                          ],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                        }}
-                      />
-                    </Link>
-                  </motion.div>
+                      {/* Dashboard Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link
+                          href="/team-dashboard"
+                          className="relative group px-4 py-2 text-sm font-mono"
+                        >
+                          <span className="relative z-10 text-cyan-400">{`> Access_Dashboard`}</span>
+                          <motion.div
+                            className="absolute inset-0 border border-cyan-500/30 rounded-md"
+                            animate={{
+                              boxShadow: [
+                                "0 0 10px rgba(0,255,255,0.2)",
+                                "0 0 20px rgba(0,255,255,0.1)",
+                                "0 0 10px rgba(0,255,255,0.2)",
+                              ],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </Link>
+                      </motion.div>
+
+                      {/* Logout Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <button
+                          onClick={handleLogout}
+                          className="relative group px-4 py-2 text-sm font-mono"
+                        >
+                          <span className="relative z-10 text-red-400">{`> Terminate_Session`}</span>
+                          <motion.div
+                            className="absolute inset-0 border border-red-500/30 rounded-md"
+                            animate={{
+                              boxShadow: [
+                                "0 0 10px rgba(255,0,0,0.2)",
+                                "0 0 20px rgba(255,0,0,0.1)",
+                                "0 0 10px rgba(255,0,0,0.2)",
+                              ],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </button>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Login Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <button
+                          onClick={() => setIsLoginModalOpen(true)}
+                          className="relative group px-4 py-2 text-sm font-mono"
+                        >
+                          <span className="relative z-10 text-cyan-400">{`> Team_Login`}</span>
+                          <motion.div
+                            className="absolute inset-0 border border-cyan-500/30 rounded-md"
+                            animate={{
+                              boxShadow: [
+                                "0 0 10px rgba(0,255,255,0.2)",
+                                "0 0 20px rgba(0,255,255,0.1)",
+                                "0 0 10px rgba(0,255,255,0.2)",
+                              ],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </button>
+                      </motion.div>
+
+                      {/* Admin Button - Only show when not logged in */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link
+                          href="/admin"
+                          className="relative group px-4 py-2 text-sm font-mono"
+                        >
+                          <span className="relative z-10 text-purple-400">{`> Admin_Access`}</span>
+                          <motion.div
+                            className="absolute inset-0 border border-purple-500/30 rounded-md"
+                            animate={{
+                              boxShadow: [
+                                "0 0 10px rgba(147,51,234,0.2)",
+                                "0 0 20px rgba(147,51,234,0.1)",
+                                "0 0 10px rgba(147,51,234,0.2)",
+                              ],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </Link>
+                      </motion.div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

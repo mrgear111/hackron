@@ -26,6 +26,14 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError('');
 
+    // Add password strength validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      setError('Password must be at least 8 characters long and contain uppercase, lowercase, number and special character');
+      setIsLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
@@ -44,7 +52,7 @@ export default function RegisterPage() {
       const teamRef = ref(db, `teams/${userCredential.user.uid}`);
       await set(teamRef, teamData);
 
-      router.push('/login');
+      router.push('/team-dashboard');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -201,7 +209,7 @@ export default function RegisterPage() {
               {/* Login Link */}
               <div className="text-center">
                 <Link 
-                  href="/login" 
+                  href="/"
                   className="text-gray-400 hover:text-cyan-400 font-mono text-sm transition-colors duration-300"
                 >
                   {`> Already_Registered? Login_Here`}

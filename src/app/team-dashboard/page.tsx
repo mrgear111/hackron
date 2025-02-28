@@ -7,6 +7,7 @@ import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 
 interface TeamData {
   teamName: string;
@@ -56,6 +57,21 @@ export default function TeamDashboard() {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 font-mono text-sm transition-colors duration-300"
+          >
+            <span className="text-cyan-400">{'<'}</span>
+            {`Return_To_Homepage`}
+          </Link>
+        </motion.div>
+
         {/* Dashboard Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -71,15 +87,6 @@ export default function TeamDashboard() {
                 {teamData?.email}
               </p>
             </div>
-            <motion.button
-              onClick={() => auth.signOut()}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-md
-                text-red-400 font-mono text-sm hover:bg-red-500/20 transition-colors"
-            >
-              {`> Terminate_Session`}
-            </motion.button>
           </div>
         </motion.div>
 
