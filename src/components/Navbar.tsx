@@ -4,32 +4,45 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
+import AdminLoginModal from './AdminLoginModal';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, get } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [teamName, setTeamName] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // Fetch team name
-        const teamRef = ref(db, `teams/${currentUser.uid}`);
-        onValue(teamRef, (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            setTeamName(data.teamName);
-          }
-        });
+        // Check if user is admin
+        const adminRef = ref(db, 'admins');
+        const snapshot = await get(adminRef);
+        const isAdminUser = snapshot.exists() && 
+          Object.values(snapshot.val()).includes(currentUser.email);
+        setIsAdmin(isAdminUser);
+
+        // Only fetch team name if not admin
+        if (!isAdminUser) {
+          const teamRef = ref(db, `teams/${currentUser.uid}`);
+          onValue(teamRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+              setTeamName(data.teamName);
+            }
+          });
+        }
       } else {
         setTeamName('');
+        setIsAdmin(false);
       }
     });
 
@@ -123,10 +136,12 @@ const Navbar = () => {
                       {/* Dashboard Button */}
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Link
-                          href="/team-dashboard"
+                          href={isAdmin ? "/admin-dashboard" : "/team-dashboard"}
                           className="relative group px-4 py-2 text-sm font-mono"
                         >
-                          <span className="relative z-10 text-cyan-400">{`> Access_Dashboard`}</span>
+                          <span className="relative z-10 text-cyan-400">
+                            {isAdmin ? `> Admin_Dashboard` : `> Team_Dashboard`}
+                          </span>
                           <motion.div
                             className="absolute inset-0 border border-cyan-500/30 rounded-md"
                             animate={{
@@ -196,26 +211,12 @@ const Navbar = () => {
 
                       {/* Admin Button - Only show when not logged in */}
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link
-                          href="/admin"
-                          className="relative group px-4 py-2 text-sm font-mono"
+                        <button
+                          onClick={() => setIsAdminModalOpen(true)}
+                          className="text-gray-400 hover:text-cyan-400 font-mono text-sm transition-colors"
                         >
-                          <span className="relative z-10 text-purple-400">{`> Admin_Access`}</span>
-                          <motion.div
-                            className="absolute inset-0 border border-purple-500/30 rounded-md"
-                            animate={{
-                              boxShadow: [
-                                "0 0 10px rgba(147,51,234,0.2)",
-                                "0 0 20px rgba(147,51,234,0.1)",
-                                "0 0 10px rgba(147,51,234,0.2)",
-                              ],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                            }}
-                          />
-                        </Link>
+                          {`> Admin_Login`}
+                        </button>
                       </motion.div>
                     </>
                   )}
@@ -238,6 +239,7 @@ const Navbar = () => {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
       />
+      <AdminLoginModal isOpen={isAdminModalOpen} onClose={() => setIsAdminModalOpen(false)} />
     </>
   );
 };

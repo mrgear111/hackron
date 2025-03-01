@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HACKRON - 24-Hour Hackathon Platform
 
-## Getting Started
+A cyberpunk-themed hackathon management platform for NST 24-hour coding competition.
 
-First, run the development server:
+![Hackron Banner](public/hackron-banner.png)
 
+## 🚀 Features
+
+### For Teams
+- **Team Registration & Login**
+  - Secure authentication system
+  - Team dashboard access
+  - Real-time project submission
+
+### For Admins
+- **Admin Control Panel**
+  - Secure admin registration with special key
+  - Team management & oversight
+  - Submission tracking
+
+### Event Details
+- 24-Hour Non-Stop Coding
+- Date: 5th March
+- Venue: Lab 1 & 2
+- Eligible: UG Students
+- Prize Pool: 80k
+
+## 💻 Tech Stack
+- Next.js 14 (App Router)
+- Firebase (Auth & Realtime DB)
+- Tailwind CSS
+- Framer Motion
+- TypeScript
+
+## 🛠️ Setup
+
+1. **Clone & Install**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [your-repo-url]
+cd hackron
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Environment Setup**
+Create `.env.local` with your Firebase config:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=your_database_url
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Run Development Server**
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📱 Key Pages
 
-## Learn More
+- `/` - Landing page with event details
+- `/register` - Team registration
+- `/team-dashboard` - Project submission portal
+- `/admin-dashboard` - Admin control panel
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Authentication Flows
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Team Registration
+1. Register with team name & email
+2. Access team dashboard
+3. Submit project details
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Admin Access
+1. Register with admin key
+2. Access admin dashboard
+3. Manage teams & submissions
 
-## Deploy on Vercel
+## 🎨 UI Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Cyberpunk-themed design
+- Animated components
+- Responsive layout
+- Terminal-style interface
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📅 Event Timeline
+
+- 07:00 AM - Participant Reporting
+- 08:30 AM - Briefing Session
+- 09:00 AM - Hackathon Begins
+- 09:30 PM - Security Check
+
+## 📊 Judging Criteria
+
+- Problem Statement
+- Approach & Implementation
+- Solution Analysis
+- Presentation
+- Innovation
+
+## 📝 License
+
+MIT License - feel free to use and modify!
+
+---
+Built with 💻 for NSE IT's Hackathon
