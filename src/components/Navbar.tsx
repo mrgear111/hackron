@@ -115,7 +115,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-4">
                   {user ? (
                     <>
-                      {/* User Status */}
+                      {/* User Status - Updated to show different status for admin */}
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -125,11 +125,34 @@ const Navbar = () => {
                           <motion.span
                             animate={{ opacity: [0, 1] }}
                             transition={{ duration: 0.8, repeat: Infinity }}
-                            className="text-cyan-400"
+                            className={`${isAdmin ? 'text-purple-400' : 'text-cyan-400'}`}
                           >
                             ●
                           </motion.span>
-                          {` ${teamName}_Connected`}
+                          {isAdmin ? (
+                            <motion.span
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="inline-flex items-center gap-2"
+                            >
+                              <span className="text-purple-400">{`_Connected`}</span>
+                              <motion.span
+                                animate={{ 
+                                  textShadow: [
+                                    "0 0 8px rgba(168, 85, 247, 0.4)",
+                                    "0 0 12px rgba(168, 85, 247, 0.2)",
+                                    "0 0 8px rgba(168, 85, 247, 0.4)"
+                                  ]
+                                }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="text-purple-400"
+                              >
+                                [ADMIN]
+                              </motion.span>
+                            </motion.span>
+                          ) : (
+                            ` ${teamName}_Connected`
+                          )}
                         </span>
                       </motion.div>
 
@@ -140,15 +163,21 @@ const Navbar = () => {
                           className="relative group px-4 py-2 text-sm font-mono"
                         >
                           <span className="relative z-10 text-cyan-400">
-                            {isAdmin ? `> Admin_Dashboard` : `> Team_Dashboard`}
+                            {isAdmin ? (
+                              <span className="text-purple-400">{`> Admin_Dashboard`}</span>
+                            ) : (
+                              `> Team_Dashboard`
+                            )}
                           </span>
                           <motion.div
-                            className="absolute inset-0 border border-cyan-500/30 rounded-md"
+                            className={`absolute inset-0 border ${
+                              isAdmin ? 'border-purple-500/30' : 'border-cyan-500/30'
+                            } rounded-md`}
                             animate={{
                               boxShadow: [
-                                "0 0 10px rgba(0,255,255,0.2)",
-                                "0 0 20px rgba(0,255,255,0.1)",
-                                "0 0 10px rgba(0,255,255,0.2)",
+                                `0 0 10px ${isAdmin ? 'rgba(168,85,247,0.2)' : 'rgba(0,255,255,0.2)'}`,
+                                `0 0 20px ${isAdmin ? 'rgba(168,85,247,0.1)' : 'rgba(0,255,255,0.1)'}`,
+                                `0 0 10px ${isAdmin ? 'rgba(168,85,247,0.2)' : 'rgba(0,255,255,0.2)'}`,
                               ],
                             }}
                             transition={{
