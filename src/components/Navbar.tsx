@@ -20,34 +20,52 @@ const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        // Check if user is admin
-        const adminRef = ref(db, 'admins');
-        const snapshot = await get(adminRef);
-        const isAdminUser = snapshot.exists() && 
-          Object.values(snapshot.val()).includes(currentUser.email);
-        setIsAdmin(isAdminUser);
+    let teamListener: (() => void) | null = null;
 
-        // Only fetch team name if not admin
-        if (!isAdminUser) {
-          const teamRef = ref(db, `teams/${currentUser.uid}`);
-          onValue(teamRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-              setTeamName(data.teamName);
-            }
-          });
-        }
-      } else {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (!currentUser) {
+        setUser(null);
         setTeamName('');
         setIsAdmin(false);
+        return;
+      }
+
+      setUser(currentUser);
+
+      // Check if user is admin
+      const adminRef = ref(db, `admins/${currentUser.uid}`);
+      const adminSnapshot = await get(adminRef);
+      const isAdminUser = adminSnapshot.exists();
+      setIsAdmin(isAdminUser);
+
+      // Clean up previous listener if exists
+      if (teamListener) {
+        teamListener();
+      }
+
+      // Only set up team listener if not an admin
+      if (!isAdminUser) {
+        const teamRef = ref(db, `teams/${currentUser.uid}`);
+        teamListener = onValue(teamRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setTeamName(data.teamName);
+          } else {
+            // If no team data found, sign out
+            auth.signOut();
+            router.push('/');
+          }
+        });
       }
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribe();
+      if (teamListener) {
+        teamListener();
+      }
+    };
+  }, [router]);
 
   const handleLogout = async () => {
     try {

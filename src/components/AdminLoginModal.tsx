@@ -76,31 +76,88 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
     setIsLoading(true);
     setError('');
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
+    
     try {
       if (isLoginMode) {
-        const userCredential = await signInWithEmailAndPassword(
-          auth, 
-          formData.email, 
-          formData.password
-        );
-        
-        const isAdmin = await checkIsAdmin(formData.email);
+        // First check if this email is registered as an admin
+        const adminRef = ref(db, 'admins');
+        const adminSnapshot = await get(adminRef);
+        const adminEmails = adminSnapshot.exists() ? Object.values(adminSnapshot.val()) : [];
+        const isAdmin = adminEmails.includes(formData.email);
+
         if (!isAdmin) {
-          throw new Error('Unauthorized access');
+          setError('This email is not registered as an admin. Please use team login if you are a team member.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Try to sign in
+        try {
+          const userCredential = await signInWithEmailAndPassword(
+            auth, 
+            formData.email, 
+            formData.password
+          );
+
+          // Double check the specific admin entry
+          const userAdminRef = ref(db, `admins/${userCredential.user.uid}`);
+          const userAdminSnapshot = await get(userAdminRef);
+          
+          if (!userAdminSnapshot.exists()) {
+            // Create the admin entry if it doesn't exist
+            await set(userAdminRef, formData.email);
+          }
+
+          router.push('/admin-dashboard');
+          onClose();
+        } catch (error: any) {
+          if (error.code === 'auth/invalid-credential') {
+            setError('Invalid email or password');
+          } else if (error.code === 'auth/user-not-found') {
+            setError('No account found with this email');
+          } else if (error.code === 'auth/wrong-password') {
+            setError('Incorrect password');
+          } else {
+            setError('Login failed. Please try again.');
+          }
+          if (auth.currentUser) {
+            await auth.signOut();
+          }
         }
       } else {
-        // Registration mode
+        // Registration validation
         if (formData.password !== formData.confirmPassword) {
           throw new Error('Passwords do not match');
         }
         
-        await registerAdmin();
-      }
+        if (!formData.adminKey) {
+          throw new Error('Admin key is required');
+        }
 
-      router.push('/admin-dashboard');
-      onClose();
+        await registerAdmin();
+        router.push('/admin-dashboard');
+        onClose();
+      }
     } catch (error: any) {
-      setError(error.message);
+      console.error('Admin auth error:', error);
+      setError(error.message || 'Authentication failed');
+      if (auth.currentUser) {
+        await auth.signOut();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -138,8 +195,31 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-gray-900/90 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6 w-full max-w-md"
+              className="bg-gray-900/90 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6 w-full max-w-md relative"
             >
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-400 hover:text-cyan-400 
+                  transition-colors duration-200 group"
+              >
+                <div className="relative">
+                  <span className="text-2xl font-mono">&times;</span>
+                  <motion.div
+                    className="absolute -inset-2 border border-cyan-500/0 rounded-full 
+                      group-hover:border-cyan-500/50"
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                    }}
+                  />
+                </div>
+              </button>
+
               <div className="space-y-6">
                 <h2 className="text-2xl font-mono text-cyan-400">
                   {isLoginMode ? `> Admin_Login` : `> Admin_Registration`}

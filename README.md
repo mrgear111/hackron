@@ -101,4 +101,4 @@ npm run dev
 MIT License - feel free to use and modify!
 
 ---
-Built with 💻 for NSE IT's Hackathon
+Built with love for NST's Hackathon

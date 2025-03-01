@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from '@/lib/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { ref, set } from 'firebase/database';
+import { ref, set, get } from 'firebase/database';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -28,18 +28,69 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
     
     try {
       if (isLoginMode) {
-        await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        // Try to sign in first
+        const userCredential = await signInWithEmailAndPassword(
+          auth, 
+          formData.email, 
+          formData.password
+        );
+
+        // Check if this is an admin account
+        const adminRef = ref(db, `admins/${userCredential.user.uid}`);
+        const adminSnapshot = await get(adminRef);
+        
+        if (adminSnapshot.exists()) {
+          await auth.signOut();
+          throw new Error('Please use admin login portal');
+        }
+
+        // Check if team exists
+        const teamRef = ref(db, `teams/${userCredential.user.uid}`);
+        const teamSnapshot = await get(teamRef);
+        
+        if (!teamSnapshot.exists()) {
+          await auth.signOut();
+          throw new Error('Team not found. Please register first');
+        }
+
         router.push('/team-dashboard');
         onClose();
       } else {
+        // Registration mode
         if (formData.password !== formData.confirmPassword) {
           throw new Error('Passwords do not match');
         }
-        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         
+        if (!formData.teamName.trim()) {
+          throw new Error('Team name is required');
+        }
+
+        // Create user account
+        const userCredential = await createUserWithEmailAndPassword(
+          auth, 
+          formData.email, 
+          formData.password
+        );
+        
+        // Save team data
         const teamData = {
           teamName: formData.teamName,
           email: formData.email,
@@ -53,7 +104,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose();
       }
     } catch (error: any) {
-      setError(error.message);
+      console.error('Team auth error:', error);
+      if (error.code === 'auth/invalid-credential') {
+        setError('Invalid email or password');
+      } else if (error.code === 'auth/email-already-in-use') {
+        setError('This email is already registered');
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many attempts. Please try again later');
+      } else {
+        setError(error.message || 'Authentication failed');
+      }
+      if (auth.currentUser) {
+        await auth.signOut();
+      }
     } finally {
       setIsLoading(false);
     }
