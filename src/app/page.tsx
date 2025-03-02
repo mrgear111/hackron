@@ -5,9 +5,11 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/utils/animations";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import LoginModal from "@/components/LoginModal";
 
 export default function Home() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const eventDetails = {
     mainInfo: [
       { icon: "🚀", label: "24'Hrs Hackathon", value: "Non-Stop Coding" },
@@ -134,6 +136,7 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setIsLoginModalOpen(true)}
                 className="group relative px-8 py-3 bg-cyan-500/10 border border-cyan-500/30
                   rounded-md text-cyan-400 hover:bg-cyan-500/20 font-mono overflow-hidden"
               >
@@ -333,6 +336,12 @@ export default function Home() {
             </motion.div>
           </div>
         </motion.section>
+
+        {/* Add Login Modal */}
+        <LoginModal 
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+        />
       </main>
     </div>
   );
