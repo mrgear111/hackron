@@ -8,6 +8,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import Quotes from '@/components/Quotes';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -141,6 +143,29 @@ export default function TeamDashboard() {
           </div>
         </motion.div>
 
+        {/* Team Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gray-800/70 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6"
+        >
+          <h2 className="text-xl font-mono text-purple-400 mb-4 flex items-center">
+            <FaUser className="mr-2" /> {`> Team_Stats`}
+          </h2>
+          <div className="space-y-2 font-mono">
+            <p className="text-gray-200">
+              Member since: {new Date(teamData?.createdAt || '').toLocaleDateString()}
+            </p>
+            <p className="text-gray-200">
+              Projects: 0
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Add the Quotes component here */}
+        <Quotes />
+
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Project Submissions */}
@@ -151,17 +176,17 @@ export default function TeamDashboard() {
             className="col-span-1 md:col-span-2 lg:col-span-3 bg-gray-800/70 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6"
           >
             <h2 className="text-xl font-mono text-cyan-400 mb-6">
-              {`> Project_Submission`}
+              {`> Project Submission`}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Project Links */}
                 <div className="space-y-4">
-                  <h3 className="text-purple-400 font-mono text-sm">{`> Project_Links`}</h3>
+                  <h3 className="text-purple-400 font-mono text-sm">{`> Project Links`}</h3>
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Live_Demo_URL:`}</label>
+                    <div className="flex items-center space-x-2">
+                      <FaLink className="text-cyan-400" />
                       <input
                         type="url"
                         name="liveDemo"
@@ -169,12 +194,12 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
                           text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="https://..."
+                        placeholder="Live Demo URL"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Presentation_URL:`}</label>
+                    <div className="flex items-center space-x-2">
+                      <FaFileAlt className="text-cyan-400" />
                       <input
                         type="url"
                         name="presentationUrl"
@@ -182,12 +207,12 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
                           text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="https://slides.com/..."
+                        placeholder="Presentation URL"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Video_Walkthrough:`}</label>
+                    <div className="flex items-center space-x-2">
+                      <FaVideo className="text-cyan-400" />
                       <input
                         type="url"
                         name="videoWalkthrough"
@@ -195,12 +220,12 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
                           text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="https://loom.com/..."
+                        placeholder="Video Walkthrough URL"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Code_Repository:`}</label>
+                    <div className="flex items-center space-x-2">
+                      <FaCode className="text-cyan-400" />
                       <input
                         type="url"
                         name="codeRepository"
@@ -208,12 +233,12 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
                           text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="https://github.com/..."
+                        placeholder="Code Repository URL"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Documentation:`}</label>
+                    <div className="flex items-center space-x-2">
+                      <FaClipboardList className="text-cyan-400" />
                       <input
                         type="url"
                         name="documentation"
@@ -221,7 +246,7 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
                           text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="https://docs.google.com/..."
+                        placeholder="Documentation URL"
                         required
                       />
                     </div>
@@ -230,10 +255,10 @@ export default function TeamDashboard() {
 
                 {/* Project Details */}
                 <div className="space-y-4">
-                  <h3 className="text-purple-400 font-mono text-sm">{`> Project_Details`}</h3>
+                  <h3 className="text-purple-400 font-mono text-sm">{`> Project Details`}</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Problem_Statement:`}</label>
+                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Problem Statement:`}</label>
                       <textarea
                         name="problemStatement"
                         value={formData.problemStatement}
@@ -259,7 +284,7 @@ export default function TeamDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Tech_Stack:`}</label>
+                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Tech Stack:`}</label>
                       <input
                         type="text"
                         name="techStack"
@@ -313,56 +338,13 @@ export default function TeamDashboard() {
                   disabled={isSubmitting}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-6 py-2 bg-cyan-500/10 border border-cyan-500/30 
-                    rounded-md text-cyan-400 font-mono text-sm hover:bg-cyan-500/20
-                    disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-md 
+                    font-mono text-sm hover:bg-gradient-to-l transition-all duration-300"
                 >
-                  {isSubmitting ? '> Processing...' : '> Submit_Project'}
+                  {isSubmitting ? '> Processing...' : '> Submit Project'}
                 </motion.button>
               </div>
             </form>
-          </motion.div>
-
-          {/* Team Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gray-800/70 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6"
-          >
-            <h2 className="text-xl font-mono text-purple-400 mb-4">
-              {`> Team_Stats`}
-            </h2>
-            <div className="space-y-2 font-mono">
-              <p className="text-gray-200">
-                Member since: {new Date(teamData?.createdAt || '').toLocaleDateString()}
-              </p>
-              <p className="text-gray-200">
-                Projects: 0
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Quick Actions */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-gray-800/70 backdrop-blur-sm border border-emerald-500/30 rounded-lg p-6"
-          >
-            <h2 className="text-xl font-mono text-emerald-400 mb-4">
-              {`> Quick_Actions`}
-            </h2>
-            <div className="space-y-3">
-              <button className="w-full px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 
-                rounded-md text-emerald-400 font-mono text-sm hover:bg-emerald-500/20 transition-colors">
-                {`> Submit_New_Project`}
-              </button>
-              <button className="w-full px-4 py-2 bg-blue-500/10 border border-blue-500/30 
-                rounded-md text-blue-400 font-mono text-sm hover:bg-blue-500/20 transition-colors">
-                {`> View_Submissions`}
-              </button>
-            </div>
           </motion.div>
         </div>
       </div>
