@@ -31,6 +31,13 @@ interface ProjectSubmission {
   learnings: string;
 }
 
+const problemStatements = [
+  "Problem Statement 1: Description...",
+  "Problem Statement 2: Description...",
+  "Problem Statement 3: Description...",
+  // Add more problem statements as needed
+];
+
 export default function TeamDashboard() {
   const router = useRouter();
   const [teamData, setTeamData] = useState<TeamData | null>(null);
@@ -49,15 +56,40 @@ export default function TeamDashboard() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [selectedProblemStatement, setSelectedProblemStatement] = useState(problemStatements[0]);
+  const [showForm, setShowForm] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
-    
+
+    // Validate form data
+    if (!formData.problemStatement || !formData.solution || !formData.techStack) {
+      setError('Please fill in all required fields.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const submissionRef = ref(db, `teams/${auth.currentUser?.uid}/projectSubmission`);
       await set(submissionRef, formData);
+
+      // Update team data after submission
+      setTeamData(prev => ({
+        ...prev,
+        projectSubmission: formData,
+        teamName: prev?.teamName || '',
+        email: prev?.email || '',
+        createdAt: prev?.createdAt || ''
+      }));
+
+      // Set success message
+      setSuccessMessage('Congrats! You have successfully submitted your project.');
+
+      // Close the form
+      setShowForm(false);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -65,11 +97,20 @@ export default function TeamDashboard() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  // Separate handler for the dropdown
+  const handleProblemStatementChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStatement = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      problemStatement: selectedStatement
     }));
   };
 
@@ -143,6 +184,13 @@ export default function TeamDashboard() {
           </div>
         </motion.div>
 
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-4 text-green-400 font-mono">
+            {successMessage}
+          </div>
+        )}
+
         {/* Team Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -179,172 +227,178 @@ export default function TeamDashboard() {
               {`> Project Submission`}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Project Links */}
-                <div className="space-y-4">
-                  <h3 className="text-purple-400 font-mono text-sm">{`> Project Links`}</h3>
+            {showForm && (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Project Links */}
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <FaLink className="text-cyan-400" />
-                      <input
-                        type="url"
-                        name="liveDemo"
-                        value={formData.liveDemo}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="Live Demo URL"
-                        required
-                      />
+                    <h3 className="text-purple-400 font-mono text-sm">{`> Project Links`}</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-2">
+                        <FaLink className="text-cyan-400" />
+                        <input
+                          type="url"
+                          name="liveDemo"
+                          value={formData.liveDemo}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="Live Demo URL"
+                          required
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaFileAlt className="text-cyan-400" />
+                        <input
+                          type="url"
+                          name="presentationUrl"
+                          value={formData.presentationUrl}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="Presentation URL"
+                          required
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaVideo className="text-cyan-400" />
+                        <input
+                          type="url"
+                          name="videoWalkthrough"
+                          value={formData.videoWalkthrough}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="Video Walkthrough URL"
+                          required
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaCode className="text-cyan-400" />
+                        <input
+                          type="url"
+                          name="codeRepository"
+                          value={formData.codeRepository}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="Code Repository URL"
+                          required
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaClipboardList className="text-cyan-400" />
+                        <input
+                          type="url"
+                          name="documentation"
+                          value={formData.documentation}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="Documentation URL"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <FaFileAlt className="text-cyan-400" />
-                      <input
-                        type="url"
-                        name="presentationUrl"
-                        value={formData.presentationUrl}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="Presentation URL"
-                        required
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FaVideo className="text-cyan-400" />
-                      <input
-                        type="url"
-                        name="videoWalkthrough"
-                        value={formData.videoWalkthrough}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="Video Walkthrough URL"
-                        required
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FaCode className="text-cyan-400" />
-                      <input
-                        type="url"
-                        name="codeRepository"
-                        value={formData.codeRepository}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="Code Repository URL"
-                        required
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FaClipboardList className="text-cyan-400" />
-                      <input
-                        type="url"
-                        name="documentation"
-                        value={formData.documentation}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="Documentation URL"
-                        required
-                      />
+                  </div>
+
+                  {/* Project Details */}
+                  <div className="space-y-4">
+                    <h3 className="text-purple-400 font-mono text-sm">{`> Project Details`}</h3>
+                    <div className="space-y-4">
+                      <div className="mb-4">
+                        <label htmlFor="problemStatement" className="block text-cyan-400 font-mono text-xs mb-2">
+                          Problem Statement
+                        </label>
+                        <select
+                          id="problemStatement"
+                          value={formData.problemStatement}
+                          onChange={handleProblemStatementChange}
+                          className="block w-full bg-black/30 border border-cyan-500/30 rounded-md p-2 text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                        >
+                          {problemStatements.map((statement, index) => (
+                            <option key={index} value={statement}>
+                              {statement}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Solution:`}</label>
+                        <textarea
+                          name="solution"
+                          value={formData.solution}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          rows={3}
+                          placeholder="How does your solution address the problem?"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Tech Stack:`}</label>
+                        <input
+                          type="text"
+                          name="techStack"
+                          value={formData.techStack}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          placeholder="React, Next.js, Firebase, etc."
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Challenges:`}</label>
+                        <textarea
+                          name="challenges"
+                          value={formData.challenges}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          rows={2}
+                          placeholder="What challenges did you face?"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Learnings:`}</label>
+                        <textarea
+                          name="learnings"
+                          value={formData.learnings}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
+                            text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
+                          rows={2}
+                          placeholder="What did you learn from this project?"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Project Details */}
-                <div className="space-y-4">
-                  <h3 className="text-purple-400 font-mono text-sm">{`> Project Details`}</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Problem Statement:`}</label>
-                      <textarea
-                        name="problemStatement"
-                        value={formData.problemStatement}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        rows={3}
-                        placeholder="What problem does your project solve?"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Solution:`}</label>
-                      <textarea
-                        name="solution"
-                        value={formData.solution}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        rows={3}
-                        placeholder="How does your solution address the problem?"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Tech Stack:`}</label>
-                      <input
-                        type="text"
-                        name="techStack"
-                        value={formData.techStack}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        placeholder="React, Next.js, Firebase, etc."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Challenges:`}</label>
-                      <textarea
-                        name="challenges"
-                        value={formData.challenges}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        rows={2}
-                        placeholder="What challenges did you face?"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-xs mb-2">{`> Learnings:`}</label>
-                      <textarea
-                        name="learnings"
-                        value={formData.learnings}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded-md px-4 py-2 
-                          text-gray-100 font-mono text-sm focus:outline-none focus:border-cyan-500/50"
-                        rows={2}
-                        placeholder="What did you learn from this project?"
-                        required
-                      />
-                    </div>
+                {error && (
+                  <div className="text-red-400 font-mono text-sm">
+                    {`> Error: ${error}`}
                   </div>
-                </div>
-              </div>
+                )}
 
-              {error && (
-                <div className="text-red-400 font-mono text-sm">
-                  {`> Error: ${error}`}
+                <div className="flex justify-end">
+                  <motion.button
+                    type="submit"
+                    disabled={isSubmitting}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-md 
+                      font-mono text-sm hover:bg-gradient-to-l transition-all duration-300"
+                  >
+                    {isSubmitting ? '> Processing...' : '> Submit Project'}
+                  </motion.button>
                 </div>
-              )}
-
-              <div className="flex justify-end">
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-md 
-                    font-mono text-sm hover:bg-gradient-to-l transition-all duration-300"
-                >
-                  {isSubmitting ? '> Processing...' : '> Submit Project'}
-                </motion.button>
-              </div>
-            </form>
+              </form>
+            )}
           </motion.div>
         </div>
       </div>

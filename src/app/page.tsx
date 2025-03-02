@@ -43,6 +43,8 @@ export default function Home() {
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.1, 0]);
 
+  const eventDetailsRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     // Initialize any Firebase-dependent code here
   }, []);
@@ -150,6 +152,9 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  eventDetailsRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="group relative px-8 py-3 bg-purple-500/10 border border-purple-500/30
                   rounded-md text-purple-400 hover:bg-purple-500/20 font-mono overflow-hidden"
               >
@@ -203,6 +208,7 @@ export default function Home() {
 
         {/* Event Details Section */}
         <motion.section
+          ref={eventDetailsRef}
           variants={staggerContainer}
           initial="initial"
           animate="animate"
