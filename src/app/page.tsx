@@ -97,7 +97,7 @@ export default function Home() {
                 }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
-                HACKRON_2024
+                HACKRON_2025
               </motion.div>
               
               {/* Glitch effect */}
@@ -113,7 +113,7 @@ export default function Home() {
                   repeatType: "reverse"
                 }}
               >
-                HACKRON_2024
+                HACKRON_2025
               </motion.div>
             </motion.div>
             
@@ -325,7 +325,7 @@ export default function Home() {
                 
                 <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                    HACKRON_2024
+                    HACKRON_2025
                   </span>
                   
                   {/* Glitch effect layers */}
@@ -342,7 +342,7 @@ export default function Home() {
                       times: [0, 0.2, 1]
                     }}
                   >
-                    HACKRON_2024
+                    HACKRON_2025
                   </motion.span>
                   
                   <motion.span
@@ -359,7 +359,7 @@ export default function Home() {
                       delay: 0.1
                     }}
                   >
-                    HACKRON_2024
+                    HACKRON_2025
                   </motion.span>
                 </span>
                 
