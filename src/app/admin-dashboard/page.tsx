@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { ref, onValue, get } from 'firebase/database';
+import { ref, onValue, get, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FirebaseError } from 'firebase/app';
 import { FaCode } from 'react-icons/fa';
@@ -22,11 +22,23 @@ interface TeamData {
     problemStatement: string;
     solution: string;
     techStack: string;
+    documentation?: string;
   };
   githubRepo?: {
     repoUrl: string;
     lastUpdated: string;
   };
+}
+
+interface TeamScore {
+  innovation: number;
+  implementation: number;
+  presentation: number;
+  problemSolving: number;
+  totalScore: number;
+  feedback: string;
+  judgedBy: string;
+  judgedAt: string;
 }
 
 const judgeQuotes = [
@@ -41,8 +53,12 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [teams, setTeams] = useState<Record<string, TeamData>>({});
+  const [teamScores, setTeamScores] = useState<Record<string, TeamScore>>({});
   const [randomQuote, setRandomQuote] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [judgedTeams, setJudgedTeams] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     console.log("AdminDashboard useEffect triggered");
@@ -72,6 +88,23 @@ export default function AdminDashboard() {
           (snapshot) => {
             const teamsData = snapshot.val() || {};
             setTeams(teamsData);
+            
+            // Also get judging data if it exists
+            const scores: Record<string, TeamScore> = {};
+            const judged: Record<string, boolean> = {};
+            
+            Object.entries(teamsData).forEach(([id, team]: [string, any]) => {
+              if (team.judging) {
+                scores[id] = team.judging;
+                // Extract judged status
+                if (team.judging.isJudged !== undefined) {
+                  judged[id] = team.judging.isJudged;
+                }
+              }
+            });
+            
+            setTeamScores(scores);
+            setJudgedTeams(judged);
             setLoading(false);
           }, 
           (error) => {
@@ -107,6 +140,83 @@ export default function AdminDashboard() {
     team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     team.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const toggleTeamExpansion = (teamId: string) => {
+    if (expandedTeamId === teamId) {
+      setExpandedTeamId(null);
+    } else {
+      setExpandedTeamId(teamId);
+    }
+  };
+
+  const handleScoreSubmit = async (teamId: string, scores: Omit<TeamScore, 'totalScore' | 'judgedBy' | 'judgedAt'>) => {
+    try {
+      const totalScore = 
+        scores.innovation + 
+        scores.implementation + 
+        scores.presentation + 
+        scores.problemSolving;
+      
+      const scoreData: TeamScore = {
+        ...scores,
+        totalScore,
+        judgedBy: auth.currentUser?.email || 'Unknown',
+        judgedAt: new Date().toISOString()
+      };
+      
+      // Save to Firebase
+      const scoreRef = ref(db, `teams/${teamId}/judging`);
+      await set(scoreRef, scoreData);
+      
+      // Update local state
+      setTeamScores(prev => ({
+        ...prev,
+        [teamId]: scoreData
+      }));
+      
+      // Show success message
+      alert("Scores submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting scores:", error);
+      alert("Failed to submit scores. Please try again.");
+    }
+  };
+
+  const toggleJudgedStatus = async (teamId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent team expansion when clicking the checkbox
+    
+    if (!auth.currentUser) {
+      alert("You must be logged in to judge teams");
+      return;
+    }
+    
+    try {
+      const newStatus = !judgedTeams[teamId];
+      
+      // Get the current team data
+      const teamRef = ref(db, `teams/${teamId}`);
+      const snapshot = await get(teamRef);
+      const teamData = snapshot.val() || {};
+      
+      // Create or update the judging field
+      const judging = teamData.judging || {};
+      judging.isJudged = newStatus;
+      judging.judgedBy = auth.currentUser.email;
+      judging.judgedAt = new Date().toISOString();
+      
+      // Update the team data
+      await set(ref(db, `teams/${teamId}/judging`), judging);
+      
+      // Update local state
+      setJudgedTeams(prev => ({
+        ...prev,
+        [teamId]: newStatus
+      }));
+    } catch (error) {
+      console.error("Error updating judged status:", error);
+      alert("Failed to update judged status. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -246,36 +356,61 @@ export default function AdminDashboard() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="bg-black/30 border border-gray-800 rounded-lg p-4 
-                    hover:border-purple-500/30 transition-all group"
+                    hover:border-purple-500/30 transition-all group cursor-pointer"
+                  onClick={() => toggleTeamExpansion(id)}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-mono text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                      <h3 className="text-lg font-mono text-cyan-400 group-hover:text-cyan-300 transition-colors flex items-center">
                         {team.teamName}
+                        <span className="ml-2 text-xs text-gray-500">
+                          {expandedTeamId === id ? '(click to collapse)' : '(click to expand)'}
+                        </span>
                       </h3>
                       <p className="text-sm font-mono text-gray-400">{team.email}</p>
                       <p className="text-xs font-mono text-gray-500">
                         Registered: {new Date(team.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    {team.projectSubmission ? (
-                      <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 
-                        rounded-full text-emerald-400 text-xs font-mono">
-                        Project Submitted
-                      </span>
-                    ) : (
-                      <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 
-                        rounded-full text-red-400 text-xs font-mono">
-                        Submission Pending
-                      </span>
-                    )}
+                    <div className="flex flex-col gap-2 items-end">
+                      {team.projectSubmission ? (
+                        <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 
+                          rounded-full text-emerald-400 text-xs font-mono">
+                          Project Submitted
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 
+                          rounded-full text-red-400 text-xs font-mono">
+                          Submission Pending
+                        </span>
+                      )}
+                      
+                      <div 
+                        className={`px-3 py-1 ${judgedTeams[id] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-gray-800/30 border-gray-700'} 
+                          border rounded-full text-xs font-mono flex items-center cursor-pointer`}
+                        onClick={(e) => toggleJudgedStatus(id, e)}
+                      >
+                        <div className={`w-4 h-4 mr-2 rounded border ${judgedTeams[id] ? 'bg-purple-500 border-purple-500' : 'bg-transparent border-gray-600'} flex items-center justify-center`}>
+                          {judgedTeams[id] && (
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
+                            </svg>
+                          )}
+                        </div>
+                        <span className={judgedTeams[id] ? 'text-purple-400' : 'text-gray-400'}>
+                          {judgedTeams[id] ? 'Judged' : 'Mark as Judged'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   
-                  {team.projectSubmission && (
+                  {expandedTeamId === id && team.projectSubmission && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                       className="mt-4 pt-4 border-t border-gray-800"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <div className="grid grid-cols-2 gap-4">
                         {team.projectSubmission.liveDemo && (
@@ -304,6 +439,32 @@ export default function AdminDashboard() {
                             <span className="transform group-hover:translate-x-1 transition-transform">→</span>
                           </a>
                         )}
+                        {team.projectSubmission.presentationUrl && (
+                          <a
+                            href={team.projectSubmission.presentationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 
+                              rounded-md text-emerald-400 font-mono text-sm hover:bg-emerald-500/20 
+                              transition-all flex items-center justify-between group"
+                          >
+                            <span>Presentation</span>
+                            <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                          </a>
+                        )}
+                        {team.projectSubmission.documentation && (
+                          <a
+                            href={team.projectSubmission.documentation}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 
+                              rounded-md text-yellow-400 font-mono text-sm hover:bg-yellow-500/20 
+                              transition-all flex items-center justify-between group"
+                          >
+                            <span>Documentation</span>
+                            <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                          </a>
+                        )}
                       </div>
 
                       {team.projectSubmission.techStack && (
@@ -323,28 +484,37 @@ export default function AdminDashboard() {
                           </p>
                         </div>
                       )}
-                    </motion.div>
-                  )}
 
-                  {team.githubRepo && (
-                    <div className="mt-4">
-                      <h4 className="text-cyan-400 font-mono text-sm mb-2">GitHub Repository:</h4>
-                      <a 
-                        href={team.githubRepo.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-purple-400 font-mono text-sm hover:underline flex items-center"
-                      >
-                        <FaCode className="mr-2" />
-                        {team.githubRepo.repoUrl.replace('https://github.com/', '')}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </a>
-                      <p className="text-gray-500 font-mono text-xs mt-1">
-                        Last updated: {new Date(team.githubRepo.lastUpdated).toLocaleString()}
-                      </p>
-                    </div>
+                      {team.projectSubmission.solution && (
+                        <div className="mt-4">
+                          <h4 className="text-cyan-400 font-mono text-sm mb-2">Solution:</h4>
+                          <p className="text-gray-300 font-mono text-sm">
+                            {team.projectSubmission.solution}
+                          </p>
+                        </div>
+                      )}
+
+                      {team.githubRepo && (
+                        <div className="mt-4">
+                          <h4 className="text-cyan-400 font-mono text-sm mb-2">GitHub Repository:</h4>
+                          <a 
+                            href={team.githubRepo.repoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-400 font-mono text-sm hover:underline flex items-center"
+                          >
+                            <FaCode className="mr-2" />
+                            {team.githubRepo.repoUrl.replace('https://github.com/', '')}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                          <p className="text-gray-500 font-mono text-xs mt-1">
+                            Connected: {new Date(team.githubRepo.lastUpdated).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+                    </motion.div>
                   )}
                 </motion.div>
               ))}
