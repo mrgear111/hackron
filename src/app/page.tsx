@@ -17,7 +17,7 @@ export default function Home() {
       { icon: "📅", label: "Date", value: "5th March" },
       { icon: "📍", label: "Venue", value: "Lab 1 & 2" },
       { icon: "👥", label: "Participants", value: "UG students" },
-      { icon: "💰", label: "Prize Pool", value: "80k" },
+      { icon: "💰", label: "Prize Pool", value: "60k" },
     ],
     timeline: [
       { time: "07:30 - 09:00", event: "Registration", desc: "Rashi Tulshyan" },
@@ -634,7 +634,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Prize_Pool</div>
-                  <div className="text-gray-300 font-mono">💰 80k</div>
+                  <div className="text-gray-300 font-mono">💰 60k</div>
                 </div>
               </div>
 

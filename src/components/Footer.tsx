@@ -110,7 +110,7 @@ const Footer = () => {
             className="flex items-center space-x-2 text-gray-400"
           >
             <span className="text-cyan-500/50">&gt;</span>
-            <span>© 2024 Hackron. All rights reserved</span>
+            <span>© 2025 Hackron. All rights reserved</span>
             <motion.span 
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 1, repeat: Infinity }}
