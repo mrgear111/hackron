@@ -20,13 +20,21 @@ export default function Home() {
       { icon: "💰", label: "Prize Pool", value: "80k" },
     ],
     timeline: [
-      { time: "07:00 AM", event: "Participant Reporting", desc: "Check-in & Registration" },
-      { time: "08:30 AM", event: "Briefing Session", desc: "Rules, Guidelines & Problem Statements" },
-      { time: "09:00 AM", event: "Hackathon Begins", desc: "🔥" },
-      { time: "12:30 PM", event: "Lunch", desc: "Coupon Distribution 🍱" },
-      { time: "05:30 PM", event: "Snacks", desc: "Coupon Distribution ☕" },
-      { time: "07:45 PM", event: "Dinner", desc: "Coupon Distribution 🍽️" },
-      { time: "09:30 PM", event: "Security Check", desc: "Campus Attendance" },
+      { time: "07:30 - 09:00", event: "Registration", desc: "Rashi Tulshyan" },
+      { time: "09:00 - 10:00", event: "Opening and briefing", desc: "Blinkit Introduction" },
+      { time: "10:00 - 10:30", event: "Settling down and allocation", desc: "Wifi setup" },
+      { time: "10:30", event: "Start of Hackathon", desc: "Rashi Tulshyan" },
+      { time: "13:00 - 13:30", event: "Checkpoint 1", desc: "Krushn Dayshmookh" },
+      { time: "14:00 - 15:00", event: "Lunch", desc: "Rashi Tulshyan" },
+      { time: "18:00 - 19:00", event: "Checkpoint 2", desc: "Krushn Dayshmookh" },
+      { time: "20:30 - 21:00", event: "Dinner", desc: "Rashi Tulshyan" },
+      { time: "22:00 - 22:30", event: "Security Check", desc: "Checking teams inside campus" },
+      { time: "00:00 - 01:00", event: "Checkpoint 3", desc: "Raghav Khandelwal" },
+      { time: "07:00 - 08:00", event: "Checkpoint 4", desc: "Raghav Khandelwal" },
+      { time: "10:00 - 11:00", event: "Project Submission", desc: "Rashi Tulshyan" },
+      { time: "11:00 - 14:00", event: "Solution Presentation", desc: "w Blinkit team" },
+      { time: "14:00 - 15:00", event: "Lunch", desc: "Rashi Tulshyan" },
+      { time: "15:00 - 16:00", event: "Prize distribution + closing", desc: "Blinkit team" },
     ],
     judgingCriteria: [
       { title: "Problem Statement", desc: "Complexity & Relevance" },
@@ -631,43 +639,58 @@ export default function Home() {
               </div>
 
               {/* Timeline */}
-              <div className="mb-8">
-                <div className="text-xl font-mono text-cyan-400 mb-4">&gt; Event_Timeline</div>
-                <div className="space-y-3 font-mono">
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">07:00 AM</div>
-                    <div className="text-gray-300">Participant Reporting</div>
-                    <div className="text-gray-500 text-sm">Check-in & Registration</div>
+              <div className="mb-12">
+                <div className="text-xl font-mono text-cyan-400 mb-6 flex items-center">
+                  <span>&gt; Event_Timeline</span>
+                  <div className="h-[1px] flex-grow ml-4 bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                </div>
+                
+                {/* Professional timeline with day separation */}
+                <div className="bg-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
+                  {/* Day 1 */}
+                  <div className="mb-6">
+                    <div className="text-cyan-400 font-mono text-lg mb-3 border-b border-cyan-500/20 pb-2">Day 1</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {eventDetails.timeline.slice(0, 9).map((item, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.05 * index }}
+                          className="bg-gray-900/50 border border-gray-800 rounded p-3 hover:border-purple-500/30 transition-colors"
+                        >
+                          <div className="flex items-center mb-2">
+                            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
+                            <div className="text-purple-400 font-mono text-sm">{item.time}</div>
+                          </div>
+                          <div className="text-gray-200 font-mono text-base mb-1">{item.event}</div>
+                          <div className="text-gray-400 text-xs font-mono">{item.desc}</div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">08:30 AM</div>
-                    <div className="text-gray-300">Briefing Session</div>
-                    <div className="text-gray-500 text-sm">Rules, Guidelines & Problem Statements</div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">09:00 AM</div>
-                    <div className="text-gray-300">Hackathon Begins</div>
-                    <div className="text-emerald-400">🔥</div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">12:30 PM</div>
-                    <div className="text-gray-300">Lunch Break</div>
-                    <div className="text-gray-500 text-sm">🍱</div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">05:30 PM</div>
-                    <div className="text-gray-300">Snacks Break</div>
-                    <div className="text-gray-500 text-sm">☕</div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">07:45 PM</div>
-                    <div className="text-gray-300">Dinner Break</div>
-                    <div className="text-gray-500 text-sm">🍽️</div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="text-purple-400 w-24">09:30 PM</div>
-                    <div className="text-gray-300">Security Check</div>
-                    <div className="text-gray-500 text-sm">Campus Attendance</div>
+                  
+                  {/* Day 2 */}
+                  <div>
+                    <div className="text-cyan-400 font-mono text-lg mb-3 border-b border-cyan-500/20 pb-2">Day 2</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {eventDetails.timeline.slice(9).map((item, index) => (
+                        <motion.div
+                          key={index + 9}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.05 * (index + 9) }}
+                          className="bg-gray-900/50 border border-gray-800 rounded p-3 hover:border-purple-500/30 transition-colors"
+                        >
+                          <div className="flex items-center mb-2">
+                            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
+                            <div className="text-purple-400 font-mono text-sm">{item.time}</div>
+                          </div>
+                          <div className="text-gray-200 font-mono text-base mb-1">{item.event}</div>
+                          <div className="text-gray-400 text-xs font-mono">{item.desc}</div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
