@@ -8,6 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FirebaseError } from 'firebase/app';
+import { FaCode } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -21,6 +22,10 @@ interface TeamData {
     problemStatement: string;
     solution: string;
     techStack: string;
+  };
+  githubRepo?: {
+    repoUrl: string;
+    lastUpdated: string;
   };
 }
 
@@ -319,6 +324,27 @@ export default function AdminDashboard() {
                         </div>
                       )}
                     </motion.div>
+                  )}
+
+                  {team.githubRepo && (
+                    <div className="mt-4">
+                      <h4 className="text-cyan-400 font-mono text-sm mb-2">GitHub Repository:</h4>
+                      <a 
+                        href={team.githubRepo.repoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-400 font-mono text-sm hover:underline flex items-center"
+                      >
+                        <FaCode className="mr-2" />
+                        {team.githubRepo.repoUrl.replace('https://github.com/', '')}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                      <p className="text-gray-500 font-mono text-xs mt-1">
+                        Last updated: {new Date(team.githubRepo.lastUpdated).toLocaleString()}
+                      </p>
+                    </div>
                   )}
                 </motion.div>
               ))}
