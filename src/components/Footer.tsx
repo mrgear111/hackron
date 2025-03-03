@@ -41,7 +41,16 @@ const Footer = () => {
               transition={{ duration: 3, repeat: Infinity }}
               className="font-bold relative"
             >
-              <span className="relative z-10">Daksh</span>
+              <span className="relative z-10">
+                <a 
+                  href="https://github.com/mrgear111" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+                >
+                  Daksh
+                </a>
+              </span>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 blur-lg"
                 animate={{
@@ -82,7 +91,14 @@ const Footer = () => {
                 transition={{ duration: 3, repeat: Infinity }}
                 className="font-bold"
               >
-                DevClub
+                <a 
+                  href="https://github.com/nst-sdc" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-cyan-300 transition-colors duration-200"
+                >
+                  DevClub
+                </a>
               </motion.span>
             </motion.div>
           </motion.div>

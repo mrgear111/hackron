@@ -10,6 +10,7 @@ import LoginModal from "@/components/LoginModal";
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const eventDetails = {
     mainInfo: [
       { icon: "🚀", label: "24'Hrs Hackathon", value: "Non-Stop Coding" },
@@ -49,12 +50,140 @@ export default function Home() {
     // Initialize any Firebase-dependent code here
   }, []);
 
+  useEffect(() => {
+    // Simulate loading time (you can remove this setTimeout if you have actual loading tasks)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="bg-gray-900 min-h-screen overflow-hidden">
+      {/* Loading Animation */}
+      {loading && (
+        <motion.div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: loading ? 1 : 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="relative flex flex-col items-center">
+            {/* Animated Logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-8 relative"
+            >
+              <motion.div 
+                className="text-4xl md:text-6xl font-bold font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
+                animate={{
+                  textShadow: [
+                    "0 0 20px rgba(34,211,238,0.5)",
+                    "0 0 35px rgba(34,211,238,0.3)",
+                    "0 0 20px rgba(34,211,238,0.5)"
+                  ]
+                }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                HACKRON_2024
+              </motion.div>
+              
+              {/* Glitch effect */}
+              <motion.div
+                className="absolute inset-0 text-4xl md:text-6xl font-bold font-mono text-cyan-400/30"
+                animate={{
+                  x: [-2, 2, -2],
+                  opacity: [0, 1, 0]
+                }}
+                transition={{
+                  duration: 0.3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                HACKRON_2024
+              </motion.div>
+            </motion.div>
+            
+            {/* Loading bar */}
+            <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden relative">
+              <motion.div
+                className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 2, ease: "easeInOut" }}
+              />
+              
+              {/* Scanning effect */}
+              <motion.div
+                className="absolute top-0 left-0 h-full w-[20%] bg-white/50"
+                animate={{ 
+                  x: ["-100%", "500%"],
+                  opacity: [0, 1, 0]
+                }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            </div>
+            
+            {/* Loading text */}
+            <motion.div 
+              className="mt-4 font-mono text-cyan-400/70 flex items-center"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              <span>INITIALIZING</span>
+              <motion.span
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 0.1 }}
+                className="ml-1"
+              >
+                _
+              </motion.span>
+            </motion.div>
+            
+            {/* System messages */}
+            <div className="mt-6 font-mono text-xs text-gray-500 max-w-xs text-center">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                &gt; Loading system modules...
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+              >
+                &gt; Establishing secure connection...
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
+              >
+                &gt; Preparing hackathon environment...
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
       {/* Animated Background Elements */}
       <motion.div 
         className="fixed inset-0 bg-grid-pattern pointer-events-none"
         style={{ opacity: gridOpacity, y: bgY }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loading ? 0 : 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       />
       <div className="fixed inset-0 bg-gradient-to-b from-black via-black/50 to-black pointer-events-none"></div>
       
@@ -63,8 +192,9 @@ export default function Home() {
       <main ref={scrollRef}>
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
-          {/* Video Background with Effects */}
+          {/* Video Background with Enhanced Effects */}
           <div className="absolute inset-0">
+            {/* Single video background */}
             <video
               autoPlay
               loop
@@ -72,6 +202,7 @@ export default function Home() {
               playsInline
               preload="auto"
               className="absolute w-full h-full object-cover opacity-40"
+              style={{ pointerEvents: "none" }}
             >
               <source src="/bg.mp4" type="video/mp4" />
               Your browser does not support the video tag.
@@ -79,56 +210,233 @@ export default function Home() {
             
             {/* Enhanced overlay effects */}
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/50 to-gray-900/80"></div>
+            
+            {/* Animated scan lines */}
+            <div className="absolute inset-0 overflow-hidden opacity-10">
+              {[...Array(10)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute top-0 w-full h-[1px] bg-cyan-400/50"
+                  style={{ top: `${i * 10}%` }}
+                  animate={{
+                    x: ["-100%", "100%"],
+                    opacity: [0.3, 0.7, 0.3]
+                  }}
+                  transition={{
+                    duration: 3 + i % 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: i * 0.2
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Matrix-style vertical data streams */}
+            <div className="absolute inset-0 overflow-hidden opacity-10">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute top-0 w-[1px] h-screen bg-gradient-to-b from-transparent via-cyan-500 to-transparent"
+                  style={{ left: `${i * 5}%` }}
+                  animate={{
+                    y: ["-100%", "100%"],
+                    opacity: [0, 0.5, 0]
+                  }}
+                  transition={{
+                    duration: 7 + i % 5,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: i * 0.1
+                  }}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Hero Content */}
           <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-            {/* Glowing Accent Line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.5 }}
-              className="h-px w-48 mx-auto mb-8 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"
-            />
+            {/* Enhanced Glowing Accent Line */}
+            <div className="relative">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.5 }}
+                className="h-px w-48 mx-auto mb-8 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"
+              />
+              
+              {/* Scanning effect */}
+              <motion.div
+                className="absolute top-0 left-0 h-full w-[30%] bg-cyan-400/80"
+                animate={{ 
+                  x: ["-100%", "400%"],
+                  opacity: [0, 0.8, 0]
+                }}
+                transition={{ 
+                  duration: 2, 
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-4xl md:text-6xl font-bold mb-6 font-mono"
-            >
-              <span className="text-cyan-400">&gt; </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                HACKRON_2024
-              </span>
-              <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
-                className="text-cyan-400 ml-2"
+            {/* Enhanced Title with Glitch Effect */}
+            <div className="relative mb-6">
+              <motion.div
+                className="absolute -inset-8 rounded-full opacity-20 blur-3xl"
+                animate={{
+                  background: [
+                    "radial-gradient(circle, rgba(34,211,238,0.3) 0%, transparent 70%)",
+                    "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
+                    "radial-gradient(circle, rgba(34,211,238,0.3) 0%, transparent 70%)"
+                  ],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-4xl md:text-6xl font-bold font-mono relative"
               >
-                |
-              </motion.span>
-            </motion.h1>
+                <motion.span
+                  className="text-cyan-400 inline-block"
+                  animate={{
+                    textShadow: [
+                      "0 0 10px rgba(34,211,238,0.5)",
+                      "0 0 20px rgba(34,211,238,0.8)",
+                      "0 0 10px rgba(34,211,238,0.5)"
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  &gt;
+                </motion.span>{" "}
+                
+                <span className="relative inline-block">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                    HACKRON_2024
+                  </span>
+                  
+                  {/* Glitch effect layers */}
+                  <motion.span
+                    className="absolute left-0 top-0 text-cyan-400/30"
+                    animate={{
+                      x: [-2, 2, -2],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      times: [0, 0.2, 1]
+                    }}
+                  >
+                    HACKRON_2024
+                  </motion.span>
+                  
+                  <motion.span
+                    className="absolute left-0 top-0 text-blue-400/30"
+                    animate={{
+                      x: [2, -2, 2],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      times: [0, 0.2, 1],
+                      delay: 0.1
+                    }}
+                  >
+                    HACKRON_2024
+                  </motion.span>
+                </span>
+                
+                <motion.span
+                  animate={{ 
+                    opacity: [1, 0],
+                    textShadow: [
+                      "0 0 10px rgba(34,211,238,0.7)",
+                      "0 0 5px rgba(34,211,238,0.3)"
+                    ]
+                  }}
+                  transition={{ duration: 0.8, repeat: Infinity }}
+                  className="text-cyan-400 ml-2"
+                >
+                  |
+                </motion.span>
+              </motion.h1>
+            </div>
 
-            {/* Animated Subtitle */}
+            {/* Enhanced Animated Subtitle */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
               className="relative"
             >
-              <div className="text-gray-300 text-lg md:text-xl mb-12 font-mono">
-                <span className="text-cyan-400">$</span> Initialize_Innovation.exe
+              <div className="text-gray-300 text-lg md:text-xl mb-12 font-mono flex items-center justify-center gap-2">
+                <motion.span
+                  className="text-cyan-400"
+                  animate={{
+                    textShadow: [
+                      "0 0 5px rgba(34,211,238,0.3)",
+                      "0 0 10px rgba(34,211,238,0.7)",
+                      "0 0 5px rgba(34,211,238,0.3)"
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  $
+                </motion.span>
+                
+                <motion.span
+                  animate={{
+                    color: ["#94a3b8", "#22d3ee", "#94a3b8"]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  Initialize_Innovation.exe
+                </motion.span>
+                
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-cyan-400 inline-block"
+                >
+                  _
+                </motion.span>
               </div>
-              <motion.div
-                className="h-[1px] w-full bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.5, duration: 1 }}
-              />
+              
+              {/* Enhanced border with animation */}
+              <div className="relative h-[1px] w-full">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.5, duration: 1 }}
+                />
+                
+                <motion.div
+                  className="absolute inset-0 w-[40%] bg-cyan-400/50"
+                  animate={{ 
+                    x: ["-100%", "300%"],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: 1.5
+                  }}
+                />
+              </div>
             </motion.div>
 
-            {/* CTA Buttons */}
+            {/* Enhanced CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -142,10 +450,32 @@ export default function Home() {
                 className="group relative px-8 py-3 bg-cyan-500/10 border border-cyan-500/30
                   rounded-md text-cyan-400 hover:bg-cyan-500/20 font-mono overflow-hidden"
               >
+                {/* Corner decorations */}
+                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-cyan-400/50" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-cyan-400/50" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-cyan-400/50" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-cyan-400/50" />
+                
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 opacity-0 
                     group-hover:opacity-100 transition-opacity duration-300"
                 />
+                
+                {/* Scan line effect */}
+                <motion.div
+                  className="absolute bottom-0 left-0 h-[1px] bg-cyan-400/80 w-0"
+                  animate={{ 
+                    width: ["0%", "100%", "0%"],
+                    x: ["0%", "0%", "100%"],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
+                
                 {`> Register_Now`}
               </motion.button>
 
@@ -158,18 +488,41 @@ export default function Home() {
                 className="group relative px-8 py-3 bg-purple-500/10 border border-purple-500/30
                   rounded-md text-purple-400 hover:bg-purple-500/20 font-mono overflow-hidden"
               >
+                {/* Corner decorations */}
+                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-purple-400/50" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-purple-400/50" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-purple-400/50" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-purple-400/50" />
+                
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 
                     group-hover:opacity-100 transition-opacity duration-300"
                 />
+                
+                {/* Scan line effect */}
+                <motion.div
+                  className="absolute bottom-0 left-0 h-[1px] bg-purple-400/80 w-0"
+                  animate={{ 
+                    width: ["0%", "100%", "0%"],
+                    x: ["0%", "0%", "100%"],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: 0.5
+                  }}
+                />
+                
                 {`> Learn_More`}
               </motion.button>
             </motion.div>
           </div>
 
-          {/* Corner Decorations */}
+          {/* Enhanced Corner Decorations */}
           <div className="absolute top-4 left-4 font-mono text-cyan-500/50 text-sm">
-            <motion.span
+            <motion.div
               animate={{
                 opacity: [1, 0.5, 1],
                 textShadow: [
@@ -179,12 +532,30 @@ export default function Home() {
                 ],
               }}
               transition={{ duration: 2, repeat: Infinity }}
+              className="flex items-center gap-2"
             >
-              [sys.hack.init]
-            </motion.span>
+              <span>[sys.hack.init]</span>
+              <motion.span
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                ●
+              </motion.span>
+            </motion.div>
+          </div>
+          
+          <div className="absolute top-4 right-4 font-mono text-cyan-500/50 text-sm">
+            <motion.div
+              animate={{
+                opacity: [1, 0.5, 1]
+              }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+            >
+              [status: online]
+            </motion.div>
           </div>
 
-          {/* Scroll Indicator */}
+          {/* Enhanced Scroll Indicator */}
           <motion.div
             className="absolute bottom-12 left-1/2 -translate-x-1/2"
             initial={{ opacity: 0 }}
@@ -198,9 +569,12 @@ export default function Home() {
             >
               <div className="text-cyan-400/70 font-mono text-sm mb-2">scroll_down</div>
               <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
+                animate={{ 
+                  height: ["20px", "30px", "20px"],
+                  opacity: [0.5, 1, 0.5]
+                }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-1 h-8 bg-gradient-to-b from-cyan-400/50 to-transparent"
+                className="w-[1px] bg-gradient-to-b from-cyan-400 to-transparent"
               />
             </motion.div>
           </motion.div>
