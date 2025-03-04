@@ -69,6 +69,23 @@ export default function Home() {
 
   return (
     <div className="bg-gray-900 min-h-screen overflow-hidden">
+      {/* Background Video - Added at the very top */}
+      <div className="fixed inset-0 -z-10">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/bg.mp4"
+          className="w-full h-full object-cover opacity-40"
+        >
+          <source src="/bg.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+
       {/* Loading Animation */}
       {loading && (
         <motion.div 
@@ -185,7 +202,7 @@ export default function Home() {
         </motion.div>
       )}
       
-      {/* Animated Background Elements */}
+      {/* Grid Pattern */}
       <motion.div 
         className="fixed inset-0 bg-grid-pattern pointer-events-none"
         style={{ opacity: gridOpacity, y: bgY }}
@@ -199,394 +216,168 @@ export default function Home() {
       
       <main ref={scrollRef}>
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
-          {/* Video Background with Enhanced Effects */}
-          <div className="absolute inset-0">
-            {/* Single video background */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="absolute w-full h-full object-cover opacity-40"
-              style={{ pointerEvents: "none" }}
-            >
-              <source src="/bg.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            
-            {/* Enhanced overlay effects */}
-            <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/50 to-gray-900/80"></div>
-            
-            {/* Animated scan lines */}
-            <div className="absolute inset-0 overflow-hidden opacity-10">
-              {[...Array(10)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute top-0 w-full h-[1px] bg-cyan-400/50"
-                  style={{ top: `${i * 10}%` }}
-                  animate={{
-                    x: ["-100%", "100%"],
-                    opacity: [0.3, 0.7, 0.3]
-                  }}
-                  transition={{
-                    duration: 3 + i % 3,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: i * 0.2
-                  }}
-                />
-              ))}
-            </div>
-            
-            {/* Matrix-style vertical data streams */}
-            <div className="absolute inset-0 overflow-hidden opacity-10">
-              {[...Array(20)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute top-0 w-[1px] h-screen bg-gradient-to-b from-transparent via-cyan-500 to-transparent"
-                  style={{ left: `${i * 5}%` }}
-                  animate={{
-                    y: ["-100%", "100%"],
-                    opacity: [0, 0.5, 0]
-                  }}
-                  transition={{
-                    duration: 7 + i % 5,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: i * 0.1
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Hero Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-            {/* Enhanced Glowing Accent Line */}
-            <div className="relative">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 1.5 }}
-                className="h-px w-48 mx-auto mb-8 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"
-              />
-              
-              {/* Scanning effect */}
-              <motion.div
-                className="absolute top-0 left-0 h-full w-[30%] bg-cyan-400/80"
-                animate={{ 
-                  x: ["-100%", "400%"],
-                  opacity: [0, 0.8, 0]
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-              />
-            </div>
-
-            {/* Enhanced Title with Glitch Effect */}
-            <div className="relative mb-6">
-              <motion.div
-                className="absolute -inset-8 rounded-full opacity-20 blur-3xl"
-                animate={{
-                  background: [
-                    "radial-gradient(circle, rgba(34,211,238,0.3) 0%, transparent 70%)",
-                    "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
-                    "radial-gradient(circle, rgba(34,211,238,0.3) 0%, transparent 70%)"
-                  ],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-              />
-              
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="text-4xl md:text-6xl font-bold font-mono relative"
-              >
-                <motion.span
-                  className="text-cyan-400 inline-block"
-                  animate={{
-                    textShadow: [
-                      "0 0 10px rgba(34,211,238,0.5)",
-                      "0 0 20px rgba(34,211,238,0.8)",
-                      "0 0 10px rgba(34,211,238,0.5)"
-                    ]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  &gt;
-                </motion.span>{" "}
-                
-                <span className="relative inline-block">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                    HACKRON_2025
-                  </span>
-                  
-                  {/* Glitch effect layers */}
-                  <motion.span
-                    className="absolute left-0 top-0 text-cyan-400/30"
-                    animate={{
-                      x: [-2, 2, -2],
-                      opacity: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: 0.3,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      times: [0, 0.2, 1]
-                    }}
-                  >
-                    HACKRON_2025
-                  </motion.span>
-                  
-                  <motion.span
-                    className="absolute left-0 top-0 text-blue-400/30"
-                    animate={{
-                      x: [2, -2, 2],
-                      opacity: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: 0.4,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      times: [0, 0.2, 1],
-                      delay: 0.1
-                    }}
-                  >
-                    HACKRON_2025
-                  </motion.span>
-                </span>
-                
-                <motion.span
-                  animate={{ 
-                    opacity: [1, 0],
-                    textShadow: [
-                      "0 0 10px rgba(34,211,238,0.7)",
-                      "0 0 5px rgba(34,211,238,0.3)"
-                    ]
-                  }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="text-cyan-400 ml-2"
-                >
-                  |
-                </motion.span>
-              </motion.h1>
-            </div>
-
-            {/* Enhanced Animated Subtitle */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="relative"
-            >
-              <div className="text-gray-300 text-lg md:text-xl mb-12 font-mono flex items-center justify-center gap-2">
-                <motion.span
-                  className="text-cyan-400"
-                  animate={{
-                    textShadow: [
-                      "0 0 5px rgba(34,211,238,0.3)",
-                      "0 0 10px rgba(34,211,238,0.7)",
-                      "0 0 5px rgba(34,211,238,0.3)"
-                    ]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  $
-                </motion.span>
-                
-                <motion.span
-                  animate={{
-                    color: ["#94a3b8", "#22d3ee", "#94a3b8"]
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  Initialize_Innovation.exe
-                </motion.span>
-                
-                <motion.span
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-cyan-400 inline-block"
-                >
-                  _
-                </motion.span>
-              </div>
-              
-              {/* Enhanced border with animation */}
-              <div className="relative h-[1px] w-full">
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.5, duration: 1 }}
-                />
-                
-                <motion.div
-                  className="absolute inset-0 w-[40%] bg-cyan-400/50"
-                  animate={{ 
-                    x: ["-100%", "300%"],
-                    opacity: [0, 1, 0]
-                  }}
-                  transition={{ 
-                    duration: 3, 
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: 1.5
-                  }}
-                />
-              </div>
-            </motion.div>
-
-            {/* Enhanced CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsLoginModalOpen(true)}
-                className="group relative px-8 py-3 bg-cyan-500/10 border border-cyan-500/30
-                  rounded-md text-cyan-400 hover:bg-cyan-500/20 font-mono overflow-hidden"
-              >
-                {/* Corner decorations */}
-                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-cyan-400/50" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-cyan-400/50" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-cyan-400/50" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-cyan-400/50" />
-                
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 opacity-0 
-                    group-hover:opacity-100 transition-opacity duration-300"
-                />
-                
-                {/* Scan line effect */}
-                <motion.div
-                  className="absolute bottom-0 left-0 h-[1px] bg-cyan-400/80 w-0"
-                  animate={{ 
-                    width: ["0%", "100%", "0%"],
-                    x: ["0%", "0%", "100%"],
-                    opacity: [0, 1, 0]
-                  }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                />
-                
-                {`> Register_Now`}
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  eventDetailsRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="group relative px-8 py-3 bg-purple-500/10 border border-purple-500/30
-                  rounded-md text-purple-400 hover:bg-purple-500/20 font-mono overflow-hidden"
-              >
-                {/* Corner decorations */}
-                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-purple-400/50" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-purple-400/50" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-purple-400/50" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-purple-400/50" />
-                
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 
-                    group-hover:opacity-100 transition-opacity duration-300"
-                />
-                
-                {/* Scan line effect */}
-                <motion.div
-                  className="absolute bottom-0 left-0 h-[1px] bg-purple-400/80 w-0"
-                  animate={{ 
-                    width: ["0%", "100%", "0%"],
-                    x: ["0%", "0%", "100%"],
-                    opacity: [0, 1, 0]
-                  }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: 0.5
-                  }}
-                />
-                
-                {`> Learn_More`}
-              </motion.button>
-            </motion.div>
-          </div>
-
-          {/* Enhanced Corner Decorations */}
-          <div className="absolute top-4 left-4 font-mono text-cyan-500/50 text-sm">
-            <motion.div
-              animate={{
-                opacity: [1, 0.5, 1],
-                textShadow: [
-                  "0 0 5px rgba(0,255,255,0.5)",
-                  "0 0 10px rgba(0,255,255,0.3)",
-                  "0 0 5px rgba(0,255,255,0.5)",
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="flex items-center gap-2"
-            >
-              <span>[sys.hack.init]</span>
-              <motion.span
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              >
-                ●
-              </motion.span>
-            </motion.div>
-          </div>
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="relative min-h-[40vh] mb-12 overflow-hidden"
+        >
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-yellow-900/10 to-black" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
           
-          <div className="absolute top-4 right-4 font-mono text-cyan-500/50 text-sm">
-            <motion.div
-              animate={{
-                opacity: [1, 0.5, 1]
-              }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-            >
-              [status: online]
-            </motion.div>
+          {/* Animated Lines */}
+          <div className="absolute inset-0">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute h-px bg-yellow-400/20"
+                style={{ top: `${20 * i}%`, left: 0, right: 0 }}
+                animate={{
+                  opacity: [0.2, 0.5, 0.2],
+                  scaleX: [1, 1.5, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  delay: i * 0.2,
+                  repeat: Infinity,
+                }}
+              />
+            ))}
           </div>
 
-          {/* Enhanced Scroll Indicator */}
-          <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="flex flex-col items-center"
-            >
-              <div className="text-cyan-400/70 font-mono text-sm mb-2">scroll_down</div>
-              <motion.div
-                animate={{ 
-                  height: ["20px", "30px", "20px"],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-[1px] bg-gradient-to-b from-cyan-400 to-transparent"
-              />
-            </motion.div>
-          </motion.div>
-        </section>
+          {/* Main Content */}
+          <div className="relative max-w-7xl mx-auto px-4 py-16">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              {/* Left Side - Text */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex-1"
+              >
+                <div className="inline-block mb-4 px-4 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+                  <span className="font-mono text-yellow-400 text-sm">Powered by</span>
+                </div>
+                <motion.div
+                  animate={{
+                    textShadow: [
+                      "0 0 20px rgba(234,179,8,0)",
+                      "0 0 20px rgba(234,179,8,0.5)",
+                      "0 0 20px rgba(234,179,8,0)",
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="mb-6"
+                >
+                  <h1 className="text-4xl md:text-6xl font-bold font-mono text-yellow-400 mb-2">
+                    BLINKIT x HACKRON
+                  </h1>
+                  <p className="text-xl text-yellow-500/80">Delivering Innovation at Lightning Speed</p>
+                </motion.div>
+                
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <motion.div 
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-3xl font-bold text-yellow-400"
+                    >
+                      10
+                    </motion.div>
+                    <div className="text-sm text-gray-400">Minute Delivery</div>
+                  </div>
+                  <div className="text-center">
+                    <motion.div 
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                      className="text-3xl font-bold text-yellow-400"
+                    >
+                      24H
+                    </motion.div>
+                    <div className="text-sm text-gray-400">Innovation</div>
+                  </div>
+                  <div className="text-center">
+                    <motion.div 
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                      className="text-3xl font-bold text-yellow-400"
+                    >
+                      60K
+                    </motion.div>
+                    <div className="text-sm text-gray-400">Prize Pool</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Right Side - Logo & Effects */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative w-64 h-64 md:w-96 md:h-96"
+              >
+                {/* Rotating circles */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0"
+                >
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute inset-0 border-2 border-dashed border-yellow-500/20 rounded-full"
+                      style={{
+                        transform: `scale(${0.8 + i * 0.2}) rotate(${i * 30}deg)`,
+                      }}
+                    />
+                  ))}
+                </motion.div>
+
+                {/* Blinkit Logo */}
+                <motion.div
+                  animate={{ 
+                    y: [0, -10, 0],
+                    filter: [
+                      'drop-shadow(0 0 20px rgba(234,179,8,0.2))',
+                      'drop-shadow(0 0 40px rgba(234,179,8,0.4))',
+                      'drop-shadow(0 0 20px rgba(234,179,8,0.2))'
+                    ]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  <Image
+                    src="/logo.png"
+                    alt="Blinkit Logo"
+                    width={200}
+                    height={200}
+                    className="object-contain"
+                  />
+                </motion.div>
+
+                {/* Lightning effects */}
+                {[...Array(4)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-gradient-to-b from-yellow-400 to-transparent"
+                    style={{ 
+                      transformOrigin: '50% 0%',
+                      rotate: `${i * 90}deg`,
+                    }}
+                    animate={{
+                      opacity: [0, 1, 0],
+                      scaleY: [0.8, 1.2, 0.8],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      delay: i * 0.2,
+                      repeat: Infinity,
+                    }}
+                  />
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </motion.section>
 
         {/* Event Details Section */}
         <motion.section

@@ -103,6 +103,70 @@ const Footer = () => {
             </motion.div>
           </motion.div>
 
+          {/* Hosted by */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center space-x-2"
+          >
+            <motion.span
+              animate={{
+                textShadow: [
+                  "0 0 8px rgba(34,211,238,0)",
+                  "0 0 12px rgba(34,211,238,0.5)",
+                  "0 0 8px rgba(34,211,238,0)",
+                ]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-gray-400"
+            >
+              <span className="text-cyan-400">&gt;</span> Hosted_by
+            </motion.span>
+            <motion.span
+              animate={{ 
+                color: ["#67e8f9", "#818cf8", "#67e8f9"],
+                textShadow: [
+                  "0 0 8px rgba(103,232,249,0.3)",
+                  "0 0 12px rgba(129,140,248,0.5)",
+                  "0 0 8px rgba(103,232,249,0.3)",
+                ]
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="font-bold relative"
+            >
+              <span className="relative z-10">
+                <a 
+                  href="https://www.newtonschool.co/"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+                >
+                  Newton School of Technology
+                </a>
+              </span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 blur-lg"
+                animate={{
+                  opacity: [0.5, 0.8, 0.5]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </motion.span>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-gray-400 flex items-center space-x-1"
+            >
+              <motion.span 
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-cyan-400 inline-block"
+              >
+                _
+              </motion.span>
+            </motion.div>
+          </motion.div>
+
           {/* Copyright */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
