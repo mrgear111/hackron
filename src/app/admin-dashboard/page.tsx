@@ -28,6 +28,7 @@ interface TeamData {
     repoUrl: string;
     lastUpdated: string;
   };
+  checkpoints?: Record<string, boolean>;
 }
 
 interface TeamScore {
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
   const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [judgedTeams, setJudgedTeams] = useState<Record<string, boolean>>({});
+  const [teamCheckpoints, setTeamCheckpoints] = useState<Record<string, Record<string, boolean>>>({});
 
   useEffect(() => {
     console.log("AdminDashboard useEffect triggered");
@@ -88,6 +90,15 @@ export default function AdminDashboard() {
           (snapshot) => {
             const teamsData = snapshot.val() || {};
             setTeams(teamsData);
+            
+            // Extract checkpoints data
+            const checkpoints: Record<string, Record<string, boolean>> = {};
+            Object.entries(teamsData).forEach(([id, team]: [string, any]) => {
+              if (team.checkpoints) {
+                checkpoints[id] = team.checkpoints;
+              }
+            });
+            setTeamCheckpoints(checkpoints);
             
             // Also get judging data if it exists
             const scores: Record<string, TeamScore> = {};
@@ -215,6 +226,24 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error updating judged status:", error);
       alert("Failed to update judged status. Please try again.");
+    }
+  };
+
+  const toggleCheckpoint = async (teamId: string, checkpoint: string) => {
+    try {
+      const newValue = !teamCheckpoints[teamId]?.[checkpoint];
+      const checkpointRef = ref(db, `teams/${teamId}/checkpoints/${checkpoint}`);
+      await set(checkpointRef, newValue);
+      
+      setTeamCheckpoints(prev => ({
+        ...prev,
+        [teamId]: {
+          ...prev[teamId],
+          [checkpoint]: newValue
+        }
+      }));
+    } catch (error) {
+      console.error('Error toggling checkpoint:', error);
     }
   };
 
@@ -400,6 +429,32 @@ export default function AdminDashboard() {
                         </span>
                       )}
                       
+                      {/* Checkpoints Status */}
+                      <div className="flex gap-2">
+                        {['C1', 'C2', 'C3', 'C4'].map((checkpoint, index) => (
+                          <div 
+                            key={checkpoint}
+                            className="flex items-center"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Add your checkpoint toggle logic here
+                              toggleCheckpoint(id, checkpoint);
+                            }}
+                          >
+                            <div className={`
+                              w-6 h-6 flex items-center justify-center rounded border 
+                              ${team.checkpoints?.[checkpoint] 
+                                ? 'bg-purple-500/20 border-purple-500/50 text-purple-400' 
+                                : 'bg-gray-800/30 border-gray-700 text-gray-500'} 
+                              cursor-pointer hover:bg-purple-500/10 transition-colors
+                            `}>
+                              {checkpoint}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Existing Mark as Judged button */}
                       <div 
                         className={`px-3 py-1 ${judgedTeams[id] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-gray-800/30 border-gray-700'} 
                           border rounded-full text-xs font-mono flex items-center cursor-pointer`}
@@ -407,7 +462,7 @@ export default function AdminDashboard() {
                       >
                         <div className={`w-4 h-4 mr-2 rounded border ${judgedTeams[id] ? 'bg-purple-500 border-purple-500' : 'bg-transparent border-gray-600'} flex items-center justify-center`}>
                           {judgedTeams[id] && (
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                             </svg>
                           )}

@@ -51,6 +51,7 @@ export default function TeamDashboard() {
   const [formData, setFormData] = useState<ProjectSubmission>({
     liveDemo: '',
     presentationUrl: '',
+    videoWalkthrough: '',
     codeRepository: '',
     documentation: '',
     problemStatement: '',
@@ -243,44 +244,45 @@ export default function TeamDashboard() {
           </div>
         )}
 
-        {/* Team Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-gray-800/70 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6"
-        >
-          <h2 className="text-xl font-mono text-purple-400 mb-4 flex items-center">
-            <FaUser className="mr-2" /> {`> Team_Stats`}
-          </h2>
-          <div className="space-y-2 font-mono">
-            <p className="text-gray-200">
-              Member since: {new Date(teamData?.createdAt || '').toLocaleDateString()}
-            </p>
-            <p className="text-gray-200">
-              Projects: 0
-            </p>
-          </div>
-        </motion.div>
-
         {/* Add the Quotes component here */}
         <Quotes />
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* GitHub Repository Section - Updated title */}
+          {/* GitHub Repository Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+            className={`col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br 
+              ${githubRepo 
+                ? 'from-green-900/20 to-black border-green-500/30' 
+                : 'from-gray-900 to-black border-purple-500/30'} 
+              backdrop-blur-sm border rounded-lg overflow-hidden 
+              shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6`}
           >
-            {/* Header with glowing accent */}
-            <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-              <h2 className="text-xl font-mono text-purple-400 flex items-center">
-                <FaCode className="mr-3 text-purple-500" />
-                {`> GitHub Repository`}
+            <div className={`relative bg-black/60 p-6 border-b 
+              ${githubRepo ? 'border-green-500/20' : 'border-purple-500/20'}`}
+            >
+              <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r 
+                from-transparent 
+                ${githubRepo ? 'via-green-500/50' : 'via-purple-500/50'} 
+                to-transparent`}
+              />
+              <h2 className={`text-xl font-mono ${githubRepo ? 'text-green-400' : 'text-purple-400'} 
+                flex items-center`}
+              >
+                <FaCode className={`mr-3 ${githubRepo ? 'text-green-500' : 'text-purple-500'}`} />
+                {`> GitHub_Repository`}
+                {githubRepo && (
+                  <motion.span
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="ml-2 text-sm text-green-400/70"
+                  >
+                    (Connected)
+                  </motion.span>
+                )}
               </h2>
             </div>
 
@@ -399,321 +401,163 @@ export default function TeamDashboard() {
             </div>
           </motion.div>
 
-          {/* Project Submissions */}
+          {/* Project Submission Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-cyan-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)]"
+            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
           >
             {/* Header with glowing accent */}
-            <div className="relative bg-black/60 p-6 border-b border-cyan-500/20">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
-              <h2 className="text-xl font-mono text-cyan-400 flex items-center">
-                <FaRocket className="mr-3 text-cyan-500" />
-                {`> Project Submission`}
+            <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+              <h2 className="text-xl font-mono text-purple-400 flex items-center">
+                <FaFileAlt className="mr-3 text-purple-500" />
+                {`> Project_Submission`}
               </h2>
             </div>
 
-            {showForm && (
-              <form onSubmit={handleSubmit} className="p-6">
-                {/* If no GitHub repo is added, show a warning */}
-                {!githubRepo && (
-                  <div className="mb-6 bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded-r-md">
-                    <div className="flex items-start">
-                      <div className="text-yellow-500 mr-3">!</div>
-                      <div className="text-yellow-200 font-mono text-sm">
-                        Please connect your GitHub repository above before submitting your project.
-                      </div>
-                    </div>
+            <div className="p-6">
+              {!githubRepo ? (
+                // Show message if GitHub repo is not connected
+                <div className="text-center py-8">
+                  <div className="text-gray-400 font-mono mb-4">
+                    Please connect your GitHub repository first
                   </div>
-                )}
-                
-                {/* Progress indicator */}
-                <div className="mb-8 px-4">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs font-mono text-cyan-400">Project Links</span>
-                    <span className="text-xs font-mono text-cyan-400">Project Details</span>
-                  </div>
-                  <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                    <div className="h-full w-1/2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"></div>
-                  </div>
+                  <motion.div
+                    animate={{
+                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.02, 1]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-purple-400/50 text-sm font-mono"
+                  >
+                    {`> Waiting for repository connection...`}
+                  </motion.div>
                 </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Project Links Panel */}
-                  <div className="relative">
-                    {/* Corner decorations */}
-                    <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-cyan-500/40"></div>
-                    <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-cyan-500/40"></div>
-                    <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-cyan-500/40"></div>
-                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan-500/40"></div>
-                    
-                    <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 h-full">
-                      <div className="flex items-center mb-6">
-                        <div className="w-1 h-6 bg-purple-500 mr-3"></div>
-                        <h3 className="text-purple-400 font-mono text-sm tracking-wider">{`PROJECT LINKS`}</h3>
-                      </div>
-                      
-                      <div className="space-y-5">
-                        {/* Live Demo */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-cyan-400 transition-colors">
-                            <FaLink className="text-purple-400 mr-2" />
-                            LIVE DEMO URL
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="url"
-                              name="liveDemo"
-                              value={formData.liveDemo}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-cyan-500 rounded-t-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                              placeholder="https://your-project.vercel.app"
-                              required
-                            />
-                            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-500 group-focus-within:w-full transition-all duration-300"></div>
-                          </div>
-                        </div>
-                        
-                        {/* Presentation URL */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-cyan-400 transition-colors">
-                            <FaFileAlt className="text-purple-400 mr-2" />
-                            PRESENTATION URL
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="url"
-                              name="presentationUrl"
-                              value={formData.presentationUrl}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-cyan-500 rounded-t-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                              placeholder="https://docs.google.com/presentation/..."
-                              required
-                            />
-                            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-500 group-focus-within:w-full transition-all duration-300"></div>
-                          </div>
-                        </div>
-                        
-                        {/* Code Repository */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-cyan-400 transition-colors">
-                            <FaCode className="text-purple-400 mr-2" />
-                            CODE REPOSITORY URL
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="url"
-                              name="codeRepository"
-                              value={formData.codeRepository}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-cyan-500 rounded-t-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                              placeholder="https://github.com/username/repo"
-                              required
-                            />
-                            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-500 group-focus-within:w-full transition-all duration-300"></div>
-                          </div>
-                        </div>
-                        
-                        {/* Documentation */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-cyan-400 transition-colors">
-                            <FaClipboardList className="text-purple-400 mr-2" />
-                            DOCUMENTATION URL
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="url"
-                              name="documentation"
-                              value={formData.documentation}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-cyan-500 rounded-t-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                              placeholder="https://docs.yourproject.com"
-                              required
-                            />
-                            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-500 group-focus-within:w-full transition-all duration-300"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              ) : (
+                // Show submission form if GitHub repo is connected
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Problem Statement Dropdown */}
+                  <div>
+                    <label className="block text-purple-400 font-mono text-sm mb-2">
+                      {`> Problem_Statement:`}
+                    </label>
+                    <select
+                      name="problemStatement"
+                      value={formData.problemStatement}
+                      onChange={handleProblemStatementChange}
+                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                      required
+                    >
+                      <option value="">Select a problem statement</option>
+                      {problemStatements.map((statement, index) => (
+                        <option key={index} value={statement}>
+                          {statement}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  
-                  {/* Project Details Panel */}
-                  <div className="relative">
-                    {/* Corner decorations */}
-                    <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-purple-500/40"></div>
-                    <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-purple-500/40"></div>
-                    <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-purple-500/40"></div>
-                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-purple-500/40"></div>
-                    
-                    <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 h-full">
-                      <div className="flex items-center mb-6">
-                        <div className="w-1 h-6 bg-cyan-500 mr-3"></div>
-                        <h3 className="text-cyan-400 font-mono text-sm tracking-wider">{`PROJECT DETAILS`}</h3>
-                      </div>
-                      
-                      <div className="space-y-5">
-                        {/* Problem Statement */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                            <FaClipboardCheck className="text-cyan-400 mr-2" />
-                            PROBLEM STATEMENT
-                          </label>
-                          <div className="relative bg-gray-900/70 rounded-md overflow-hidden">
-                            <select
-                              id="problemStatement"
-                              value={formData.problemStatement}
-                              onChange={handleProblemStatementChange}
-                              className="w-full bg-transparent border-l-2 border-gray-700 focus:border-purple-500 px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none appearance-none"
-                            >
-                              {problemStatements.map((statement, index) => (
-                                <option key={index} value={statement} className="bg-gray-900">
-                                  {statement}
-                                </option>
-                              ))}
-                            </select>
-                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-cyan-500 pointer-events-none">
-                              ▼
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Solution */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                            <FaRocket className="text-cyan-400 mr-2" />
-                            SOLUTION
-                          </label>
-                          <div className="relative">
-                            <textarea
-                              name="solution"
-                              value={formData.solution}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-l-2 border-gray-700 focus:border-purple-500 rounded-r-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none min-h-[80px] resize-none"
-                              placeholder="How does your solution address the problem?"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        {/* Tech Stack */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                            <FaCode className="text-cyan-400 mr-2" />
-                            TECH STACK
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="text"
-                              name="techStack"
-                              value={formData.techStack}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-l-2 border-gray-700 focus:border-purple-500 rounded-r-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none"
-                              placeholder="React, Next.js, Firebase, etc."
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        {/* Challenges */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                            <FaClipboardList className="text-cyan-400 mr-2" />
-                            CHALLENGES
-                          </label>
-                          <div className="relative">
-                            <textarea
-                              name="challenges"
-                              value={formData.challenges}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-l-2 border-gray-700 focus:border-purple-500 rounded-r-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none min-h-[60px] resize-none"
-                              placeholder="What challenges did you face?"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        {/* Learnings */}
-                        <div className="group">
-                          <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                            <FaClipboardList className="text-cyan-400 mr-2" />
-                            LEARNINGS
-                          </label>
-                          <div className="relative">
-                            <textarea
-                              name="learnings"
-                              value={formData.learnings}
-                              onChange={handleChange}
-                              className="w-full bg-gray-900/70 border-l-2 border-gray-700 focus:border-purple-500 rounded-r-md px-4 py-2 
-                                text-gray-100 font-mono text-sm focus:outline-none min-h-[60px] resize-none"
-                              placeholder="What did you learn from this project?"
-                              required
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Error message */}
-                {error && (
-                  <div className="mt-6 bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-md">
-                    <div className="flex items-start">
-                      <div className="text-red-500 mr-3">!</div>
-                      <div className="text-red-200 font-mono text-sm">{error}</div>
-                    </div>
+                  {/* Solution */}
+                  <div>
+                    <label className="block text-purple-400 font-mono text-sm mb-2">
+                      {`> Solution:`}
+                    </label>
+                    <textarea
+                      name="solution"
+                      value={formData.solution}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                      placeholder="Describe your solution..."
+                      required
+                    />
                   </div>
-                )}
 
-                {/* Submit button */}
-                <div className="mt-8 flex justify-center">
+                  {/* Tech Stack */}
+                  <div>
+                    <label className="block text-purple-400 font-mono text-sm mb-2">
+                      {`> Tech_Stack:`}
+                    </label>
+                    <input
+                      type="text"
+                      name="techStack"
+                      value={formData.techStack}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                      placeholder="React, Node.js, Firebase, etc."
+                      required
+                    />
+                  </div>
+
+                  {/* Live Demo URL */}
+                  <div>
+                    <label className="block text-purple-400 font-mono text-sm mb-2">
+                      {`> Live_Demo_URL:`}
+                    </label>
+                    <input
+                      type="url"
+                      name="liveDemo"
+                      value={formData.liveDemo}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                      placeholder="https://your-demo-url.com"
+                      required
+                    />
+                  </div>
+
+                  {/* Presentation URL */}
+                  <div>
+                    <label className="block text-purple-400 font-mono text-sm mb-2">
+                      {`> Presentation_URL:`}
+                    </label>
+                    <input
+                      type="url"
+                      name="presentationUrl"
+                      value={formData.presentationUrl}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                      placeholder="https://slides.com/your-presentation"
+                      required
+                    />
+                  </div>
+
+                  {/* Submit Button */}
                   <motion.button
                     type="submit"
-                    disabled={isSubmitting || !githubRepo}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="relative overflow-hidden group px-8 py-3 bg-gradient-to-r from-cyan-600/80 to-purple-600/80 rounded-md font-mono text-white shadow-lg disabled:opacity-50"
+                    disabled={isSubmitting}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-gradient-to-r from-purple-600/80 to-cyan-600/80 
+                      rounded-md py-3 text-white font-mono shadow-lg 
+                      disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="relative z-10 flex items-center">
-                      {isSubmitting ? (
-                        <>
-                          <motion.span
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="inline-block mr-2"
-                          >
-                            ⟳
-                          </motion.span>
-                          PROCESSING...
-                        </>
-                      ) : (
-                        <>
-                          <span className="mr-2">SUBMIT PROJECT</span>
-                          <FaRocket />
-                        </>
-                      )}
-                    </span>
-                    
-                    {/* Button glow effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-cyan-600/0 via-white/20 to-purple-600/0"
-                      animate={{ x: ["120%", "-120%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
-                    />
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <motion.span
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >⟳</motion.span>
+                        SUBMITTING...
+                      </span>
+                    ) : (
+                      'SUBMIT PROJECT'
+                    )}
                   </motion.button>
-                </div>
-              </form>
-            )}
+
+                  {error && (
+                    <div className="text-red-400 font-mono text-sm text-center">
+                      {`> Error: ${error}`}
+                    </div>
+                  )}
+                </form>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>

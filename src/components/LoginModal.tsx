@@ -271,22 +271,22 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                   {!isLoginMode && (
                     <div className="mt-2 text-xs font-mono text-gray-500">
-                      {`> Password must contain:`}
+                      {``}
                       <ul className="ml-4 mt-1 space-y-1">
                         <li className={`${/[A-Z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          • Uppercase letter
+                          
                         </li>
                         <li className={`${/[a-z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          • Lowercase letter
+                        
                         </li>
                         <li className={`${/[0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          • Number
+                          
                         </li>
                         <li className={`${/[^A-Za-z0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          • Special character
+                          
                         </li>
                         <li className={`${formData.password.length >= 8 ? 'text-cyan-400' : ''}`}>
-                          • Min 8 characters
+                          
                         </li>
                       </ul>
                     </div>
