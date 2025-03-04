@@ -9,7 +9,7 @@ import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import Quotes from '@/components/Quotes';
-import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket } from 'react-icons/fa';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket, FaFileCode } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -437,94 +437,174 @@ export default function TeamDashboard() {
                 </div>
               ) : (
                 // Show submission form if GitHub repo is connected
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Problem Statement Dropdown */}
-                  <div>
-                    <label className="block text-purple-400 font-mono text-sm mb-2">
-                      {`> Problem_Statement:`}
-                    </label>
-                    <select
-                      name="problemStatement"
-                      value={formData.problemStatement}
-                      onChange={handleProblemStatementChange}
-                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                      required
-                    >
-                      <option value="">Select a problem statement</option>
-                      {problemStatements.map((statement, index) => (
-                        <option key={index} value={statement}>
-                          {statement}
-                        </option>
-                      ))}
-                    </select>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* URLs Section */}
+                  <div className="space-y-6 bg-black/20 p-6 rounded-lg border border-purple-500/20">
+                    <h3 className="text-lg font-mono text-purple-400 mb-4 flex items-center">
+                      <FaLink className="mr-2" />
+                      {`> Project_URLs`}
+                    </h3>
+
+                    {/* Live Demo URL */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Live_Demo_URL:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="liveDemo"
+                        value={formData.liveDemo}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        placeholder="https://your-demo-url.com"
+                        required
+                      />
+                    </div>
+
+                    {/* Video Walkthrough */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Video_Walkthrough:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="videoWalkthrough"
+                        value={formData.videoWalkthrough}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        placeholder="YouTube/Drive video link"
+                        required
+                      />
+                    </div>
+
+                    {/* Presentation URL */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Presentation_URL:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="presentationUrl"
+                        value={formData.presentationUrl}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        placeholder="https://slides.com/your-presentation"
+                        required
+                      />
+                    </div>
                   </div>
 
-                  {/* Solution */}
-                  <div>
-                    <label className="block text-purple-400 font-mono text-sm mb-2">
-                      {`> Solution:`}
-                    </label>
-                    <textarea
-                      name="solution"
-                      value={formData.solution}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
-                      placeholder="Describe your solution..."
-                      required
-                    />
-                  </div>
+                  {/* Project Details Section */}
+                  <div className="space-y-6 bg-black/20 p-6 rounded-lg border border-purple-500/20">
+                    <h3 className="text-lg font-mono text-purple-400 mb-4 flex items-center">
+                      <FaFileCode className="mr-2" />
+                      {`> Project_Details`}
+                    </h3>
 
-                  {/* Tech Stack */}
-                  <div>
-                    <label className="block text-purple-400 font-mono text-sm mb-2">
-                      {`> Tech_Stack:`}
-                    </label>
-                    <input
-                      type="text"
-                      name="techStack"
-                      value={formData.techStack}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                      placeholder="React, Node.js, Firebase, etc."
-                      required
-                    />
-                  </div>
+                    {/* Problem Statement Dropdown */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Problem_Statement:`}
+                      </label>
+                      <select
+                        name="problemStatement"
+                        value={formData.problemStatement}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        required
+                      >
+                        <option value="">Select a problem statement</option>
+                        {problemStatements.map((statement, index) => (
+                          <option key={index} value={statement}>
+                            {statement}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  {/* Live Demo URL */}
-                  <div>
-                    <label className="block text-purple-400 font-mono text-sm mb-2">
-                      {`> Live_Demo_URL:`}
-                    </label>
-                    <input
-                      type="url"
-                      name="liveDemo"
-                      value={formData.liveDemo}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                      placeholder="https://your-demo-url.com"
-                      required
-                    />
-                  </div>
+                    {/* Solution */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Solution:`}
+                      </label>
+                      <textarea
+                        name="solution"
+                        value={formData.solution}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="Describe your solution..."
+                        required
+                      />
+                    </div>
 
-                  {/* Presentation URL */}
-                  <div>
-                    <label className="block text-purple-400 font-mono text-sm mb-2">
-                      {`> Presentation_URL:`}
-                    </label>
-                    <input
-                      type="url"
-                      name="presentationUrl"
-                      value={formData.presentationUrl}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                        text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                      placeholder="https://slides.com/your-presentation"
-                      required
-                    />
+                    {/* Tech Stack */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Tech_Stack:`}
+                      </label>
+                      <input
+                        type="text"
+                        name="techStack"
+                        value={formData.techStack}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        placeholder="React, Node.js, Firebase, etc."
+                        required
+                      />
+                    </div>
+
+                    {/* Documentation */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Documentation:`}
+                      </label>
+                      <textarea
+                        name="documentation"
+                        value={formData.documentation}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="Add any additional documentation or setup instructions..."
+                      />
+                    </div>
+
+                    {/* Challenges Faced */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Challenges_Faced:`}
+                      </label>
+                      <textarea
+                        name="challenges"
+                        value={formData.challenges}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="Describe the challenges you faced during development..."
+                        required
+                      />
+                    </div>
+
+                    {/* Key Learnings */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Key_Learnings:`}
+                      </label>
+                      <textarea
+                        name="learnings"
+                        value={formData.learnings}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="Share your key learnings from this project..."
+                        required
+                      />
+                    </div>
                   </div>
 
                   {/* Submit Button */}
