@@ -8,7 +8,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
-import Quotes from '@/components/Quotes';
 import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket, FaFileCode, FaBell, FaTimes } from 'react-icons/fa';
 
 interface TeamData {
@@ -55,6 +54,29 @@ const problemStatements = [
   "Heatmap-Based Store Placement Analysis: Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores."
 ];
 
+const motivationalQuotes = [
+  {
+    text: "Keep pushing forward, warrior! 🚀\nYou've come too far to give up now. The code flows through you - embrace the challenge and make something legendary!",
+    timestamp: new Date().toLocaleString()
+  },
+  {
+    text: "In the matrix of possibilities, you are the chosen one! 💻\nEvery bug you fix makes you stronger. Every feature you ship brings you closer to greatness!",
+    timestamp: new Date().toLocaleString()
+  },
+  {
+    text: "Debug like a warrior, deploy like a boss! ⚡\nYour code is your weapon, your logic is your shield. The future belongs to those who build it!",
+    timestamp: new Date().toLocaleString()
+  },
+  {
+    text: "The best code is yet to come! 🎯\nEvery line of code you write is a step towards innovation. Keep pushing the boundaries of what's possible!",
+    timestamp: new Date().toLocaleString()
+  },
+  {
+    text: "You're not just coding, you're crafting the future! 🌟\nEmbrace the challenges, celebrate the victories, and let your creativity flow through your keystrokes!",
+    timestamp: new Date().toLocaleString()
+  }
+];
+
 export default function TeamDashboard() {
   const router = useRouter();
   const [teamData, setTeamData] = useState<TeamData | null>(null);
@@ -82,6 +104,15 @@ export default function TeamDashboard() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [submissionUrl, setSubmissionUrl] = useState('');
   const [isSubmittingUrl, setIsSubmittingUrl] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
+    }, 300000); // Changes every 5 minutes
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Function to handle edit mode activation
   const handleEditSubmission = () => {
@@ -313,9 +344,6 @@ export default function TeamDashboard() {
           </div>
         )}
 
-        {/* Add the Quotes component here */}
-        <Quotes />
-
         {/* Checkpoint Alert Popup */}
         <AnimatePresence>
           {showAlert && (
@@ -361,11 +389,10 @@ export default function TeamDashboard() {
                     {`> System_Alert`}
                   </h3>
                   <p className="text-gray-300 font-mono text-sm whitespace-pre-line">
-                    Checkpoint 1 Alert! 🚀
-                    All teams must update their project on GitHub, be ready, and move to their designated places now!
+                    {motivationalQuotes[currentQuote].text}
                   </p>
                   <p className="text-cyan-500/50 font-mono text-xs mt-3">
-                    {new Date().toLocaleString()}
+                    {motivationalQuotes[currentQuote].timestamp}
                   </p>
                 </div>
               </div>
