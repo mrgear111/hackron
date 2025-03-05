@@ -17,6 +17,7 @@ interface TeamData {
   createdAt: string;
   projectSubmission?: ProjectSubmission;
   githubRepo?: GitHubRepo;
+  submissionUrl?: string;
 }
 
 interface ProjectSubmission {
@@ -79,6 +80,8 @@ export default function TeamDashboard() {
   const [isAddingRepo, setIsAddingRepo] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [submissionUrl, setSubmissionUrl] = useState('');
+  const [isSubmittingUrl, setIsSubmittingUrl] = useState(false);
 
   // Function to handle edit mode activation
   const handleEditSubmission = () => {
@@ -180,6 +183,44 @@ export default function TeamDashboard() {
     } catch (error: any) {
       setError(error.message);
       setIsAddingRepo(false);
+    }
+  };
+
+  const handleUrlSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!submissionUrl) {
+      setError('Please enter a valid URL');
+      return;
+    }
+    
+    // Validate URL format
+    try {
+      new URL(submissionUrl);
+    } catch {
+      setError('Please enter a valid URL');
+      return;
+    }
+    
+    setIsSubmittingUrl(true);
+    
+    try {
+      const urlRef = ref(db, `teams/${auth.currentUser?.uid}/submissionUrl`);
+      await set(urlRef, submissionUrl);
+      
+      // Update local state
+      setTeamData(prev => ({
+        ...prev!,
+        submissionUrl: submissionUrl
+      }));
+      
+      setSuccessMessage('URL submitted successfully!');
+      setSubmissionUrl('');
+      setIsEditMode(false);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsSubmittingUrl(false);
     }
   };
 
@@ -481,6 +522,130 @@ export default function TeamDashboard() {
                       <span>Format: https://github.com/username/repository</span>
                     </div>
                   </div>
+                </form>
+              )}
+            </div>
+          </motion.div>
+
+          {/* URL Submission Box */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+          >
+            <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+              <h2 className="text-xl font-mono text-purple-400 flex items-center">
+                <FaLink className="mr-3 text-purple-500" />
+                {`> URL_Submission`}
+              </h2>
+            </div>
+
+            <div className="p-6">
+              {teamData?.submissionUrl && !isEditMode ? (
+                <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="flex-grow">
+                      <div className="text-gray-400 font-mono text-xs mb-2">SUBMITTED URL</div>
+                      <a 
+                        href={teamData.submissionUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-cyan-400 font-mono text-lg hover:underline flex items-center"
+                      >
+                        <FaLink className="mr-2" />
+                        {teamData.submissionUrl}
+                      </a>
+                      <div className="text-gray-500 font-mono text-xs mt-2">
+                        Status: <span className="text-green-400">Submitted</span>
+                      </div>
+                    </div>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setIsEditMode(true)}
+                      className="px-4 py-2 bg-cyan-600/80 text-white rounded font-mono text-sm flex items-center"
+                    >
+                      <FaLink className="mr-2" />
+                      Update URL
+                    </motion.button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleUrlSubmit} className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-grow">
+                      <div className="group w-full">
+                        <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
+                          <FaLink className="text-purple-400 mr-2" />
+                          ENTER URL
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="url"
+                            value={submissionUrl}
+                            onChange={(e) => setSubmissionUrl(e.target.value)}
+                            className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-purple-500 rounded-t-md px-4 py-2 
+                              text-gray-100 font-mono text-sm focus:outline-none transition-colors"
+                            placeholder="https://your-url-here.com"
+                            required
+                          />
+                          <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-purple-500 group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex-shrink-0">
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmittingUrl}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="h-full px-6 py-2 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 rounded-md font-mono text-white shadow-lg disabled:opacity-50 flex items-center justify-center"
+                      >
+                        {isSubmittingUrl ? (
+                          <>
+                            <motion.span
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="inline-block mr-2"
+                            >
+                              ⟳
+                            </motion.span>
+                            SUBMITTING...
+                          </>
+                        ) : (
+                          <>SUBMIT URL</>
+                        )}
+                      </motion.button>
+                    </div>
+                  </div>
+                  
+                  {/* Helpful tips */}
+                  <div className="mt-4 text-gray-500 font-mono text-xs">
+                    <div className="flex items-start mb-1">
+                      <span className="text-purple-500 mr-2">•</span>
+                      <span>Make sure your URL is accessible and valid</span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="text-purple-500 mr-2">•</span>
+                      <span>Format: https://your-url-here.com</span>
+                    </div>
+                  </div>
+                  
+                  {isEditMode && (
+                    <motion.button
+                      type="button"
+                      onClick={() => setIsEditMode(false)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-gray-700/80 rounded-md py-2 text-white font-mono shadow-lg mt-4"
+                    >
+                      CANCEL
+                    </motion.button>
+                  )}
                 </form>
               )}
             </div>
