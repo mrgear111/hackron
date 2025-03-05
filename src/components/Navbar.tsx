@@ -556,6 +556,32 @@ const Navbar = () => {
                     </>
                   )}
                 </div>
+
+                {/* Problem Statements Button */}
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    href="/problems"
+                    className="relative group px-4 py-2 text-sm font-mono"
+                  >
+                    <span className="relative z-10 text-cyan-400">
+                      {`> Problem_Statements`}
+                    </span>
+                    <motion.div
+                      className="absolute inset-0 border border-cyan-500/30 rounded-md"
+                      animate={{
+                        boxShadow: [
+                          "0 0 10px rgba(0,255,255,0.2)",
+                          "0 0 20px rgba(0,255,255,0.1)",
+                          "0 0 10px rgba(0,255,255,0.2)",
+                        ],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                      }}
+                    />
+                  </Link>
+                </motion.div>
               </div>
             </div>
           </div>
