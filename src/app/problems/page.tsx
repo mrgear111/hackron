@@ -8,42 +8,42 @@ const problemStatements = [
   {
     id: 1,
     title: "City-Wide Dark Store Network Projection",
-    description: "Design a projection model to determine the ideal number, size, and location of Blinkit dark stores within a city, factoring in customer demand patterns, delivery time constraints, and operational costs."
+    description: "Develop a system for analyzing and projecting the expansion of dark stores across a city. It may involve demand forecasting, geographical analysis, and optimal placement for maximum efficiency and customer reach."
   },
   {
     id: 2,
     title: "Smart Inventory Theft Detection System",
-    description: "Build an AI-based anti-theft system that uses RFID sensors, computer vision, and inventory logs to detect discrepancies, suspicious activities, and unauthorized inventory movements in dark stores."
+    description: "A system that uses AI, IoT, and data analytics to detect theft in inventory management. It could involve real-time monitoring, anomaly detection, and alert mechanisms to prevent unauthorized access or theft."
   },
   {
     id: 3,
     title: "Smart Dynamic Pricing System",
-    description: "Design a platform that dynamically adjusts pricing for deliveries based on factors such as demand fluctuations, delivery urgency, route congestion, and available delivery staff. The system should optimize pricing in real-time to balance cost efficiency for customers and profitability for the service provider while ensuring fair and transparent pricing."
+    description: "Create a pricing system that adjusts product prices dynamically based on various factors like demand, stock levels, competitor pricing, and customer behavior, potentially using AI or machine learning for optimization."
   },
   {
     id: 4,
     title: "Dark Store Management Platform",
-    description: "Build a centralized dashboard that integrates inventory tracking, staff task management, store maintenance requests, and delivery scheduling into a single system."
+    description: "Design a comprehensive platform for managing dark stores, which includes inventory tracking, order management, staff coordination, and logistical planning. It should streamline operations for better efficiency."
   },
   {
     id: 5,
-    title: "Heatmap-Based Store Placement Analysis",
-    description: "Develop a heatmap visualization tool that combines order density, delivery delays, and population demographics to identify underserved areas and recommend new store locations."
+    title: "Real-Time Inventory Auditing System",
+    description: "Build a system that allows for continuous, real-time auditing of inventory levels in warehouses or stores, minimizing the need for manual stock-taking and improving accuracy in inventory data."
   },
   {
     id: 6,
     title: "Expiry-Based Dynamic Discount System",
-    description: "Create an automated pricing system that reduces prices of perishable products based on expiry dates, customer demand, and shelf time to minimize wastage."
+    description: "A system that automatically applies dynamic discounts to products nearing their expiration date, encouraging sales while reducing waste. It could integrate with inventory systems to monitor expiration and adjust pricing accordingly."
   },
   {
     id: 7,
-    title: "Real-Time Inventory Auditing System",
-    description: "Design a system that conducts real-time audits by cross-verifying physical stock with digital inventory records using barcode scanning and weight sensors at regular intervals."
+    title: "Waste Management Automation in Dark Stores",
+    description: "Create a solution to automate waste management processes in dark stores, including the efficient disposal, recycling, and reduction of waste. This might involve IoT integration, AI for predictive waste patterns, and sustainability features."
   },
   {
     id: 8,
-    title: "Waste Management Automation in Dark Stores",
-    description: "Design an automated waste segregation and disposal system that tracks expired products and sorts recyclable and non-recyclable waste."
+    title: "Heatmap-Based Store Placement Analysis",
+    description: "Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores."
   }
 ];
 
