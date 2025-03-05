@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import Quotes from '@/components/Quotes';
-import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket, FaFileCode } from 'react-icons/fa';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket, FaFileCode, FaBell, FaTimes } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -77,6 +77,7 @@ export default function TeamDashboard() {
   const [githubRepo, setGithubRepo] = useState<GitHubRepo | null>(null);
   const [repoUrl, setRepoUrl] = useState('');
   const [isAddingRepo, setIsAddingRepo] = useState(false);
+  const [showAlert, setShowAlert] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -255,6 +256,63 @@ export default function TeamDashboard() {
 
         {/* Add the Quotes component here */}
         <Quotes />
+
+        {/* Checkpoint Alert Popup */}
+        <AnimatePresence>
+          {showAlert && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-6 relative bg-gradient-to-r from-purple-900/20 to-cyan-900/20 border border-cyan-500/30 rounded-lg p-6 overflow-hidden"
+            >
+              {/* Glowing border effect */}
+              <motion.div
+                className="absolute inset-0 opacity-30"
+                animate={{
+                  background: [
+                    'linear-gradient(90deg, transparent, rgba(34,211,238,0.2), transparent)',
+                    'linear-gradient(90deg, transparent, rgba(168,85,247,0.2), transparent)',
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+              />
+
+              {/* Close button */}
+              <button
+                onClick={() => setShowAlert(false)}
+                className="absolute top-4 right-4 text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                <FaTimes />
+              </button>
+
+              {/* Alert content */}
+              <div className="flex items-start space-x-4">
+                <div className="relative">
+                  <FaBell className="text-cyan-400 h-6 w-6" />
+                  <motion.div
+                    className="absolute inset-0 bg-cyan-500 filter blur-md"
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <h3 className="text-cyan-400 font-mono text-lg mb-2">
+                    {`> System_Alert`}
+                  </h3>
+                  <p className="text-gray-300 font-mono text-sm whitespace-pre-line">
+                    Checkpoint 1 Alert! 🚀
+                    All teams must update their project on GitHub, be ready, and move to their designated places now!
+                  </p>
+                  <p className="text-cyan-500/50 font-mono text-xs mt-3">
+                    {new Date().toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

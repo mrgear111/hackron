@@ -9,6 +9,7 @@ import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get } from 'firebase/database';
 import { useRouter } from 'next/navigation';
+import Notifications from '@/components/Notifications';
 
 const Navbar = () => {
   const router = useRouter();
@@ -582,6 +583,11 @@ const Navbar = () => {
                     />
                   </Link>
                 </motion.div>
+
+                {/* Notifications */}
+                {user && !isAdmin && (
+                  <Notifications />
+                )}
               </div>
             </div>
           </div>
