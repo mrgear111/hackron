@@ -22,7 +22,6 @@ interface TeamData {
 interface ProjectSubmission {
   liveDemo: string;
   presentationUrl: string;
-  videoWalkthrough?: string;
   codeRepository: string;
   documentation: string;
   problemStatement: string;
@@ -38,10 +37,21 @@ interface GitHubRepo {
 }
 
 const problemStatements = [
-  "Problem Statement 1: Description...",
-  "Problem Statement 2: Description...",
-  "Problem Statement 3: Description...",
-  // Add more problem statements as needed
+  "City-Wide Dark Store Network Projection: Develop a system for analyzing and projecting the expansion of dark stores across a city. It may involve demand forecasting, geographical analysis, and optimal placement for maximum efficiency and customer reach.",
+  
+  "Smart Inventory Theft Detection System: A system that uses AI, IoT, and data analytics to detect theft in inventory management. It could involve real-time monitoring, anomaly detection, and alert mechanisms to prevent unauthorized access or theft.",
+  
+  "Smart Dynamic Pricing System: Create a pricing system that adjusts product prices dynamically based on various factors like demand, stock levels, competitor pricing, and customer behavior, potentially using AI or machine learning for optimization.",
+  
+  "Dark Store Management Platform: Design a comprehensive platform for managing dark stores, which includes inventory tracking, order management, staff coordination, and logistical planning. It should streamline operations for better efficiency.",
+  
+  "Real-Time Inventory Auditing System: Build a system that allows for continuous, real-time auditing of inventory levels in warehouses or stores, minimizing the need for manual stock-taking and improving accuracy in inventory data.",
+  
+  "Expiry-Based Dynamic Discount System: A system that automatically applies dynamic discounts to products nearing their expiration date, encouraging sales while reducing waste. It could integrate with inventory systems to monitor expiration and adjust pricing accordingly.",
+  
+  "Waste Management Automation in Dark Stores: Create a solution to automate waste management processes in dark stores, including the efficient disposal, recycling, and reduction of waste. This might involve IoT integration, AI for predictive waste patterns, and sustainability features.",
+  
+  "Heatmap-Based Store Placement Analysis: Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores."
 ];
 
 export default function TeamDashboard() {
@@ -51,7 +61,6 @@ export default function TeamDashboard() {
   const [formData, setFormData] = useState<ProjectSubmission>({
     liveDemo: '',
     presentationUrl: '',
-    videoWalkthrough: '',
     codeRepository: '',
     documentation: '',
     problemStatement: '',
@@ -462,23 +471,6 @@ export default function TeamDashboard() {
                       />
                     </div>
 
-                    {/* Video Walkthrough */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Video_Walkthrough:`}
-                      </label>
-                      <input
-                        type="url"
-                        name="videoWalkthrough"
-                        value={formData.videoWalkthrough}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="YouTube/Drive video link"
-                        required
-                      />
-                    </div>
-
                     {/* Presentation URL */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -492,6 +484,23 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
                         placeholder="https://slides.com/your-presentation"
+                        required
+                      />
+                    </div>
+
+                    {/* Code Repository */}
+                    <div>
+                      <label className="block text-purple-400 font-mono text-sm mb-2">
+                        {`> Code_Repository:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="codeRepository"
+                        value={formData.codeRepository}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
+                        placeholder="https://github.com/username/repo"
                         required
                       />
                     </div>
