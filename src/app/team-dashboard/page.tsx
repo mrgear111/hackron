@@ -78,6 +78,18 @@ export default function TeamDashboard() {
   const [repoUrl, setRepoUrl] = useState('');
   const [isAddingRepo, setIsAddingRepo] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Function to handle edit mode activation
+  const handleEditSubmission = () => {
+    // Pre-populate the form with existing submission data
+    if (teamData?.projectSubmission) {
+      setFormData(teamData.projectSubmission);
+    }
+    setIsEditMode(true);
+    setShowForm(true);
+    setSuccessMessage('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,8 +120,9 @@ export default function TeamDashboard() {
       // Set success message
       setSuccessMessage('Congrats! You have successfully submitted your project.');
 
-      // Close the form
+      // Close the form and exit edit mode
       setShowForm(false);
+      setIsEditMode(false);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -186,6 +199,11 @@ export default function TeamDashboard() {
         // Also get GitHub repo data if it exists
         if (data && data.githubRepo) {
           setGithubRepo(data.githubRepo);
+        }
+
+        // If project is already submitted, don't show form by default
+        if (data && data.projectSubmission) {
+          setShowForm(false);
         }
         
         setLoading(false);
@@ -478,12 +496,26 @@ export default function TeamDashboard() {
             {/* Header with glowing accent */}
             <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-              <h2 className="text-xl font-mono text-purple-400 flex items-center">
-                <FaFileAlt className="mr-3 text-purple-500" />
-                {`> Project_Submission`}
-              </h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-mono text-purple-400 flex items-center">
+                  <FaFileAlt className="mr-3 text-purple-500" />
+                  {teamData?.projectSubmission && !isEditMode ? 
+                    `> Congrats! You have successfully submitted your project.` : 
+                    `> Project_Submission`}
+                </h2>
+                {teamData?.projectSubmission && !showForm && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleEditSubmission}
+                    className="px-4 py-1 bg-cyan-600/80 text-white rounded font-mono text-sm flex items-center"
+                  >
+                    <FaClipboardCheck className="mr-2" />
+                    Edit Submission
+                  </motion.button>
+                )}
+              </div>
             </div>
-
             <div className="p-6">
               {!githubRepo ? (
                 // Show message if GitHub repo is not connected
@@ -502,6 +534,75 @@ export default function TeamDashboard() {
                     {`> Waiting for repository connection...`}
                   </motion.div>
                 </div>
+              ) : teamData?.projectSubmission && !showForm ? (
+                // Show submitted project details
+                <div className="space-y-8">
+                  {/* Project Summary */}
+                  <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 border border-green-500/20">
+                    <div className="flex items-center mb-4">
+                      <FaRocket className="text-green-400 mr-2" />
+                      <h3 className="text-lg font-mono text-green-400">Project Summary</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                      {/* Problem Statement */}
+                      <div>
+                        <h4 className="text-purple-400 font-mono text-sm mb-2">Problem Statement</h4>
+                        <p className="text-gray-300 font-mono text-sm">
+                          {teamData.projectSubmission.problemStatement}
+                        </p>
+                      </div>
+                      
+                      {/* Tech Stack */}
+                      <div>
+                        <h4 className="text-purple-400 font-mono text-sm mb-2">Tech Stack</h4>
+                        <p className="text-gray-300 font-mono text-sm">
+                          {teamData.projectSubmission.techStack}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Links Section */}
+                    <div className="mt-6 border-t border-gray-800 pt-4">
+                      <h4 className="text-purple-400 font-mono text-sm mb-2">Project Links</h4>
+                      <div className="flex flex-wrap gap-4">
+                        {teamData.projectSubmission.liveDemo && (
+                          <a
+                            href={teamData.projectSubmission.liveDemo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
+                          >
+                            <FaRocket className="mr-2" />
+                            Live Demo
+                          </a>
+                        )}
+                        {teamData.projectSubmission.presentationUrl && (
+                          <a
+                            href={teamData.projectSubmission.presentationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
+                          >
+                            <FaFileAlt className="mr-2" />
+                            Presentation
+                          </a>
+                        )}
+                        {teamData.projectSubmission.codeRepository && (
+                          <a
+                            href={teamData.projectSubmission.codeRepository}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
+                          >
+                            <FaCode className="mr-2" />
+                            Code Repository
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 // Show submission form if GitHub repo is connected
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -511,7 +612,6 @@ export default function TeamDashboard() {
                       <FaLink className="mr-2" />
                       {`> Project_URLs`}
                     </h3>
-
                     {/* Live Demo URL */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -528,7 +628,6 @@ export default function TeamDashboard() {
                         required
                       />
                     </div>
-
                     {/* Presentation URL */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -545,7 +644,6 @@ export default function TeamDashboard() {
                         required
                       />
                     </div>
-
                     {/* Code Repository */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -563,14 +661,12 @@ export default function TeamDashboard() {
                       />
                     </div>
                   </div>
-
                   {/* Project Details Section */}
                   <div className="space-y-6 bg-black/20 p-6 rounded-lg border border-purple-500/20">
                     <h3 className="text-lg font-mono text-purple-400 mb-4 flex items-center">
                       <FaFileCode className="mr-2" />
                       {`> Project_Details`}
                     </h3>
-
                     {/* Problem Statement Dropdown */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -592,7 +688,6 @@ export default function TeamDashboard() {
                         ))}
                       </select>
                     </div>
-
                     {/* Solution */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -608,7 +703,6 @@ export default function TeamDashboard() {
                         required
                       />
                     </div>
-
                     {/* Tech Stack */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -625,7 +719,6 @@ export default function TeamDashboard() {
                         required
                       />
                     </div>
-
                     {/* Documentation */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -640,7 +733,6 @@ export default function TeamDashboard() {
                         placeholder="Add any additional documentation or setup instructions..."
                       />
                     </div>
-
                     {/* Challenges Faced */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -656,7 +748,6 @@ export default function TeamDashboard() {
                         required
                       />
                     </div>
-
                     {/* Key Learnings */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
@@ -673,7 +764,6 @@ export default function TeamDashboard() {
                       />
                     </div>
                   </div>
-
                   {/* Submit Button */}
                   <motion.button
                     type="submit"
@@ -692,15 +782,27 @@ export default function TeamDashboard() {
                         >⟳</motion.span>
                         SUBMITTING...
                       </span>
-                    ) : (
-                      'SUBMIT PROJECT'
-                    )}
+                    ) : isEditMode ? 'UPDATE PROJECT' : 'SUBMIT PROJECT'}
                   </motion.button>
-
                   {error && (
                     <div className="text-red-400 font-mono text-sm text-center">
                       {`> Error: ${error}`}
                     </div>
+                  )}
+                  
+                  {isEditMode && (
+                    <motion.button
+                      type="button"
+                      onClick={() => {
+                        setShowForm(false);
+                        setIsEditMode(false);
+                      }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-gray-700/80 rounded-md py-3 text-white font-mono shadow-lg mt-2"
+                    >
+                      CANCEL
+                    </motion.button>
                   )}
                 </form>
               )}
@@ -710,4 +812,4 @@ export default function TeamDashboard() {
       </div>
     </div>
   );
-} 
+}
