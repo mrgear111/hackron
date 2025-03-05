@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hackron - Hackathon Platform",
   description: "Submit your revolutionary projects and showcase your innovation",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
