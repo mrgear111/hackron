@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
-import { FaLightbulb, FaLock } from 'react-icons/fa';
+import { FaLightbulb } from 'react-icons/fa';
 
 const problemStatements = [
   {
@@ -48,8 +48,6 @@ const problemStatements = [
 ];
 
 export default function Problems() {
-  const isLocked = true; // We'll make this dynamic when you want to unlock it
-
   return (
     <div className="min-h-screen bg-black">
       <Navbar />
@@ -67,77 +65,32 @@ export default function Problems() {
               <FaLightbulb className="text-purple-500" />
               {`> Problem_Statements`}
             </h1>
+            <p className="mt-4 text-gray-400 font-mono">
+              Choose one of the following problem statements for your project.
+            </p>
           </div>
 
-          {/* Locked Content Display */}
-          <motion.div 
-            className="flex flex-col items-center justify-center py-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 1, 0.5]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="relative"
-            >
-              <FaLock className="text-6xl text-purple-500/50" />
+          {/* Problem Statements Grid */}
+          <div className="grid grid-cols-1 gap-6">
+            {problemStatements.map((problem, index) => (
               <motion.div
-                className="absolute inset-0 blur-xl bg-purple-500/20"
-                animate={{
-                  opacity: [0.2, 0.4, 0.2]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </motion.div>
-            
-            <motion.p 
-              className="mt-8 text-xl font-mono text-purple-400/80 text-center"
-              animate={{
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              {`> Access_Restricted`}
-            </motion.p>
-            
-            <p className="mt-4 text-gray-500 font-mono text-sm text-center max-w-md">
-              Problem statements will be revealed when the competition begins.
-            </p>
-
-            {/* Matrix-like effect in background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <motion.div
-                className="w-full h-full opacity-[0.02]"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236366f1' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`,
-                }}
-                animate={{
-                  y: ["0%", "100%"]
-                }}
-                transition={{
-                  duration: 20,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-              />
-            </div>
-          </motion.div>
+                key={problem.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-black/40 backdrop-blur-sm border border-cyan-500/30 
+                  rounded-lg p-6 hover:border-cyan-500/50 transition-colors"
+              >
+                <h2 className="text-xl font-mono text-cyan-400 mb-4 flex items-center gap-2">
+                  <span className="text-sm text-cyan-500/70">{`${problem.id}.`}</span>
+                  {problem.title}
+                </h2>
+                <p className="text-gray-400 font-mono text-sm leading-relaxed">
+                  {problem.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </main>
     </div>
