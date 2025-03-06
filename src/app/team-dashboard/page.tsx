@@ -213,76 +213,14 @@ export default function TeamDashboard() {
 
   const handleAddRepo = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!repoUrl) {
-      setError('Please enter a valid GitHub repository URL');
-      return;
-    }
-    
-    // Validate GitHub URL format
-    if (!repoUrl.match(/^https:\/\/github\.com\/[\w-]+\/[\w-]+$/)) {
-      setError('Please enter a valid GitHub repository URL (https://github.com/username/repo)');
-      return;
-    }
-    
-    setIsAddingRepo(true);
-    
-    try {
-      const newRepo: GitHubRepo = {
-        repoUrl,
-        lastUpdated: new Date().toISOString()
-      };
-      
-      // Save to Firebase
-      const repoRef = ref(db, `teams/${auth.currentUser?.uid}/githubRepo`);
-      await set(repoRef, newRepo);
-      
-      // Update local state
-      setGithubRepo(newRepo);
-      setRepoUrl('');
-      setIsAddingRepo(false);
-    } catch (error: any) {
-      setError(error.message);
-      setIsAddingRepo(false);
-    }
+    setError("GitHub repository submissions are now closed. The hackathon has ended.");
+    return;
   };
 
-  const handleUrlSubmit = async (e: React.FormEvent) => {
+  const handleSubmitUrl = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!submissionUrl) {
-      setError('Please enter a valid URL');
-      return;
-    }
-    
-    // Validate URL format
-    try {
-      new URL(submissionUrl);
-    } catch {
-      setError('Please enter a valid URL');
-      return;
-    }
-    
-    setIsSubmittingUrl(true);
-    
-    try {
-      const urlRef = ref(db, `teams/${auth.currentUser?.uid}/submissionUrl`);
-      await set(urlRef, submissionUrl);
-      
-      // Update local state
-      setTeamData(prev => ({
-        ...prev!,
-        submissionUrl: submissionUrl
-      }));
-      
-      setSuccessMessage('URL submitted successfully!');
-      setSubmissionUrl('');
-      setIsEditMode(false);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setIsSubmittingUrl(false);
-    }
+    setError("URL submissions are now closed. The hackathon has ended.");
+    return;
   };
 
   if (loading) {
@@ -468,115 +406,29 @@ export default function TeamDashboard() {
 
             <div className="p-6">
               {githubRepo ? (
-                <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between">
-                    <div className="mb-4 md:mb-0">
-                      <div className="text-gray-400 font-mono text-xs mb-1">PROJECT REPOSITORY</div>
-                      <a 
-                        href={githubRepo.repoUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-cyan-400 font-mono text-lg hover:underline flex items-center"
-                      >
-                        <FaCode className="mr-2" />
-                        {githubRepo.repoUrl.replace('https://github.com/', '')}
-                      </a>
-                      <div className="text-gray-500 font-mono text-xs mt-2">
-                        Connected: {new Date(githubRepo.lastUpdated).toLocaleString()}
-                      </div>
-                    </div>
-                    
-                    <div className="flex space-x-2">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 bg-purple-600/80 text-white rounded font-mono text-sm flex items-center"
-                        onClick={() => window.open(githubRepo.repoUrl, '_blank')}
-                      >
-                        <span className="mr-2">View Repo</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                          <path fillRule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
-                          <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
-                        </svg>
-                      </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 bg-gray-700/80 text-white rounded font-mono text-sm flex items-center"
-                        onClick={() => setGithubRepo(null)}
-                      >
-                        Change Repo
-                      </motion.button>
-                    </div>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-mono text-cyan-400">Repository Details:</h3>
+                  </div>
+                  <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
+                    <p className="text-gray-300 font-mono text-sm break-all">{githubRepo.repoUrl}</p>
+                    <p className="text-gray-500 font-mono text-xs mt-2">
+                      Last updated: {new Date(githubRepo.lastUpdated).toLocaleString()}
+                    </p>
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleAddRepo} className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
-                  <div className="text-gray-300 font-mono mb-4">
-                    Please connect your GitHub repository for your project. This is required before submitting your project.
+                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
+                  <div className="text-center space-y-4">
+                    <FaCode className="text-4xl text-red-400 mx-auto" />
+                    <h3 className="text-xl font-mono text-red-400">
+                      Repository Submissions Closed
+                    </h3>
+                    <p className="text-gray-400 font-mono text-sm">
+                      GitHub repository submissions are now closed.
+                    </p>
                   </div>
-                  
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-grow">
-                      <div className="group w-full">
-                        <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                          <FaCode className="text-purple-400 mr-2" />
-                          GITHUB REPOSITORY URL
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="url"
-                            value={repoUrl}
-                            onChange={(e) => setRepoUrl(e.target.value)}
-                            className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-purple-500 rounded-t-md px-4 py-2 
-                              text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                            placeholder="https://github.com/username/repo"
-                            required
-                          />
-                          <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-purple-500 group-focus-within:w-full transition-all duration-300"></div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex-shrink-0">
-                      <motion.button
-                        type="submit"
-                        disabled={isAddingRepo}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="h-full px-6 py-2 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 rounded-md font-mono text-white shadow-lg disabled:opacity-50 flex items-center justify-center"
-                      >
-                        {isAddingRepo ? (
-                          <>
-                            <motion.span
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              className="inline-block mr-2"
-                            >
-                              ⟳
-                            </motion.span>
-                            CONNECTING...
-                          </>
-                        ) : (
-                          <>CONNECT REPOSITORY</>
-                        )}
-                      </motion.button>
-                    </div>
-                  </div>
-                  
-                  {/* Helpful tips */}
-                  <div className="mt-4 text-gray-500 font-mono text-xs">
-                    <div className="flex items-start mb-1">
-                      <span className="text-purple-500 mr-2">•</span>
-                      <span>Make sure your repository is public or our team has access to it</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-purple-500 mr-2">•</span>
-                      <span>Format: https://github.com/username/repository</span>
-                    </div>
-                  </div>
-                </form>
+                </div>
               )}
             </div>
           </motion.div>
@@ -597,110 +449,27 @@ export default function TeamDashboard() {
             </div>
 
             <div className="p-6">
-              {teamData?.submissionUrl && !isEditMode ? (
-                <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div className="flex-grow">
-                      <div className="text-gray-400 font-mono text-xs mb-2">SUBMITTED URL</div>
-                      <a 
-                        href={teamData.submissionUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-cyan-400 font-mono text-lg hover:underline flex items-center"
-                      >
-                        <FaLink className="mr-2" />
-                        {teamData.submissionUrl}
-                      </a>
-                      <div className="text-gray-500 font-mono text-xs mt-2">
-                        Status: <span className="text-green-400">Submitted</span>
-                      </div>
-                    </div>
-                    
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setIsEditMode(true)}
-                      className="px-4 py-2 bg-cyan-600/80 text-white rounded font-mono text-sm flex items-center"
-                    >
-                      <FaLink className="mr-2" />
-                      Update URL
-                    </motion.button>
+              {submissionUrl ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-mono text-cyan-400">Submission URL:</h3>
+                  </div>
+                  <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
+                    <p className="text-gray-300 font-mono text-sm break-all">{submissionUrl}</p>
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleUrlSubmit} className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-grow">
-                      <div className="group w-full">
-                        <label className="flex items-center text-gray-300 font-mono text-xs mb-2 group-focus-within:text-purple-400 transition-colors">
-                          <FaLink className="text-purple-400 mr-2" />
-                          ENTER URL
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="url"
-                            value={submissionUrl}
-                            onChange={(e) => setSubmissionUrl(e.target.value)}
-                            className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-purple-500 rounded-t-md px-4 py-2 
-                              text-gray-100 font-mono text-sm focus:outline-none transition-colors"
-                            placeholder="https://your-url-here.com"
-                            required
-                          />
-                          <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-purple-500 group-focus-within:w-full transition-all duration-300"></div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex-shrink-0">
-                      <motion.button
-                        type="submit"
-                        disabled={isSubmittingUrl}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="h-full px-6 py-2 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 rounded-md font-mono text-white shadow-lg disabled:opacity-50 flex items-center justify-center"
-                      >
-                        {isSubmittingUrl ? (
-                          <>
-                            <motion.span
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              className="inline-block mr-2"
-                            >
-                              ⟳
-                            </motion.span>
-                            SUBMITTING...
-                          </>
-                        ) : (
-                          <>SUBMIT URL</>
-                        )}
-                      </motion.button>
-                    </div>
+                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
+                  <div className="text-center space-y-4">
+                    <FaLink className="text-4xl text-red-400 mx-auto" />
+                    <h3 className="text-xl font-mono text-red-400">
+                      URL Submissions Closed
+                    </h3>
+                    <p className="text-gray-400 font-mono text-sm">
+                      Project URL submissions are now closed.
+                    </p>
                   </div>
-                  
-                  {/* Helpful tips */}
-                  <div className="mt-4 text-gray-500 font-mono text-xs">
-                    <div className="flex items-start mb-1">
-                      <span className="text-purple-500 mr-2">•</span>
-                      <span>Make sure your URL is accessible and valid</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-purple-500 mr-2">•</span>
-                      <span>Format: https://your-url-here.com</span>
-                    </div>
-                  </div>
-                  
-                  {isEditMode && (
-                    <motion.button
-                      type="button"
-                      onClick={() => setIsEditMode(false)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full bg-gray-700/80 rounded-md py-2 text-white font-mono shadow-lg mt-4"
-                    >
-                      CANCEL
-                    </motion.button>
-                  )}
-                </form>
+                </div>
               )}
             </div>
           </motion.div>
