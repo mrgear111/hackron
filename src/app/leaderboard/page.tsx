@@ -33,7 +33,7 @@ export default function Leaderboard() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-mono text-cyan-400 mb-4">Shortlisted Teams</h1>
-          <p className="text-gray-400 font-mono">Code Odyssey 2024</p>
+     
         </motion.div>
 
         <div className="grid gap-4 max-w-3xl mx-auto">
