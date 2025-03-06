@@ -61,7 +61,7 @@ export default function AdminDashboard() {
   const [randomQuote, setRandomQuote] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "projectSubmitted" | "submissionUrl">("all");
   const [judgedTeams, setJudgedTeams] = useState<Record<string, boolean>>({});
   const [teamCheckpoints, setTeamCheckpoints] = useState<Record<string, Record<string, boolean>>>({});
 
@@ -150,10 +150,15 @@ export default function AdminDashboard() {
     return { totalTeams, submittedProjects, pendingSubmissions };
   };
 
-  const filteredTeams = Object.entries(teams).filter(([_, team]) => 
-    team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    team.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredTeams = Object.entries(teams).filter(([_, team]) => {
+    if (activeFilter === "projectSubmitted") {
+      return team.projectSubmission !== undefined;
+    }
+    if (activeFilter === "submissionUrl") {
+      return team.submissionUrl !== undefined;
+    }
+    return true;
+  });
 
   const toggleTeamExpansion = (teamId: string) => {
     if (expandedTeamId === teamId) {
@@ -368,6 +373,50 @@ export default function AdminDashboard() {
                 text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 
                 placeholder-gray-600"
             />
+          </div>
+
+          {/* Add this new filter buttons section */}
+          <div className="mb-6 flex flex-wrap gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setActiveFilter("all")}
+              className={`px-4 py-2 rounded-md font-mono text-sm ${
+                activeFilter === "all"
+                  ? "bg-cyan-600/80 text-white"
+                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+              }`}
+            >
+              All Teams
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setActiveFilter("projectSubmitted")}
+              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${
+                activeFilter === "projectSubmitted"
+                  ? "bg-purple-600/80 text-white"
+                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+              }`}
+            >
+              <FaFileCode />
+              Project Submitted
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setActiveFilter("submissionUrl")}
+              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${
+                activeFilter === "submissionUrl"
+                  ? "bg-green-600/80 text-white"
+                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+              }`}
+            >
+              <FaLink />
+              Submission URL Added
+            </motion.button>
           </div>
 
           {/* Team List */}
