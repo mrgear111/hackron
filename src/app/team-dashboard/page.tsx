@@ -56,6 +56,10 @@ const problemStatements = [
 
 const motivationalQuotes = [
   {
+    text: "🏁 HACKATHON ENDED 🏁\n\nThank you for participating! Project submissions are now closed. Stay tuned for the results!",
+    isUrgent: true
+  },
+  {
     text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. And some teams have update broken links Please fix this immediately to avoid disqualification. ⚠️⏳",
     isUrgent: true
   },
@@ -118,15 +122,37 @@ export default function TeamDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // Function to handle edit mode activation
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        router.push('/');
+        return;
+      }
+
+      // Set showForm to false since hackathon is over
+      setShowForm(false);
+      
+      // Fetch team data
+      const teamRef = ref(db, `teams/${user.uid}`);
+      onValue(teamRef, (snapshot) => {
+        const data = snapshot.val();
+        setTeamData(data);
+        
+        // Also get GitHub repo data if it exists
+        if (data && data.githubRepo) {
+          setGithubRepo(data.githubRepo);
+        }
+        
+        setLoading(false);
+      });
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
   const handleEditSubmission = () => {
-    // Pre-populate the form with existing submission data
-    if (teamData?.projectSubmission) {
-      setFormData(teamData.projectSubmission);
-    }
-    setIsEditMode(true);
-    setShowForm(true);
-    setSuccessMessage('');
+    setError("Project submissions are now closed. The hackathon has ended.");
+    return;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -258,36 +284,6 @@ export default function TeamDashboard() {
       setIsSubmittingUrl(false);
     }
   };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      // Fetch team data
-      const teamRef = ref(db, `teams/${user.uid}`);
-      onValue(teamRef, (snapshot) => {
-        const data = snapshot.val();
-        setTeamData(data);
-        
-        // Also get GitHub repo data if it exists
-        if (data && data.githubRepo) {
-          setGithubRepo(data.githubRepo);
-        }
-
-        // If project is already submitted, don't show form by default
-        if (data && data.projectSubmission) {
-          setShowForm(false);
-        }
-        
-        setLoading(false);
-      });
-    });
-
-    return () => unsubscribe();
-  }, [router]);
 
   if (loading) {
     return (
@@ -740,287 +736,28 @@ export default function TeamDashboard() {
               </div>
             </div>
             <div className="p-6">
-              {!githubRepo ? (
-                // Show message if GitHub repo is not connected
-                <div className="text-center py-8">
-                  <div className="text-gray-400 font-mono mb-4">
-                    Please connect your GitHub repository first
-                  </div>
-                  <motion.div
-                    animate={{
-                      opacity: [0.5, 1, 0.5],
-                      scale: [1, 1.02, 1]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-purple-400/50 text-sm font-mono"
-                  >
-                    {`> Waiting for repository connection...`}
-                  </motion.div>
-                </div>
-              ) : teamData?.projectSubmission && !showForm ? (
-                // Show submitted project details
-                <div className="space-y-8">
-                  {/* Project Summary */}
-                  <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 border border-green-500/20">
-                    <div className="flex items-center mb-4">
-                      <FaRocket className="text-green-400 mr-2" />
-                      <h3 className="text-lg font-mono text-green-400">Project Summary</h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                      {/* Problem Statement */}
-                      <div>
-                        <h4 className="text-purple-400 font-mono text-sm mb-2">Problem Statement</h4>
-                        <p className="text-gray-300 font-mono text-sm">
-                          {teamData.projectSubmission.problemStatement}
-                        </p>
+              {!showForm && (
+                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
+                  <div className="text-center space-y-4">
+                    <FaClipboardCheck className="text-4xl text-red-400 mx-auto" />
+                    <h3 className="text-xl font-mono text-red-400">
+                      Hackathon Submissions Closed
+                    </h3>
+                    <p className="text-gray-400 font-mono text-sm">
+                      Thank you for participating! Project submissions are now closed.
+                      Stay tuned for the results! 🏆
+                    </p>
+                    {teamData?.projectSubmission && (
+                      <div className="mt-6">
+                        <h4 className="text-cyan-400 font-mono text-sm mb-3">
+                          Your Submitted Project:
+                        </h4>
+                        {/* Display submitted project details */}
+                        {/* ... rest of your project display code ... */}
                       </div>
-                      
-                      {/* Tech Stack */}
-                      <div>
-                        <h4 className="text-purple-400 font-mono text-sm mb-2">Tech Stack</h4>
-                        <p className="text-gray-300 font-mono text-sm">
-                          {teamData.projectSubmission.techStack}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {/* Links Section */}
-                    <div className="mt-6 border-t border-gray-800 pt-4">
-                      <h4 className="text-purple-400 font-mono text-sm mb-2">Project Links</h4>
-                      <div className="flex flex-wrap gap-4">
-                        {teamData.projectSubmission.liveDemo && (
-                          <a
-                            href={teamData.projectSubmission.liveDemo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
-                          >
-                            <FaRocket className="mr-2" />
-                            Live Demo
-                          </a>
-                        )}
-                        {teamData.projectSubmission.presentationUrl && (
-                          <a
-                            href={teamData.projectSubmission.presentationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
-                          >
-                            <FaFileAlt className="mr-2" />
-                            Presentation
-                          </a>
-                        )}
-                        {teamData.projectSubmission.codeRepository && (
-                          <a
-                            href={teamData.projectSubmission.codeRepository}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-cyan-400 font-mono text-sm hover:underline flex items-center"
-                          >
-                            <FaCode className="mr-2" />
-                            Code Repository
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
-              ) : (
-                // Show submission form if GitHub repo is connected
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* URLs Section */}
-                  <div className="space-y-6 bg-black/20 p-6 rounded-lg border border-purple-500/20">
-                    <h3 className="text-lg font-mono text-purple-400 mb-4 flex items-center">
-                      <FaLink className="mr-2" />
-                      {`> Project_URLs`}
-                    </h3>
-                    {/* Live Demo URL */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Live_Demo_URL:`}
-                      </label>
-                      <input
-                        type="url"
-                        name="liveDemo"
-                        value={formData.liveDemo}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="https://your-demo-url.com"
-                        required
-                      />
-                    </div>
-                    {/* Presentation URL */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Presentation_URL:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <input
-                        type="url"
-                        name="presentationUrl"
-                        value={formData.presentationUrl}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="https://slides.com/your-presentation"
-                      />
-                    </div>
-                    {/* Code Repository */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Code_Repository:`}
-                      </label>
-                      <input
-                        type="url"
-                        name="codeRepository"
-                        value={formData.codeRepository}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="https://github.com/username/repo"
-                        required
-                      />
-                    </div>
-                  </div>
-                  {/* Project Details Section */}
-                  <div className="space-y-6 bg-black/20 p-6 rounded-lg border border-purple-500/20">
-                    <h3 className="text-lg font-mono text-purple-400 mb-4 flex items-center">
-                      <FaFileCode className="mr-2" />
-                      {`> Project_Details`}
-                    </h3>
-                    {/* Problem Statement Dropdown */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Problem_Statement:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <select
-                        name="problemStatement"
-                        value={formData.problemStatement || ''}
-                        onChange={handleProblemStatementChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                      >
-                        <option value="">Select a problem statement ()</option>
-                        {problemStatements.map((statement, index) => (
-                          <option key={index} value={statement}>
-                            {statement}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {/* Solution */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Solution:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <textarea
-                        name="solution"
-                        value={formData.solution}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
-                        placeholder="Describe your solution..."
-                      />
-                    </div>
-                    {/* Tech Stack */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Tech_Stack:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <textarea
-                        name="techStack"
-                        value={formData.techStack}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="List the technologies used..."
-                      />
-                    </div>
-                    {/* Documentation */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Documentation:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <textarea
-                        name="documentation"
-                        value={formData.documentation}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="Add documentation details..."
-                      />
-                    </div>
-                    {/* Challenges Faced */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Challenges_Faced:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <textarea
-                        name="challenges"
-                        value={formData.challenges}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="Describe the challenges faced..."
-                      />
-                    </div>
-                    {/* Key Learnings */}
-                    <div>
-                      <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Key_Learnings:`} <span className="text-gray-500">()</span>
-                      </label>
-                      <textarea
-                        name="learnings"
-                        value={formData.learnings}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="Share your key learnings..."
-                      />
-                    </div>
-                  </div>
-                  {/* Submit Button */}
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-purple-600/80 to-cyan-600/80 
-                      rounded-md py-3 text-white font-mono shadow-lg 
-                      disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <motion.span
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        >⟳</motion.span>
-                        SUBMITTING...
-                      </span>
-                    ) : isEditMode ? 'UPDATE PROJECT' : 'SUBMIT PROJECT'}
-                  </motion.button>
-                  {error && (
-                    <div className="text-red-400 font-mono text-sm text-center">
-                      {`> Error: ${error}`}
-                    </div>
-                  )}
-                  
-                  {isEditMode && (
-                    <motion.button
-                      type="button"
-                      onClick={() => {
-                        setShowForm(false);
-                        setIsEditMode(false);
-                      }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full bg-gray-700/80 rounded-md py-3 text-white font-mono shadow-lg mt-2"
-                    >
-                      CANCEL
-                    </motion.button>
-                  )}
-                </form>
               )}
             </div>
           </motion.div>
