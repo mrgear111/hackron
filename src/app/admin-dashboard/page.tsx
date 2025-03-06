@@ -151,13 +151,19 @@ export default function AdminDashboard() {
   };
 
   const filteredTeams = Object.entries(teams).filter(([_, team]) => {
-    if (activeFilter === "projectSubmitted") {
-      return team.projectSubmission !== undefined;
-    }
-    if (activeFilter === "submissionUrl") {
-      return team.submissionUrl !== undefined;
-    }
-    return true;
+    // First check if the team matches the search term
+    const matchesSearch = searchTerm === '' || 
+      team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      team.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Then check if it matches the active filter
+    const matchesFilter = 
+      activeFilter === "all" ||
+      (activeFilter === "projectSubmitted" && team.projectSubmission !== undefined) ||
+      (activeFilter === "submissionUrl" && team.submissionUrl !== undefined);
+
+    // Return true only if both conditions are met
+    return matchesSearch && matchesFilter;
   });
 
   const toggleTeamExpansion = (teamId: string) => {
@@ -368,7 +374,7 @@ export default function AdminDashboard() {
               type="text"
               placeholder="Search_Teams"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
               className="w-full bg-black/30 border border-purple-500/30 rounded-lg pl-8 pr-4 py-2
                 text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 
                 placeholder-gray-600"
