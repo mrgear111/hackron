@@ -854,7 +854,7 @@ export default function TeamDashboard() {
                     {/* Presentation URL */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Presentation_URL:`} <span className="text-gray-500">(optional)</span>
+                        {`> Presentation_URL:`} <span className="text-gray-500">()</span>
                       </label>
                       <input
                         type="url"
@@ -892,7 +892,7 @@ export default function TeamDashboard() {
                     {/* Problem Statement Dropdown */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Problem_Statement:`} <span className="text-gray-500">(optional)</span>
+                        {`> Problem_Statement:`} <span className="text-gray-500">()</span>
                       </label>
                       <select
                         name="problemStatement"
@@ -901,7 +901,7 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
                       >
-                        <option value="">Select a problem statement (optional)</option>
+                        <option value="">Select a problem statement ()</option>
                         {problemStatements.map((statement, index) => (
                           <option key={index} value={statement}>
                             {statement}
@@ -912,7 +912,7 @@ export default function TeamDashboard() {
                     {/* Solution */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Solution:`} <span className="text-gray-500">(optional)</span>
+                        {`> Solution:`} <span className="text-gray-500">()</span>
                       </label>
                       <textarea
                         name="solution"
@@ -926,7 +926,7 @@ export default function TeamDashboard() {
                     {/* Tech Stack */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Tech_Stack:`} <span className="text-gray-500">(optional)</span>
+                        {`> Tech_Stack:`} <span className="text-gray-500">()</span>
                       </label>
                       <textarea
                         name="techStack"
@@ -940,7 +940,7 @@ export default function TeamDashboard() {
                     {/* Documentation */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Documentation:`} <span className="text-gray-500">(optional)</span>
+                        {`> Documentation:`} <span className="text-gray-500">()</span>
                       </label>
                       <textarea
                         name="documentation"
@@ -954,7 +954,7 @@ export default function TeamDashboard() {
                     {/* Challenges Faced */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Challenges_Faced:`} <span className="text-gray-500">(optional)</span>
+                        {`> Challenges_Faced:`} <span className="text-gray-500">()</span>
                       </label>
                       <textarea
                         name="challenges"
@@ -968,7 +968,7 @@ export default function TeamDashboard() {
                     {/* Key Learnings */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Key_Learnings:`} <span className="text-gray-500">(optional)</span>
+                        {`> Key_Learnings:`} <span className="text-gray-500">()</span>
                       </label>
                       <textarea
                         name="learnings"
