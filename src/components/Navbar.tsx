@@ -610,7 +610,7 @@ const Navbar = () => {
                   className="relative group px-4 py-2 text-sm font-mono hover:text-cyan-400 transition-colors duration-300"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    <span>{`> Leaderboard`}</span>
+                    <span>{`> Shortlisted_Teams`}</span>
                   </span>
                   <motion.div
                     className="absolute inset-0 border border-cyan-500/30 rounded-md overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity"
