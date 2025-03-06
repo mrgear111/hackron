@@ -9,6 +9,7 @@ import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get } from 'firebase/database';
 import { useRouter } from 'next/navigation';
+import { FaTrophy } from 'react-icons/fa';
 
 const Navbar = () => {
   const router = useRouter();
@@ -19,6 +20,24 @@ const Navbar = () => {
   const [teamName, setTeamName] = useState<string>('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [showLeaderboardLock, setShowLeaderboardLock] = useState(false);
+
+  const finalRankings = [
+    { name: "Humorous", rank: 1, badge: "🏆" },
+    { name: "Hack O' Giants", rank: 2, badge: "🥈" },
+    { name: "Coding Knights", rank: 3, badge: "🥉" },
+    { name: "402", rank: 4, badge: "⭐" },
+    { name: "Red Renegades", rank: 5, badge: "🚀" },
+    { name: "Int main", rank: 6, badge: "💫" },
+    { name: "The Neural Network", rank: 7, badge: "🧠" },
+    { name: "Fantastic Four", rank: 8, badge: "✨" },
+    { name: "Pixel_Perfect", rank: 9, badge: "🎨" },
+    { name: "codemonk", rank: 10, badge: "🎯" },
+    { name: "Skittles", rank: 11, badge: "🌈" },
+    { name: "JHC hub", rank: 12, badge: "💻" },
+    { name: "Senorita", rank: 13, badge: "🌟" },
+    { name: "Techies", rank: 14, badge: "⚡" },
+    { name: "8 bit", rank: 15, badge: "🎮" }
+  ];
 
   useEffect(() => {
     let teamListener: (() => void) | null = null;
@@ -584,76 +603,27 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
 
-                {/* Locked Leaderboard Button */}
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }}
-                  className="relative"
+                {/* Final Rankings Button */}
+                <Link
+                  href="/leaderboard"
+                  className="relative group px-4 py-2 text-sm font-mono cursor-pointer"
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
                 >
-                  <div
-                    className="relative group px-4 py-2 text-sm font-mono cursor-not-allowed"
-                    onMouseEnter={() => setShowLeaderboardLock(true)}
-                    onMouseLeave={() => setShowLeaderboardLock(false)}
-                  >
-                    <span className="relative z-10 text-gray-500 flex items-center gap-2">
-                      <span>{`> Leaderboard`}</span>
-                      <motion.span
-                        animate={{
-                          opacity: [1, 0.5, 1],
-                          scale: [1, 1.1, 1]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity
-                        }}
-                      >
-                        🔒
-                      </motion.span>
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 border border-gray-500/30 rounded-md overflow-hidden"
-                      animate={{
-                        boxShadow: [
-                          "0 0 10px rgba(107,114,128,0.2)",
-                          "0 0 20px rgba(107,114,128,0.1)",
-                          "0 0 10px rgba(107,114,128,0.2)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                      }}
-                    >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-500/10 to-transparent"
-                        animate={{
-                          x: ['-100%', '100%']
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: 'linear'
-                        }}
-                      />
-                    </motion.div>
-                  </div>
-                  
-                  {/* Locked Message Tooltip */}
-                  <AnimatePresence>
-                    {showLeaderboardLock && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-2 bg-black/90 border border-red-500/30 rounded-md whitespace-nowrap z-50"
-                      >
-                        <div className="text-red-400 font-mono text-xs flex items-center gap-2">
-                          <span>⚠️ Leaderboard will be unlocked after judging</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                  <span className="relative z-10 text-cyan-400 flex items-center">
+                    <FaTrophy className="mr-2" />
+                    {`> Final_Rankings`}
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-cyan-500/10 rounded-md"
+                    initial={false}
+                    animate={{
+                      opacity: isHovered ? 1 : 0,
+                      scale: isHovered ? 1.05 : 1
+                    }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
               </div>
             </div>
           </div>
@@ -705,6 +675,22 @@ const Navbar = () => {
         onClose={() => setIsLoginModalOpen(false)}
       />
       <AdminLoginModal isOpen={isAdminModalOpen} onClose={() => setIsAdminModalOpen(false)} />
+
+      {/* Final Rankings Popup */}
+      <AnimatePresence>
+        {showLeaderboardLock && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-2 bg-black/90 border border-cyan-500/30 rounded-md whitespace-nowrap z-50"
+          >
+            <div className="text-cyan-400 font-mono text-xs flex items-center gap-2">
+              <span>🎉 Congratulations to all winners! 🎊</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
