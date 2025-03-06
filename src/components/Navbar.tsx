@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
 import AdminLoginModal from './AdminLoginModal';
@@ -18,6 +18,7 @@ const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [teamName, setTeamName] = useState<string>('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showLeaderboardLock, setShowLeaderboardLock] = useState(false);
 
   useEffect(() => {
     let teamListener: (() => void) | null = null;
@@ -581,6 +582,77 @@ const Navbar = () => {
                       }}
                     />
                   </Link>
+                </motion.div>
+
+                {/* Locked Leaderboard Button */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  className="relative"
+                >
+                  <div
+                    className="relative group px-4 py-2 text-sm font-mono cursor-not-allowed"
+                    onMouseEnter={() => setShowLeaderboardLock(true)}
+                    onMouseLeave={() => setShowLeaderboardLock(false)}
+                  >
+                    <span className="relative z-10 text-gray-500 flex items-center gap-2">
+                      <span>{`> Leaderboard`}</span>
+                      <motion.span
+                        animate={{
+                          opacity: [1, 0.5, 1],
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity
+                        }}
+                      >
+                        🔒
+                      </motion.span>
+                    </span>
+                    <motion.div
+                      className="absolute inset-0 border border-gray-500/30 rounded-md overflow-hidden"
+                      animate={{
+                        boxShadow: [
+                          "0 0 10px rgba(107,114,128,0.2)",
+                          "0 0 20px rgba(107,114,128,0.1)",
+                          "0 0 10px rgba(107,114,128,0.2)",
+                        ],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                      }}
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-500/10 to-transparent"
+                        animate={{
+                          x: ['-100%', '100%']
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: 'linear'
+                        }}
+                      />
+                    </motion.div>
+                  </div>
+                  
+                  {/* Locked Message Tooltip */}
+                  <AnimatePresence>
+                    {showLeaderboardLock && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-2 bg-black/90 border border-red-500/30 rounded-md whitespace-nowrap z-50"
+                      >
+                        <div className="text-red-400 font-mono text-xs flex items-center gap-2">
+                          <span>⚠️ Leaderboard will be unlocked after judging</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               </div>
             </div>
