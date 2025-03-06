@@ -56,7 +56,7 @@ const problemStatements = [
 
 const motivationalQuotes = [
   {
-    text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. Please do so immediately to avoid disqualification. ⚠️⏳",
+    text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. And some teams have update broken links Please fix this immediately to avoid disqualification. ⚠️⏳",
     isUrgent: true
   },
   {
