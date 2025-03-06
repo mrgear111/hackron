@@ -56,6 +56,10 @@ const problemStatements = [
 
 const motivationalQuotes = [
   {
+    text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. Please do so immediately to avoid disqualification. ⚠️⏳",
+    isUrgent: true
+  },
+  {
     text: "Keep pushing forward, warrior! 🚀\nYou've come too far to give up now. The code flows through you - embrace the challenge and make something legendary!",
     timestamp: new Date().toLocaleString()
   },
@@ -385,15 +389,42 @@ export default function TeamDashboard() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="text-cyan-400 font-mono text-lg mb-2">
-                    {`> System_Alert`}
+                  <h3 className={`font-mono text-lg mb-2 ${
+                    motivationalQuotes[currentQuote].isUrgent 
+                      ? 'text-red-400 animate-pulse'
+                      : 'text-cyan-400'
+                  }`}>
+                    {motivationalQuotes[currentQuote].isUrgent 
+                      ? `> Urgent_Alert` 
+                      : `> System_Alert`}
                   </h3>
-                  <p className="text-gray-300 font-mono text-sm whitespace-pre-line">
+                  <p className={`font-mono text-sm whitespace-pre-line ${
+                    motivationalQuotes[currentQuote].isUrgent 
+                      ? 'text-red-300'
+                      : 'text-gray-300'
+                  }`}>
                     {motivationalQuotes[currentQuote].text}
                   </p>
                   <p className="text-cyan-500/50 font-mono text-xs mt-3">
-                    {motivationalQuotes[currentQuote].timestamp}
+                    {new Date().toLocaleString()}
                   </p>
+                  {motivationalQuotes[currentQuote].isUrgent && (
+                    <motion.div
+                      animate={{ 
+                        opacity: [1, 0.5, 1],
+                        scale: [1, 1.02, 1]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity 
+                      }}
+                      className="mt-3 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-md"
+                    >
+                      <p className="text-red-400 font-mono text-xs">
+                        ⚡ Take immediate action to ensure your team's participation!
+                      </p>
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </motion.div>
