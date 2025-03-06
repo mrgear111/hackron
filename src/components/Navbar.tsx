@@ -21,22 +21,23 @@ const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showLeaderboardLock, setShowLeaderboardLock] = useState(false);
 
-  const finalRankings = [
-    { name: "Humorous", rank: 1, badge: "🏆" },
-    { name: "Hack O' Giants", rank: 2, badge: "🥈" },
-    { name: "Coding Knights", rank: 3, badge: "🥉" },
-    { name: "402", rank: 4, badge: "⭐" },
-    { name: "Red Renegades", rank: 5, badge: "🚀" },
-    { name: "Int main", rank: 6, badge: "💫" },
-    { name: "The Neural Network", rank: 7, badge: "🧠" },
-    { name: "Fantastic Four", rank: 8, badge: "✨" },
-    { name: "Pixel_Perfect", rank: 9, badge: "🎨" },
-    { name: "codemonk", rank: 10, badge: "🎯" },
-    { name: "Skittles", rank: 11, badge: "🌈" },
-    { name: "JHC hub", rank: 12, badge: "💻" },
-    { name: "Senorita", rank: 13, badge: "🌟" },
-    { name: "Techies", rank: 14, badge: "⚡" },
-    { name: "8 bit", rank: 15, badge: "🎮" }
+  const shortlistedTeams = [
+    { name: "Humorous", badge: "🏆" },
+    { name: "Hack O' Giants", badge: "🚀" },
+    { name: "Coding Knights", badge: "⭐" },
+    { name: "402", badge: "✨" },
+    { name: "Red Renegades", badge: "💫" },
+    { name: "Int main", badge: "🧠" },
+    { name: "The Neural Network", badge: "🎯" },
+    { name: "Fantastic Four", badge: "🌟" },
+    { name: "Pixel_Perfect", badge: "💻" },
+    { name: "codemonk", badge: "⚡" },
+    { name: "Skittles", badge: "🌈" },
+    { name: "JHC hub", badge: "🎨" },
+    { name: "Senorita", badge: "🔮" },
+    { name: "Techies", badge: "💡" },
+    { name: "8 bit", badge: "🎮" },
+    { name: "localhost:8080", badge: "🌐" }
   ];
 
   useEffect(() => {
@@ -612,7 +613,7 @@ const Navbar = () => {
                 >
                   <span className="relative z-10 text-cyan-400 flex items-center">
                     <FaTrophy className="mr-2" />
-                    {`> Final_Rankings`}
+                    {`> Shortlisted_Teams`}
                   </span>
                   <motion.div
                     className="absolute inset-0 bg-cyan-500/10 rounded-md"
