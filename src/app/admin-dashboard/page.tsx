@@ -151,7 +151,7 @@ export default function AdminDashboard() {
   };
 
   const filteredTeams = Object.entries(teams).filter(([_, team]) => {
-    // First check if the team matches the search term
+    // First check if the team matches the search term (allowing spaces)
     const matchesSearch = searchTerm === '' || 
       team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -162,7 +162,6 @@ export default function AdminDashboard() {
       (activeFilter === "projectSubmitted" && team.projectSubmission !== undefined) ||
       (activeFilter === "submissionUrl" && team.submissionUrl !== undefined);
 
-    // Return true only if both conditions are met
     return matchesSearch && matchesFilter;
   });
 
@@ -374,7 +373,7 @@ export default function AdminDashboard() {
               type="text"
               placeholder="Search_Teams"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value.trim())}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-black/30 border border-purple-500/30 rounded-lg pl-8 pr-4 py-2
                 text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 
                 placeholder-gray-600"
