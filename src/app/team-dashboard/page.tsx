@@ -536,7 +536,6 @@ export default function TeamDashboard() {
                             className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-purple-500 rounded-t-md px-4 py-2 
                               text-gray-100 font-mono text-sm focus:outline-none transition-colors"
                             placeholder="https://github.com/username/repo"
-                            required
                           />
                           <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-purple-500 group-focus-within:w-full transition-all duration-300"></div>
                         </div>
@@ -648,7 +647,6 @@ export default function TeamDashboard() {
                             className="w-full bg-gray-900/70 border-b-2 border-gray-700 focus:border-purple-500 rounded-t-md px-4 py-2 
                               text-gray-100 font-mono text-sm focus:outline-none transition-colors"
                             placeholder="https://your-url-here.com"
-                            required
                           />
                           <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-purple-500 group-focus-within:w-full transition-all duration-300"></div>
                         </div>
@@ -848,7 +846,6 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
                         placeholder="https://your-demo-url.com"
-                        required
                       />
                     </div>
                     {/* Presentation URL */}
@@ -863,8 +860,7 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="https://slides.com/your-presentation"
-                        required
+                        placeholder="https://your-presentation-url.com"
                       />
                     </div>
                     {/* Code Repository */}
@@ -879,8 +875,7 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="https://github.com/username/repo"
-                        required
+                        placeholder="https://github.com/your-repo"
                       />
                     </div>
                   </div>
@@ -895,21 +890,14 @@ export default function TeamDashboard() {
                       <label className="block text-purple-400 font-mono text-sm mb-2">
                         {`> Problem_Statement:`}
                       </label>
-                      <select
+                      <textarea
                         name="problemStatement"
                         value={formData.problemStatement}
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        required
-                      >
-                        <option value="">Select a problem statement</option>
-                        {problemStatements.map((statement, index) => (
-                          <option key={index} value={statement}>
-                            {statement}
-                          </option>
-                        ))}
-                      </select>
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="Describe the problem you're solving..."
+                      />
                     </div>
                     {/* Solution */}
                     <div>
@@ -923,7 +911,6 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
                         placeholder="Describe your solution..."
-                        required
                       />
                     </div>
                     {/* Tech Stack */}
@@ -931,15 +918,13 @@ export default function TeamDashboard() {
                       <label className="block text-purple-400 font-mono text-sm mb-2">
                         {`> Tech_Stack:`}
                       </label>
-                      <input
-                        type="text"
+                      <textarea
                         name="techStack"
                         value={formData.techStack}
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
-                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50"
-                        placeholder="React, Node.js, Firebase, etc."
-                        required
+                          text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
+                        placeholder="List the technologies used..."
                       />
                     </div>
                     {/* Documentation */}
@@ -953,13 +938,13 @@ export default function TeamDashboard() {
                         onChange={handleChange}
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
-                        placeholder="Add any additional documentation or setup instructions..."
+                        placeholder="Project documentation and setup instructions..."
                       />
                     </div>
                     {/* Challenges Faced */}
                     <div>
                       <label className="block text-purple-400 font-mono text-sm mb-2">
-                        {`> Challenges_Faced:`}
+                        {`> Challenges:`}
                       </label>
                       <textarea
                         name="challenges"
@@ -968,7 +953,6 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
                         placeholder="Describe the challenges you faced during development..."
-                        required
                       />
                     </div>
                     {/* Key Learnings */}
@@ -983,7 +967,6 @@ export default function TeamDashboard() {
                         className="w-full bg-black/30 border border-purple-500/30 rounded p-2 
                           text-gray-300 font-mono focus:outline-none focus:border-purple-500/50 min-h-[100px]"
                         placeholder="Share your key learnings from this project..."
-                        required
                       />
                     </div>
                   </div>
