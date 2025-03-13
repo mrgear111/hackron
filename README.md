@@ -4,6 +4,7 @@ A cyberpunk-themed hackathon management platform for NST 24-hour coding competit
 
 ![Hackron Banner](public/hackron-banner.png)
 
+
 ## 🚀 Features
 
 ### For Teams
