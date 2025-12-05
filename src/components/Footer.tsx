@@ -71,7 +71,7 @@ const Footer = () => {
               animate={{ opacity: 1 }}
               className="text-gray-400 flex items-center space-x-1"
             >
-              <span>Vice_President</span>
+              {/* <span>Vice_President</span> */}
               <motion.span 
                 animate={{ opacity: [0, 1, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
