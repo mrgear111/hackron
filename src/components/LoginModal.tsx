@@ -29,6 +29,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setIsLoading(true);
     setError('');
 
+    // Check if auth is initialized
+    if (!auth) {
+      setError('Firebase configuration missing. Please check .env.local');
+      setIsLoading(false);
+      return;
+    }
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
@@ -43,20 +50,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       setIsLoading(false);
       return;
     }
-    
+
     try {
       if (isLoginMode) {
         // Try to sign in first
         const userCredential = await signInWithEmailAndPassword(
-          auth, 
-          formData.email, 
+          auth,
+          formData.email,
           formData.password
         );
 
         // Check if this is an admin account
         const adminRef = ref(db, `admins/${userCredential.user.uid}`);
         const adminSnapshot = await get(adminRef);
-        
+
         if (adminSnapshot.exists()) {
           await auth.signOut();
           throw new Error('Please use admin login portal');
@@ -65,7 +72,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         // Check if team exists
         const teamRef = ref(db, `teams/${userCredential.user.uid}`);
         const teamSnapshot = await get(teamRef);
-        
+
         if (!teamSnapshot.exists()) {
           await auth.signOut();
           throw new Error('Team not found. Please register first');
@@ -78,28 +85,28 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         if (formData.password !== formData.confirmPassword) {
           throw new Error('Passwords do not match');
         }
-        
+
         if (!formData.teamName.trim()) {
           throw new Error('Team name is required');
         }
 
         // Create user account
         const userCredential = await createUserWithEmailAndPassword(
-          auth, 
-          formData.email, 
+          auth,
+          formData.email,
           formData.password
         );
-        
+
         // Save team data
         const teamData = {
           teamName: formData.teamName,
           email: formData.email,
           createdAt: new Date().toISOString(),
         };
-        
+
         const teamRef = ref(db, `teams/${userCredential.user.uid}`);
         await set(teamRef, teamData);
-        
+
         router.push('/team-dashboard');
         onClose();
       }
@@ -114,7 +121,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       } else {
         setError(error.message || 'Authentication failed');
       }
-      if (auth.currentUser) {
+      if (auth?.currentUser) {
         await auth.signOut();
       }
     } finally {
@@ -183,7 +190,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       {`> ${isLoginMode ? 'Team_Login.exe' : 'Team_Registration.exe'}`}
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={onClose}
                     className="text-gray-400 hover:text-white transition-colors"
                   >
@@ -259,11 +266,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       {[...Array(5)].map((_, i) => (
                         <div
                           key={i}
-                          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-                            i < getPasswordStrength(formData.password)
+                          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i < getPasswordStrength(formData.password)
                               ? 'bg-cyan-500'
                               : 'bg-gray-700'
-                          }`}
+                            }`}
                         />
                       ))}
                     </div>
@@ -274,19 +280,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       {``}
                       <ul className="ml-4 mt-1 space-y-1">
                         <li className={`${/[A-Z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          
+
                         </li>
                         <li className={`${/[a-z]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                        
+
                         </li>
                         <li className={`${/[0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          
+
                         </li>
                         <li className={`${/[^A-Za-z0-9]/.test(formData.password) ? 'text-cyan-400' : ''}`}>
-                          
+
                         </li>
                         <li className={`${formData.password.length >= 8 ? 'text-cyan-400' : ''}`}>
-                          
+
                         </li>
                       </ul>
                     </div>
@@ -358,8 +364,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       onClick={toggleMode}
                       className="text-gray-400 hover:text-cyan-400 font-mono text-sm transition-colors duration-300"
                     >
-                      {isLoginMode ? 
-                        `> New_Team? Register_Here` : 
+                      {isLoginMode ?
+                        `> New_Team? Register_Here` :
                         `> Already_Registered? Login_Here`
                       }
                     </button>

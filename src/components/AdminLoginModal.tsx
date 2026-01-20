@@ -39,13 +39,13 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
     const adminKeyRef = ref(db, 'adminKey');
     try {
       const snapshot = await get(adminKeyRef);
-      
+
       console.log('Admin key check:', {
         exists: snapshot.exists(),
         inputKey: formData.adminKey,
         dbKey: snapshot.val()
       });
-      
+
       if (!snapshot.exists() || snapshot.val() !== formData.adminKey) {
         throw new Error('Invalid admin key');
       }
@@ -56,18 +56,18 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
       console.error('Admin registration error:', error);
       throw error;
     }
-    
+
     // Create user account
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       formData.email,
       formData.password
     );
-    
+
     // Add to admins list
     const adminRef = ref(db, `admins/${userCredential.user.uid}`);
     await set(adminRef, formData.email);
-    
+
     return userCredential;
   };
 
@@ -75,7 +75,7 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
@@ -90,7 +90,7 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
       setIsLoading(false);
       return;
     }
-    
+
     try {
       if (isLoginMode) {
         // First check if this email is registered as an admin
@@ -108,15 +108,15 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
         // Try to sign in
         try {
           const userCredential = await signInWithEmailAndPassword(
-            auth, 
-            formData.email, 
+            auth,
+            formData.email,
             formData.password
           );
 
           // Double check the specific admin entry
           const userAdminRef = ref(db, `admins/${userCredential.user.uid}`);
           const userAdminSnapshot = await get(userAdminRef);
-          
+
           if (!userAdminSnapshot.exists()) {
             // Create the admin entry if it doesn't exist
             await set(userAdminRef, formData.email);
@@ -143,7 +143,7 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
         if (formData.password !== formData.confirmPassword) {
           throw new Error('Passwords do not match');
         }
-        
+
         if (!formData.adminKey) {
           throw new Error('Admin key is required');
         }
@@ -154,7 +154,13 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
       }
     } catch (error: any) {
       console.error('Admin auth error:', error);
-      setError(error.message || 'Authentication failed');
+
+      if (error.code === 'auth/email-already-in-use') {
+        setError('This email is already registered. Please switch to login.');
+      } else {
+        setError(error.message || 'Authentication failed');
+      }
+
       if (auth.currentUser) {
         await auth.signOut();
       }
@@ -357,8 +363,8 @@ export default function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProp
                     className="w-full text-center text-cyan-400/70 hover:text-cyan-400 
                       font-mono text-sm mt-4 transition-colors"
                   >
-                    {isLoginMode ? 
-                      '> Switch_to_Registration' : 
+                    {isLoginMode ?
+                      '> Switch_to_Registration' :
                       '> Switch_to_Login'}
                   </button>
                 </form>

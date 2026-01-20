@@ -25,11 +25,16 @@ let githubProvider: GithubAuthProvider;
 // Only initialize Firebase on the client side
 if (typeof window !== 'undefined') {
   try {
-    app = initializeApp(firebaseConfig);
-    db = getDatabase(app);
-    auth = getAuth(app);
-    analytics = getAnalytics(app);
-    githubProvider = new GithubAuthProvider();
+    // Check if required config values are present
+    if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+      console.warn('Firebase configuration missing. Check your .env.local file.');
+    } else {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      auth = getAuth(app);
+      analytics = getAnalytics(app);
+      githubProvider = new GithubAuthProvider();
+    }
   } catch (error) {
     console.error('Firebase initialization error:', error);
   }

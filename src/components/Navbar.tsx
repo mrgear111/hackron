@@ -43,6 +43,8 @@ const Navbar = () => {
   useEffect(() => {
     let teamListener: (() => void) | null = null;
 
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         setUser(null);
@@ -109,14 +111,14 @@ const Navbar = () => {
         <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm border-b border-cyan-500/30 overflow-hidden">
           {/* Animated grid background */}
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
-          
+
           {/* Animated noise overlay */}
           <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay" />
 
           {/* Glowing border with dual scan lines */}
           <div className="absolute inset-x-0 bottom-0">
             {/* Main border gradient */}
-            <motion.div 
+            <motion.div
               className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
               animate={{
                 boxShadow: [
@@ -131,12 +133,12 @@ const Navbar = () => {
             {/* Fast scan line */}
             <motion.div
               className="absolute bottom-0 h-[2px] w-[10%] bg-cyan-400/80"
-              animate={{ 
+              animate={{
                 x: ["-100%", "1000%"],
                 opacity: [0, 1, 0]
               }}
-              transition={{ 
-                duration: 2, 
+              transition={{
+                duration: 2,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -145,12 +147,12 @@ const Navbar = () => {
             {/* Slow scan line */}
             <motion.div
               className="absolute bottom-0 h-[1px] w-[30%] bg-cyan-400/40"
-              animate={{ 
+              animate={{
                 x: ["-100%", "400%"],
                 opacity: [0, 1, 0]
               }}
-              transition={{ 
-                duration: 4, 
+              transition={{
+                duration: 4,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -163,7 +165,7 @@ const Navbar = () => {
               <motion.div
                 key={i}
                 className="absolute top-0 w-px bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
-                style={{ 
+                style={{
                   left: `${i * 3.33}%`,
                   height: '100%',
                   opacity: 0.1
@@ -350,7 +352,7 @@ const Navbar = () => {
                             >
                               <span className="text-purple-400">{`_Connected`}</span>
                               <motion.span
-                                animate={{ 
+                                animate={{
                                   textShadow: [
                                     "0 0 8px rgba(168, 85, 247, 0.4)",
                                     "0 0 12px rgba(168, 85, 247, 0.2)",
@@ -383,9 +385,8 @@ const Navbar = () => {
                             )}
                           </span>
                           <motion.div
-                            className={`absolute inset-0 border ${
-                              isAdmin ? 'border-purple-500/30' : 'border-cyan-500/30'
-                            } rounded-md`}
+                            className={`absolute inset-0 border ${isAdmin ? 'border-purple-500/30' : 'border-cyan-500/30'
+                              } rounded-md`}
                             animate={{
                               boxShadow: [
                                 `0 0 10px ${isAdmin ? 'rgba(168,85,247,0.2)' : 'rgba(0,255,255,0.2)'}`,
@@ -428,8 +429,8 @@ const Navbar = () => {
                   ) : (
                     <>
                       {/* Login Button */}
-                      <motion.div 
-                        whileHover={{ scale: 1.05 }} 
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="relative group"
                       >
@@ -440,7 +441,7 @@ const Navbar = () => {
                           <span className="relative z-10 text-cyan-400 group-hover:text-cyan-300">
                             {`> Team_Login`}
                           </span>
-                          
+
                           {/* Animated border */}
                           <motion.div
                             className="absolute inset-0 border border-cyan-500/30 rounded-md"
@@ -502,8 +503,8 @@ const Navbar = () => {
                       </motion.div>
 
                       {/* Admin Button - Only show when not logged in */}
-                      <motion.div 
-                        whileHover={{ scale: 1.05 }} 
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="relative group"
                       >
@@ -514,7 +515,7 @@ const Navbar = () => {
                           <span className="relative z-10 text-purple-400 group-hover:text-purple-300">
                             {`> Admin_Login`}
                           </span>
-                          
+
                           {/* Animated border */}
                           <motion.div
                             className="absolute inset-0 border border-purple-500/30 rounded-md"
@@ -578,55 +579,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* Problem Statements Button */}
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    href="/problems"
-                    className="relative group px-4 py-2 text-sm font-mono"
-                  >
-                    <span className="relative z-10 text-cyan-400">
-                      {`> Problem_Statements`}
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 border border-cyan-500/30 rounded-md"
-                      animate={{
-                        boxShadow: [
-                          "0 0 10px rgba(0,255,255,0.2)",
-                          "0 0 20px rgba(0,255,255,0.1)",
-                          "0 0 10px rgba(0,255,255,0.2)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                      }}
-                    />
-                  </Link>
-                </motion.div>
 
-                {/* Final Rankings Button */}
-                <Link
-                  href="/leaderboard"
-                  className="relative group px-4 py-2 text-sm font-mono hover:text-cyan-400 transition-colors duration-300"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <span>{`> Shortlisted_Teams`}</span>
-                  </span>
-                  <motion.div
-                    className="absolute inset-0 border border-cyan-500/30 rounded-md overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity"
-                    animate={{
-                      boxShadow: [
-                        "0 0 10px rgba(34,211,238,0.2)",
-                        "0 0 20px rgba(34,211,238,0.1)",
-                        "0 0 10px rgba(34,211,238,0.2)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                    }}
-                  />
-                </Link>
               </div>
             </div>
           </div>
@@ -673,7 +626,7 @@ const Navbar = () => {
         </motion.div>
       </motion.nav>
 
-      <LoginModal 
+      <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
       />

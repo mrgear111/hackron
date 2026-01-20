@@ -17,7 +17,7 @@ export default function Home() {
       { icon: "📅", label: "Date", value: "5th March" },
       { icon: "📍", label: "Venue", value: "Lab 1 & 2" },
       { icon: "👥", label: "Participants", value: "UG students" },
-      { icon: "💰", label: "Prize Pool", value: "60k" },
+      { icon: "💰", label: "Prize Pool", value: "75k" },
     ],
     timeline: [
       { time: "07:30 - 09:00", event: "Registration", desc: "" },
@@ -63,7 +63,7 @@ export default function Home() {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -88,7 +88,7 @@ export default function Home() {
 
       {/* Loading Animation */}
       {loading && (
-        <motion.div 
+        <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black"
           initial={{ opacity: 1 }}
           animate={{ opacity: loading ? 1 : 0 }}
@@ -103,7 +103,7 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="mb-8 relative"
             >
-              <motion.div 
+              <motion.div
                 className="text-4xl md:text-6xl font-bold font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
                 animate={{
                   textShadow: [
@@ -114,9 +114,9 @@ export default function Home() {
                 }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
-                HACKRON_2025
+                HACKRON_2026
               </motion.div>
-              
+
               {/* Glitch effect */}
               <motion.div
                 className="absolute inset-0 text-4xl md:text-6xl font-bold font-mono text-cyan-400/30"
@@ -130,10 +130,10 @@ export default function Home() {
                   repeatType: "reverse"
                 }}
               >
-                HACKRON_2025
+                HACKRON_2026
               </motion.div>
             </motion.div>
-            
+
             {/* Loading bar */}
             <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden relative">
               <motion.div
@@ -142,24 +142,24 @@ export default function Home() {
                 animate={{ width: "100%" }}
                 transition={{ duration: 2, ease: "easeInOut" }}
               />
-              
+
               {/* Scanning effect */}
               <motion.div
                 className="absolute top-0 left-0 h-full w-[20%] bg-white/50"
-                animate={{ 
+                animate={{
                   x: ["-100%", "500%"],
                   opacity: [0, 1, 0]
                 }}
-                transition={{ 
-                  duration: 1.5, 
+                transition={{
+                  duration: 1.5,
                   repeat: Infinity,
                   ease: "linear"
                 }}
               />
             </div>
-            
+
             {/* Loading text */}
-            <motion.div 
+            <motion.div
               className="mt-4 font-mono text-cyan-400/70 flex items-center"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -173,7 +173,7 @@ export default function Home() {
                 _
               </motion.span>
             </motion.div>
-            
+
             {/* System messages */}
             <div className="mt-6 font-mono text-xs text-gray-500 max-w-xs text-center">
               <motion.div
@@ -201,9 +201,9 @@ export default function Home() {
           </div>
         </motion.div>
       )}
-      
+
       {/* Grid Pattern */}
-      <motion.div 
+      <motion.div
         className="fixed inset-0 bg-grid-pattern pointer-events-none"
         style={{ opacity: gridOpacity, y: bgY }}
         initial={{ opacity: 0 }}
@@ -211,26 +211,26 @@ export default function Home() {
         transition={{ duration: 0.5, delay: 0.3 }}
       />
       <div className="fixed inset-0 bg-gradient-to-b from-black via-black/50 to-black pointer-events-none"></div>
-      
+
       <Navbar />
-      
+
       <main ref={scrollRef}>
         {/* Hero Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="relative min-h-[40vh] mb-12 overflow-hidden"
         >
           {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-yellow-900/10 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-900/10 to-black" />
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
-          
+
           {/* Animated Lines */}
           <div className="absolute inset-0">
             {[...Array(5)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute h-px bg-yellow-400/20"
+                className="absolute h-px bg-cyan-400/20"
                 style={{ top: `${20 * i}%`, left: 0, right: 0 }}
                 animate={{
                   opacity: [0.2, 0.5, 0.2],
@@ -249,60 +249,58 @@ export default function Home() {
           <div className="relative max-w-7xl mx-auto px-4 py-16">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               {/* Left Side - Text */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="flex-1"
               >
-                <div className="inline-block mb-4 px-4 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
-                  <span className="font-mono text-yellow-400 text-sm">Powered by</span>
-                </div>
+
                 <motion.div
                   animate={{
                     textShadow: [
-                      "0 0 20px rgba(234,179,8,0)",
-                      "0 0 20px rgba(234,179,8,0.5)",
-                      "0 0 20px rgba(234,179,8,0)",
+                      "0 0 20px rgba(34,211,238,0)",
+                      "0 0 20px rgba(34,211,238,0.5)",
+                      "0 0 20px rgba(34,211,238,0)",
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
                   className="mb-6"
                 >
-                  <h1 className="text-4xl md:text-6xl font-bold font-mono text-yellow-400 mb-2">
-                    BLINKIT x HACKRON
+                  <h1 className="text-4xl md:text-6xl font-bold font-mono text-cyan-400 mb-2">
+                    HACKRON 2026
                   </h1>
-                  <p className="text-xl text-yellow-500/80">Delivering Innovation at Lightning Speed</p>
+                  <p className="text-xl text-cyan-500/80">Innovate. Build. Conquer.</p>
                 </motion.div>
-                
+
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <motion.div 
+                    <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-3xl font-bold text-yellow-400"
-                    >
-                      10
-                    </motion.div>
-                    <div className="text-sm text-gray-400">Minute Delivery</div>
-                  </div>
-                  <div className="text-center">
-                    <motion.div 
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-                      className="text-3xl font-bold text-yellow-400"
+                      className="text-3xl font-bold text-cyan-400"
                     >
                       24H
                     </motion.div>
-                    <div className="text-sm text-gray-400">Innovation</div>
+                    <div className="text-sm text-gray-400">Duration</div>
                   </div>
                   <div className="text-center">
-                    <motion.div 
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                      className="text-3xl font-bold text-cyan-400"
+                    >
+                      50+
+                    </motion.div>
+                    <div className="text-sm text-gray-400">Teams</div>
+                  </div>
+                  <div className="text-center">
+                    <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-                      className="text-3xl font-bold text-yellow-400"
+                      className="text-3xl font-bold text-cyan-400"
                     >
-                      60K
+                      75K
                     </motion.div>
                     <div className="text-sm text-gray-400">Prize Pool</div>
                   </div>
@@ -310,7 +308,7 @@ export default function Home() {
               </motion.div>
 
               {/* Right Side - Logo & Effects */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="relative w-64 h-64 md:w-96 md:h-96"
@@ -324,7 +322,7 @@ export default function Home() {
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="absolute inset-0 border-2 border-dashed border-yellow-500/20 rounded-full"
+                      className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full"
                       style={{
                         transform: `scale(${0.8 + i * 0.2}) rotate(${i * 30}deg)`,
                       }}
@@ -332,34 +330,30 @@ export default function Home() {
                   ))}
                 </motion.div>
 
-                {/* Blinkit Logo */}
+                {/* Center Tech Element */}
                 <motion.div
-                  animate={{ 
+                  animate={{
                     y: [0, -10, 0],
                     filter: [
-                      'drop-shadow(0 0 20px rgba(234,179,8,0.2))',
-                      'drop-shadow(0 0 40px rgba(234,179,8,0.4))',
-                      'drop-shadow(0 0 20px rgba(234,179,8,0.2))'
+                      'drop-shadow(0 0 20px rgba(34,211,238,0.2))',
+                      'drop-shadow(0 0 40px rgba(34,211,238,0.4))',
+                      'drop-shadow(0 0 20px rgba(34,211,238,0.2))'
                     ]
                   }}
                   transition={{ duration: 4, repeat: Infinity }}
                   className="absolute inset-0 flex items-center justify-center"
                 >
-                  <Image
-                    src="/logo.png"
-                    alt="Blinkit Logo"
-                    width={200}
-                    height={200}
-                    className="object-contain"
-                  />
+                  <div className="text-6xl text-cyan-400 font-mono font-bold">
+                    &lt;/&gt;
+                  </div>
                 </motion.div>
 
                 {/* Lightning effects */}
                 {[...Array(4)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-gradient-to-b from-yellow-400 to-transparent"
-                    style={{ 
+                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-gradient-to-b from-cyan-400 to-transparent"
+                    style={{
                       transformOrigin: '50% 0%',
                       rotate: `${i * 90}deg`,
                     }}
@@ -425,7 +419,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Prize_Pool</div>
-                  <div className="text-gray-300 font-mono">💰 60k</div>
+                  <div className="text-gray-300 font-mono">💰 75k</div>
                 </div>
               </div>
 
@@ -435,7 +429,7 @@ export default function Home() {
                   <span>&gt; Event_Timeline</span>
                   <div className="h-[1px] flex-grow ml-4 bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
                 </div>
-                
+
                 {/* Professional timeline with day separation */}
                 <div className="bg-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
                   {/* Day 1 */}
@@ -460,7 +454,7 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                  
+
                   {/* Day 2 */}
                   <div>
                     <div className="text-cyan-400 font-mono text-lg mb-3 border-b border-cyan-500/20 pb-2">Day 2</div>
@@ -532,7 +526,7 @@ export default function Home() {
         </motion.section>
 
         {/* Add Login Modal */}
-        <LoginModal 
+        <LoginModal
           isOpen={isLoginModalOpen}
           onClose={() => setIsLoginModalOpen(false)}
         />

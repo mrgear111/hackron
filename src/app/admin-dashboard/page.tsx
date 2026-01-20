@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FirebaseError } from 'firebase/app';
-import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList } from 'react-icons/fa';
+import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList, FaBell } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -65,6 +65,44 @@ export default function AdminDashboard() {
   const [judgedTeams, setJudgedTeams] = useState<Record<string, boolean>>({});
   const [teamCheckpoints, setTeamCheckpoints] = useState<Record<string, Record<string, boolean>>>({});
 
+  // Notification State
+  const [notificationMsg, setNotificationMsg] = useState('');
+  const [isUrgent, setIsUrgent] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  // Fetch current notification on load
+  useEffect(() => {
+    const notificationRef = ref(db, 'admin/notification');
+    onValue(notificationRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setNotificationMsg(data.text || '');
+        setIsUrgent(data.isUrgent || false);
+        setIsActive(data.active || false);
+      }
+    });
+  }, []);
+
+  const handleUpdateNotification = async () => {
+    try {
+      if (!auth.currentUser) return;
+
+      const notificationRef = ref(db, 'admin/notification');
+      await set(notificationRef, {
+        text: notificationMsg,
+        isUrgent,
+        active: isActive,
+        lastUpdated: new Date().toISOString(),
+        updatedBy: auth.currentUser.email
+      });
+
+      alert('Notification broadcast updated successfully!');
+    } catch (error) {
+      console.error('Error updating notification:', error);
+      alert('Failed to update notification');
+    }
+  };
+
   useEffect(() => {
     console.log("AdminDashboard useEffect triggered");
     setRandomQuote(judgeQuotes[Math.floor(Math.random() * judgeQuotes.length)]);
@@ -80,7 +118,7 @@ export default function AdminDashboard() {
         // Check if user is admin using their UID
         const adminRef = ref(db, `admins/${user.uid}`);
         const adminSnapshot = await get(adminRef);
-        
+
         if (!adminSnapshot.exists()) {
           console.log("Not an admin, redirecting");
           router.push('/');
@@ -89,11 +127,11 @@ export default function AdminDashboard() {
 
         // Fetch teams data with error handling
         const teamsRef = ref(db, 'teams');
-        const unsubTeams = onValue(teamsRef, 
+        const unsubTeams = onValue(teamsRef,
           (snapshot) => {
             const teamsData = snapshot.val() || {};
             setTeams(teamsData);
-            
+
             // Extract checkpoints data
             const checkpoints: Record<string, Record<string, boolean>> = {};
             Object.entries(teamsData).forEach(([id, team]: [string, any]) => {
@@ -102,11 +140,11 @@ export default function AdminDashboard() {
               }
             });
             setTeamCheckpoints(checkpoints);
-            
+
             // Also get judging data if it exists
             const scores: Record<string, TeamScore> = {};
             const judged: Record<string, boolean> = {};
-            
+
             Object.entries(teamsData).forEach(([id, team]: [string, any]) => {
               if (team.judging) {
                 scores[id] = team.judging;
@@ -116,11 +154,11 @@ export default function AdminDashboard() {
                 }
               }
             });
-            
+
             setTeamScores(scores);
             setJudgedTeams(judged);
             setLoading(false);
-          }, 
+          },
           (error) => {
             console.error("Error fetching teams:", error);
             if ('code' in error && error.code === 'PERMISSION_DENIED') {
@@ -146,18 +184,18 @@ export default function AdminDashboard() {
     const totalTeams = Object.keys(teams).length;
     const submittedProjects = Object.values(teams).filter(team => team.projectSubmission).length;
     const pendingSubmissions = totalTeams - submittedProjects;
-    
+
     return { totalTeams, submittedProjects, pendingSubmissions };
   };
 
   const filteredTeams = Object.entries(teams).filter(([_, team]) => {
     // First check if the team matches the search term (allowing spaces)
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.email.toLowerCase().includes(searchTerm.toLowerCase());
 
     // Then check if it matches the active filter
-    const matchesFilter = 
+    const matchesFilter =
       activeFilter === "all" ||
       (activeFilter === "projectSubmitted" && team.projectSubmission !== undefined) ||
       (activeFilter === "submissionUrl" && team.submissionUrl !== undefined);
@@ -175,29 +213,29 @@ export default function AdminDashboard() {
 
   const handleScoreSubmit = async (teamId: string, scores: Omit<TeamScore, 'totalScore' | 'judgedBy' | 'judgedAt'>) => {
     try {
-      const totalScore = 
-        scores.innovation + 
-        scores.implementation + 
-        scores.presentation + 
+      const totalScore =
+        scores.innovation +
+        scores.implementation +
+        scores.presentation +
         scores.problemSolving;
-      
+
       const scoreData: TeamScore = {
         ...scores,
         totalScore,
         judgedBy: auth.currentUser?.email || 'Unknown',
         judgedAt: new Date().toISOString()
       };
-      
+
       // Save to Firebase
       const scoreRef = ref(db, `teams/${teamId}/judging`);
       await set(scoreRef, scoreData);
-      
+
       // Update local state
       setTeamScores(prev => ({
         ...prev,
         [teamId]: scoreData
       }));
-      
+
       // Show success message
       alert("Scores submitted successfully!");
     } catch (error) {
@@ -208,29 +246,29 @@ export default function AdminDashboard() {
 
   const toggleJudgedStatus = async (teamId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent team expansion when clicking the checkbox
-    
+
     if (!auth.currentUser) {
       alert("You must be logged in to judge teams");
       return;
     }
-    
+
     try {
       const newStatus = !judgedTeams[teamId];
-      
+
       // Get the current team data
       const teamRef = ref(db, `teams/${teamId}`);
       const snapshot = await get(teamRef);
       const teamData = snapshot.val() || {};
-      
+
       // Create or update the judging field
       const judging = teamData.judging || {};
       judging.isJudged = newStatus;
       judging.judgedBy = auth.currentUser.email;
       judging.judgedAt = new Date().toISOString();
-      
+
       // Update the team data
       await set(ref(db, `teams/${teamId}/judging`), judging);
-      
+
       // Update local state
       setJudgedTeams(prev => ({
         ...prev,
@@ -247,7 +285,7 @@ export default function AdminDashboard() {
       const newValue = !teamCheckpoints[teamId]?.[checkpoint];
       const checkpointRef = ref(db, `teams/${teamId}/checkpoints/${checkpoint}`);
       await set(checkpointRef, newValue);
-      
+
       setTeamCheckpoints(prev => ({
         ...prev,
         [teamId]: {
@@ -266,11 +304,11 @@ export default function AdminDashboard() {
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               rotate: [0, 360]
             }}
-            transition={{ 
+            transition={{
               duration: 2,
               repeat: Infinity,
               ease: "linear"
@@ -324,7 +362,7 @@ export default function AdminDashboard() {
 
             {/* Quote Content */}
             <div className="relative ml-6">
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -344,6 +382,55 @@ export default function AdminDashboard() {
               className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"
             />
           </motion.div>
+
+          {/* Notification Console */}
+          <div className="bg-black/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
+            <h2 className="text-xl font-mono text-cyan-400 mb-4 flex items-center gap-2">
+              <FaBell className="text-cyan-500" />
+              <span>{`> Notification_Console`}</span>
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-500 font-mono text-sm mb-2">Message Content:</label>
+                <textarea
+                  value={notificationMsg}
+                  onChange={(e) => setNotificationMsg(e.target.value)}
+                  className="w-full bg-black/30 border border-cyan-500/30 rounded-lg p-3 text-gray-300 font-mono focus:outline-none focus:border-cyan-500 h-24"
+                  placeholder="Enter notification message..."
+                />
+              </div>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isUrgent}
+                    onChange={(e) => setIsUrgent(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
+                  />
+                  <span className={`font-mono text-sm ${isUrgent ? 'text-red-400' : 'text-gray-400'}`}>
+                    Mark as Urgent
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isActive}
+                    onChange={(e) => setIsActive(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
+                  />
+                  <span className={`font-mono text-sm ${isActive ? 'text-green-400' : 'text-gray-400'}`}>
+                    Active (Visible to Teams)
+                  </span>
+                </label>
+                <button
+                  onClick={handleUpdateNotification}
+                  className="ml-auto px-6 py-2 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/50 rounded-lg text-cyan-400 font-mono text-sm transition-all"
+                >
+                  {`> Update_Broadcast`}
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -386,38 +473,35 @@ export default function AdminDashboard() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveFilter("all")}
-              className={`px-4 py-2 rounded-md font-mono text-sm ${
-                activeFilter === "all"
-                  ? "bg-cyan-600/80 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
-              }`}
+              className={`px-4 py-2 rounded-md font-mono text-sm ${activeFilter === "all"
+                ? "bg-cyan-600/80 text-white"
+                : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+                }`}
             >
               All Teams
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveFilter("projectSubmitted")}
-              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${
-                activeFilter === "projectSubmitted"
-                  ? "bg-purple-600/80 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
-              }`}
+              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${activeFilter === "projectSubmitted"
+                ? "bg-purple-600/80 text-white"
+                : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+                }`}
             >
               <FaFileCode />
               Project Submitted
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveFilter("submissionUrl")}
-              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${
-                activeFilter === "submissionUrl"
-                  ? "bg-green-600/80 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
-              }`}
+              className={`px-4 py-2 rounded-md font-mono text-sm flex items-center gap-2 ${activeFilter === "submissionUrl"
+                ? "bg-green-600/80 text-white"
+                : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50"
+                }`}
             >
               <FaLink />
               Submission URL Added
@@ -439,19 +523,17 @@ export default function AdminDashboard() {
               {filteredTeams.map(([id, team]) => (
                 <motion.div
                   key={id}
-                  className={`bg-black/40 backdrop-blur-sm border ${
-                    expandedTeamId === id 
-                      ? 'border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                      : 'border-gray-800'
-                  } rounded-lg overflow-hidden transition-all duration-300`}
+                  className={`bg-black/40 backdrop-blur-sm border ${expandedTeamId === id
+                    ? 'border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'border-gray-800'
+                    } rounded-lg overflow-hidden transition-all duration-300`}
                 >
                   {/* Team Header */}
-                  <div 
-                    className={`p-4 cursor-pointer ${
-                      expandedTeamId === id 
-                        ? 'bg-gradient-to-r from-cyan-500/5 to-transparent' 
-                        : 'hover:bg-gray-800/30'
-                    } transition-colors duration-300`}
+                  <div
+                    className={`p-4 cursor-pointer ${expandedTeamId === id
+                      ? 'bg-gradient-to-r from-cyan-500/5 to-transparent'
+                      : 'hover:bg-gray-800/30'
+                      } transition-colors duration-300`}
                     onClick={() => setExpandedTeamId(expandedTeamId === id ? null : id)}
                   >
                     <div className="flex justify-between items-start">
@@ -464,7 +546,7 @@ export default function AdminDashboard() {
                         </h3>
                         <p className="text-sm font-mono text-gray-400">{team.email}</p>
                         {team.githubRepo && (
-                          <a 
+                          <a
                             href={team.githubRepo.repoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -479,7 +561,7 @@ export default function AdminDashboard() {
                           </a>
                         )}
                         {team.submissionUrl && (
-                          <a 
+                          <a
                             href={team.submissionUrl}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -509,11 +591,11 @@ export default function AdminDashboard() {
                             Submission Pending
                           </span>
                         )}
-                        
+
                         {/* Checkpoints Status */}
                         <div className="flex gap-2">
                           {['C1', 'C2', 'C3', 'C4'].map((checkpoint, index) => (
-                            <div 
+                            <div
                               key={checkpoint}
                               className="flex items-center"
                               onClick={(e) => {
@@ -524,8 +606,8 @@ export default function AdminDashboard() {
                             >
                               <div className={`
                                 w-6 h-6 flex items-center justify-center rounded border 
-                                ${team.checkpoints?.[checkpoint] 
-                                  ? 'bg-purple-500/20 border-purple-500/50 text-purple-400' 
+                                ${team.checkpoints?.[checkpoint]
+                                  ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
                                   : 'bg-gray-800/30 border-gray-700 text-gray-500'} 
                                 cursor-pointer hover:bg-purple-500/10 transition-colors
                               `}>
@@ -536,7 +618,7 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Existing Mark as Judged button */}
-                        <div 
+                        <div
                           className={`px-3 py-1 ${judgedTeams[id] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-gray-800/30 border-gray-700'} 
                             border rounded-full text-xs font-mono flex items-center cursor-pointer`}
                           onClick={(e) => toggleJudgedStatus(id, e)}
@@ -555,7 +637,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Expanded Details */}
                   {expandedTeamId === id && (
                     <motion.div
@@ -628,7 +710,7 @@ export default function AdminDashboard() {
                               </h4>
                               <div className="space-y-3 ml-4">
                                 {team.projectSubmission.liveDemo && (
-                                  <a 
+                                  <a
                                     href={team.projectSubmission.liveDemo}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -639,7 +721,7 @@ export default function AdminDashboard() {
                                   </a>
                                 )}
                                 {team.projectSubmission.videoWalkthrough && (
-                                  <a 
+                                  <a
                                     href={team.projectSubmission.videoWalkthrough}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -650,7 +732,7 @@ export default function AdminDashboard() {
                                   </a>
                                 )}
                                 {team.projectSubmission.presentationUrl && (
-                                  <a 
+                                  <a
                                     href={team.projectSubmission.presentationUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -661,7 +743,7 @@ export default function AdminDashboard() {
                                   </a>
                                 )}
                                 {team.githubRepo && (
-                                  <a 
+                                  <a
                                     href={team.githubRepo.repoUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"

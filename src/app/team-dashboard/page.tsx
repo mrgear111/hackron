@@ -38,19 +38,19 @@ interface GitHubRepo {
 
 const problemStatements = [
   "City-Wide Dark Store Network Projection: Develop a system for analyzing and projecting the expansion of dark stores across a city. It may involve demand forecasting, geographical analysis, and optimal placement for maximum efficiency and customer reach.",
-  
+
   "Smart Inventory Theft Detection System: A system that uses AI, IoT, and data analytics to detect theft in inventory management. It could involve real-time monitoring, anomaly detection, and alert mechanisms to prevent unauthorized access or theft.",
-  
+
   "Smart Dynamic Pricing System: Create a pricing system that adjusts product prices dynamically based on various factors like demand, stock levels, competitor pricing, and customer behavior, potentially using AI or machine learning for optimization.",
-  
+
   "Dark Store Management Platform: Design a comprehensive platform for managing dark stores, which includes inventory tracking, order management, staff coordination, and logistical planning. It should streamline operations for better efficiency.",
-  
+
   "Real-Time Inventory Auditing System: Build a system that allows for continuous, real-time auditing of inventory levels in warehouses or stores, minimizing the need for manual stock-taking and improving accuracy in inventory data.",
-  
+
   "Expiry-Based Dynamic Discount System: A system that automatically applies dynamic discounts to products nearing their expiration date, encouraging sales while reducing waste. It could integrate with inventory systems to monitor expiration and adjust pricing accordingly.",
-  
+
   "Waste Management Automation in Dark Stores: Create a solution to automate waste management processes in dark stores, including the efficient disposal, recycling, and reduction of waste. This might involve IoT integration, AI for predictive waste patterns, and sustainability features.",
-  
+
   "Heatmap-Based Store Placement Analysis: Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores."
 ];
 
@@ -113,6 +113,7 @@ export default function TeamDashboard() {
   const [submissionUrl, setSubmissionUrl] = useState('');
   const [isSubmittingUrl, setIsSubmittingUrl] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(0);
+  const [adminBroadcast, setAdminBroadcast] = useState<{ text: string, isUrgent: boolean, timestamp?: string } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -129,21 +130,49 @@ export default function TeamDashboard() {
         return;
       }
 
-      // Set showForm to false since hackathon is over
-      setShowForm(false);
-      
-      // Fetch team data
+      // Fetch team data first to check submission status
       const teamRef = ref(db, `teams/${user.uid}`);
       onValue(teamRef, (snapshot) => {
         const data = snapshot.val();
+
+        // Set showForm based on whether submission exists
+        setShowForm(!data?.projectSubmission);
+
         setTeamData(data);
-        
+
         // Also get GitHub repo data if it exists
         if (data && data.githubRepo) {
           setGithubRepo(data.githubRepo);
+          setRepoUrl(data.githubRepo.repoUrl);
         }
-        
+
+        if (data && data.submissionUrl) {
+          setSubmissionUrl(data.submissionUrl);
+        }
+
         setLoading(false);
+      });
+
+      // Listen for notifications
+      const notificationRef = ref(db, 'admin/notification');
+      onValue(notificationRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.active && data.text) {
+          // Override the current quote with the broadcast message
+          const adminQuote = {
+            text: data.text,
+            isUrgent: data.isUrgent || false,
+            timestamp: data.lastUpdated
+          };
+
+          // We'll put this in a special state or override the quotes array
+          // Here I'll add it as a high-priority quote and freeze the rotation
+          // or handle it via a new state variable. 
+          // Let's use a new state variable for Admin Broadcast to take precedence.
+          setAdminBroadcast(adminQuote);
+        } else {
+          setAdminBroadcast(null);
+        }
       });
     });
 
@@ -151,8 +180,13 @@ export default function TeamDashboard() {
   }, [router]);
 
   const handleEditSubmission = () => {
-    setError("Project submissions are now closed. The hackathon has ended.");
-    return;
+    setShowForm(true);
+    setIsEditMode(true);
+    setError('');
+    // Pre-fill form with existing data
+    if (teamData?.projectSubmission) {
+      setFormData(teamData.projectSubmission);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,12 +207,8 @@ export default function TeamDashboard() {
 
       // Update team data after submission
       setTeamData(prev => ({
-        ...prev,
+        ...prev!, // Assert prev is not null as we're authenticated
         projectSubmission: formData,
-        teamName: prev?.teamName || '',
-        email: prev?.email || '',
-        createdAt: prev?.createdAt || '',
-        githubRepo: prev?.githubRepo || undefined
       }));
 
       // Set success message
@@ -213,14 +243,54 @@ export default function TeamDashboard() {
 
   const handleAddRepo = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("GitHub repository submissions are now closed. The hackathon has ended.");
-    return;
+    setIsAddingRepo(true);
+    setError('');
+
+    if (!repoUrl) {
+      setError('Please enter a GitHub repository URL');
+      setIsAddingRepo(false);
+      return;
+    }
+
+    try {
+      const repoData = {
+        repoUrl,
+        lastUpdated: new Date().toISOString()
+      };
+
+      const repoRef = ref(db, `teams/${auth.currentUser?.uid}/githubRepo`);
+      await set(repoRef, repoData);
+
+      setGithubRepo(repoData);
+      setSuccessMessage('GitHub repository connected successfully!');
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsAddingRepo(false);
+    }
   };
 
   const handleSubmitUrl = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("URL submissions are now closed. The hackathon has ended.");
-    return;
+    setIsSubmittingUrl(true);
+    setError('');
+
+    if (!submissionUrl) {
+      setError('Please enter a submission URL');
+      setIsSubmittingUrl(false);
+      return;
+    }
+
+    try {
+      const urlRef = ref(db, `teams/${auth.currentUser?.uid}/submissionUrl`);
+      await set(urlRef, submissionUrl);
+
+      setSuccessMessage('Submission URL updated successfully!');
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsSubmittingUrl(false);
+    }
   };
 
   if (loading) {
@@ -240,7 +310,7 @@ export default function TeamDashboard() {
   return (
     <div className="min-h-screen bg-black">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
         {/* Back Button */}
         <motion.div
@@ -284,7 +354,7 @@ export default function TeamDashboard() {
 
         {/* Checkpoint Alert Popup */}
         <AnimatePresence>
-          {showAlert && (
+          {(showAlert || adminBroadcast) && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -303,13 +373,15 @@ export default function TeamDashboard() {
                 transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
               />
 
-              {/* Close button */}
-              <button
-                onClick={() => setShowAlert(false)}
-                className="absolute top-4 right-4 text-cyan-400 hover:text-cyan-300 transition-colors"
-              >
-                <FaTimes />
-              </button>
+              {/* Close button - Only show if it's NOT an urgent broadcast */}
+              {(!adminBroadcast?.isUrgent) && (
+                <button
+                  onClick={() => setShowAlert(false)}
+                  className="absolute top-4 right-4 text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  <FaTimes />
+                </button>
+              )}
 
               {/* Alert content */}
               <div className="flex items-start space-x-4">
@@ -323,34 +395,32 @@ export default function TeamDashboard() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className={`font-mono text-lg mb-2 ${
-                    motivationalQuotes[currentQuote].isUrgent 
+                  <h3 className={`font-mono text-lg mb-2 ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
                       ? 'text-red-400 animate-pulse'
                       : 'text-cyan-400'
-                  }`}>
-                    {motivationalQuotes[currentQuote].isUrgent 
-                      ? `> Urgent_Alert` 
+                    }`}>
+                    {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                      ? `> Urgent_Alert`
                       : `> System_Alert`}
                   </h3>
-                  <p className={`font-mono text-sm whitespace-pre-line ${
-                    motivationalQuotes[currentQuote].isUrgent 
+                  <p className={`font-mono text-sm whitespace-pre-line ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
                       ? 'text-red-300'
                       : 'text-gray-300'
-                  }`}>
-                    {motivationalQuotes[currentQuote].text}
+                    }`}>
+                    {adminBroadcast ? adminBroadcast.text : motivationalQuotes[currentQuote].text}
                   </p>
                   <p className="text-cyan-500/50 font-mono text-xs mt-3">
-                    {new Date().toLocaleString()}
+                    {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleString() : new Date().toLocaleString()}
                   </p>
-                  {motivationalQuotes[currentQuote].isUrgent && (
+                  {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent) && (
                     <motion.div
-                      animate={{ 
+                      animate={{
                         opacity: [1, 0.5, 1],
                         scale: [1, 1.02, 1]
                       }}
-                      transition={{ 
+                      transition={{
                         duration: 2,
-                        repeat: Infinity 
+                        repeat: Infinity
                       }}
                       className="mt-3 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-md"
                     >
@@ -373,8 +443,8 @@ export default function TeamDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className={`col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br 
-              ${githubRepo 
-                ? 'from-green-900/20 to-black border-green-500/30' 
+              ${githubRepo
+                ? 'from-green-900/20 to-black border-green-500/30'
                 : 'from-gray-900 to-black border-purple-500/30'} 
               backdrop-blur-sm border rounded-lg overflow-hidden 
               shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6`}
@@ -409,6 +479,15 @@ export default function TeamDashboard() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-mono text-cyan-400">Repository Details:</h3>
+                    <button
+                      onClick={() => {
+                        setGithubRepo(null);
+                        setRepoUrl('');
+                      }}
+                      className="text-red-400 hover:text-red-300 font-mono text-sm underline"
+                    >
+                      Remove
+                    </button>
                   </div>
                   <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
                     <p className="text-gray-300 font-mono text-sm break-all">{githubRepo.repoUrl}</p>
@@ -418,17 +497,28 @@ export default function TeamDashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
-                  <div className="text-center space-y-4">
-                    <FaCode className="text-4xl text-red-400 mx-auto" />
-                    <h3 className="text-xl font-mono text-red-400">
-                      Repository Submissions Closed
-                    </h3>
-                    <p className="text-gray-400 font-mono text-sm">
-                      GitHub repository submissions are now closed.
-                    </p>
+                <form onSubmit={handleAddRepo} className="space-y-4">
+                  <div>
+                    <label className="block text-cyan-400 font-mono text-sm mb-2">
+                      {`> Repository_URL:`}
+                    </label>
+                    <input
+                      type="url"
+                      value={repoUrl}
+                      onChange={(e) => setRepoUrl(e.target.value)}
+                      placeholder="https://github.com/username/repo"
+                      className="w-full bg-black/30 border border-green-500/30 rounded px-4 py-2 text-green-400 font-mono focus:outline-none focus:border-green-500 placeholder-green-500/30"
+                      required
+                    />
                   </div>
-                </div>
+                  <button
+                    type="submit"
+                    disabled={isAddingRepo}
+                    className="w-full bg-green-500/10 hover:bg-green-500/20 border border-green-500/50 text-green-400 font-mono py-2 rounded transition-all duration-300"
+                  >
+                    {isAddingRepo ? 'Connecting...' : '> Connect_Repository'}
+                  </button>
+                </form>
               )}
             </div>
           </motion.div>
@@ -453,23 +543,43 @@ export default function TeamDashboard() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-mono text-cyan-400">Submission URL:</h3>
+                    <button
+                      onClick={() => {
+                        setSubmissionUrl('');
+                        // Optional: update DB to remove url
+                      }}
+                      className="text-red-400 hover:text-red-300 font-mono text-sm underline"
+                    >
+                      Change
+                    </button>
                   </div>
                   <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
                     <p className="text-gray-300 font-mono text-sm break-all">{submissionUrl}</p>
                   </div>
                 </div>
               ) : (
-                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
-                  <div className="text-center space-y-4">
-                    <FaLink className="text-4xl text-red-400 mx-auto" />
-                    <h3 className="text-xl font-mono text-red-400">
-                      URL Submissions Closed
-                    </h3>
-                    <p className="text-gray-400 font-mono text-sm">
-                      Project URL submissions are now closed.
-                    </p>
+                <form onSubmit={handleSubmitUrl} className="space-y-4">
+                  <div>
+                    <label className="block text-cyan-400 font-mono text-sm mb-2">
+                      {`> Project_URL:`}
+                    </label>
+                    <input
+                      type="url"
+                      value={submissionUrl}
+                      onChange={(e) => setSubmissionUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full bg-black/30 border border-purple-500/30 rounded px-4 py-2 text-purple-400 font-mono focus:outline-none focus:border-purple-500 placeholder-purple-500/30"
+                      required
+                    />
                   </div>
-                </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingUrl}
+                    className="w-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/50 text-purple-400 font-mono py-2 rounded transition-all duration-300"
+                  >
+                    {isSubmittingUrl ? 'Submitting...' : '> Submit_URL'}
+                  </button>
+                </form>
               )}
             </div>
           </motion.div>
@@ -487,8 +597,8 @@ export default function TeamDashboard() {
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-mono text-purple-400 flex items-center">
                   <FaFileAlt className="mr-3 text-purple-500" />
-                  {teamData?.projectSubmission && !isEditMode ? 
-                    `> Congrats! You have successfully submitted your project.` : 
+                  {teamData?.projectSubmission && !isEditMode ?
+                    `> Congrats! You have successfully submitted your project.` :
                     `> Project_Submission`}
                 </h2>
                 {teamData?.projectSubmission && !showForm && (
@@ -505,26 +615,204 @@ export default function TeamDashboard() {
               </div>
             </div>
             <div className="p-6">
-              {!showForm && (
-                <div className="bg-black/30 p-6 rounded-lg border border-red-500/30">
-                  <div className="text-center space-y-4">
-                    <FaClipboardCheck className="text-4xl text-red-400 mx-auto" />
-                    <h3 className="text-xl font-mono text-red-400">
-                      Hackathon Submissions Closed
-                    </h3>
-                    <p className="text-gray-400 font-mono text-sm">
-                      Thank you for participating! Project submissions are now closed.
-                      Stay tuned for the results! 🏆
+              {showForm ? (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Problem Statement Selection */}
+                  <div>
+                    <label className="block text-cyan-400 font-mono text-sm mb-2">
+                      {`> Problem_Statement:`}
+                    </label>
+                    <select
+                      value={formData.problemStatement || problemStatements[0]}
+                      onChange={handleProblemStatementChange}
+                      className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                    >
+                      {problemStatements.map((statement, index) => (
+                        <option key={index} value={statement} className="bg-gray-900 text-gray-300">
+                          {statement.split(':')[0]}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-2 text-xs text-gray-500 font-mono">
+                      {formData.problemStatement || problemStatements[0]}
                     </p>
-                    {teamData?.projectSubmission && (
-                      <div className="mt-6">
-                        <h4 className="text-cyan-400 font-mono text-sm mb-3">
-                          Your Submitted Project:
-                        </h4>
-                        {/* Display submitted project details */}
-                        {/* ... rest of your project display code ... */}
+                  </div>
+
+                  {/* URLs Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Live_Demo_URL:`} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="url"
+                        name="liveDemo"
+                        value={formData.liveDemo}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="https://..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Presentation_URL:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="presentationUrl"
+                        value={formData.presentationUrl}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="https://..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Code_Repository:`} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="url"
+                        name="codeRepository"
+                        value={formData.codeRepository}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="https://github.com/..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Documentation_URL:`}
+                      </label>
+                      <input
+                        type="url"
+                        name="documentation"
+                        value={formData.documentation}
+                        onChange={handleChange}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="https://..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Text Areas */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Solution_Description:`}
+                      </label>
+                      <textarea
+                        name="solution"
+                        value={formData.solution}
+                        onChange={handleChange}
+                        rows={4}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="Describe your solution..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Tech_Stack:`}
+                      </label>
+                      <textarea
+                        name="techStack"
+                        value={formData.techStack}
+                        onChange={handleChange}
+                        rows={2}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        placeholder="React, Next.js, Firebase, etc..."
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Challenges_Faced:`}
+                        </label>
+                        <textarea
+                          name="challenges"
+                          value={formData.challenges}
+                          onChange={handleChange}
+                          rows={3}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="What challenges did you face?"
+                        />
                       </div>
-                    )}
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Key_Learnings:`}
+                        </label>
+                        <textarea
+                          name="learnings"
+                          value={formData.learnings}
+                          onChange={handleChange}
+                          rows={3}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="What did you learn?"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Error Message */}
+                  {error && (
+                    <div className="text-red-400 font-mono text-sm">
+                      {`> Error: ${error}`}
+                    </div>
+                  )}
+
+                  {/* Submit Button */}
+                  <div className="flex justify-end pt-4">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 
+                        text-cyan-400 font-mono px-8 py-3 rounded-lg flex items-center gap-2
+                        transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <motion.span
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            ⟳
+                          </motion.span>
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <FaRocket />
+                          {`> Submit_Project`}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="space-y-6">
+                  <div className="bg-black/30 p-6 rounded-lg border border-cyan-500/30">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-mono text-cyan-400">{teamData?.projectSubmission?.problemStatement?.split(':')[0]}</h3>
+                      <div className="flex gap-2">
+                        {teamData?.projectSubmission?.liveDemo && (
+                          <a href={teamData.projectSubmission.liveDemo} target="_blank" rel="noopener noreferrer"
+                            className="text-cyan-400 hover:text-cyan-300"><FaRocket size={20} /></a>
+                        )}
+                        {teamData?.projectSubmission?.codeRepository && (
+                          <a href={teamData.projectSubmission.codeRepository} target="_blank" rel="noopener noreferrer"
+                            className="text-cyan-400 hover:text-cyan-300"><FaCode size={20} /></a>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-gray-300 font-mono text-sm mb-4">{teamData?.projectSubmission?.solution}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {teamData?.projectSubmission?.techStack?.split(',').map((tech, i) => (
+                        <span key={i} className="px-2 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded text-xs text-cyan-400 font-mono">
+                          {tech.trim()}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
