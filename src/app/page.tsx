@@ -68,8 +68,21 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-gray-900 min-h-screen overflow-hidden">
-      {/* Background Video - Added at the very top */}
+    <div className="bg-gradient-to-b from-tekron-purple-deep via-tekron-purple-mid to-tekron-purple-deep min-h-screen overflow-hidden relative">
+      {/* CRT Scanlines Overlay */}
+      <div className="crt-scanlines" />
+
+      {/* Cloud Background */}
+      <div className="cloud-bg">
+        <div className="cloud" />
+        <div className="cloud" />
+        <div className="cloud" />
+      </div>
+
+      {/* Pixel Dust */}
+      <div className="pixel-dust" />
+
+      {/* Background Video with Pixelation */}
       <div className="fixed inset-0 -z-10">
         <video
           autoPlay
@@ -77,13 +90,17 @@ export default function Home() {
           muted
           playsInline
           poster="/bg.mp4"
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover opacity-20"
+          style={{
+            filter: 'blur(2px) contrast(1.2)',
+            imageRendering: 'pixelated'
+          }}
         >
           <source src="/bg.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/50" />
+        {/* Purple overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0b2e]/80 via-[#2d1b4e]/60 to-[#1a0b2e]/80" />
       </div>
 
       {/* Loading Animation */}
@@ -104,12 +121,13 @@ export default function Home() {
               className="mb-8 relative"
             >
               <motion.div
-                className="text-4xl md:text-6xl font-bold font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
+                className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff006e] via-[#ff4db8] to-[#00f5ff]"
+                style={{ fontFamily: "'Press Start 2P', cursive" }}
                 animate={{
                   textShadow: [
-                    "0 0 20px rgba(34,211,238,0.5)",
-                    "0 0 35px rgba(34,211,238,0.3)",
-                    "0 0 20px rgba(34,211,238,0.5)"
+                    "0 0 20px rgba(255,0,110,0.5)",
+                    "0 0 35px rgba(255,0,110,0.3)",
+                    "0 0 20px rgba(255,0,110,0.5)"
                   ]
                 }}
                 transition={{ duration: 1, repeat: Infinity }}
@@ -119,7 +137,8 @@ export default function Home() {
 
               {/* Glitch effect */}
               <motion.div
-                className="absolute inset-0 text-4xl md:text-6xl font-bold font-mono text-cyan-400/30"
+                className="absolute inset-0 text-4xl md:text-6xl font-bold text-[#ff006e]/30"
+                style={{ fontFamily: "'Press Start 2P', cursive" }}
                 animate={{
                   x: [-2, 2, -2],
                   opacity: [0, 1, 0]
@@ -137,7 +156,7 @@ export default function Home() {
             {/* Loading bar */}
             <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden relative">
               <motion.div
-                className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
+                className="h-full bg-gradient-to-r from-[#ff006e] to-[#9d4edd]"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
                 transition={{ duration: 2, ease: "easeInOut" }}
@@ -160,7 +179,7 @@ export default function Home() {
 
             {/* Loading text */}
             <motion.div
-              className="mt-4 font-mono text-cyan-400/70 flex items-center"
+              className="mt-4 text-retro text-[#ff4db8]/70 flex items-center"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
@@ -175,7 +194,7 @@ export default function Home() {
             </motion.div>
 
             {/* System messages */}
-            <div className="mt-6 font-mono text-xs text-gray-500 max-w-xs text-center">
+            <div className="mt-6 text-retro text-xs text-[#6b3d99] max-w-xs text-center">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -210,7 +229,7 @@ export default function Home() {
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       />
-      <div className="fixed inset-0 bg-gradient-to-b from-black via-black/50 to-black pointer-events-none"></div>
+      <div className="fixed inset-0 pointer-events-none"></div>
 
       <Navbar />
 
@@ -219,162 +238,150 @@ export default function Home() {
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="relative min-h-[40vh] mb-12 overflow-hidden"
+          className="relative min-h-[100vh] mb-20 overflow-hidden"
         >
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-900/10 to-black" />
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
+          {/* Subtle Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary-dark-base via-bg-deep-night/40 to-primary-dark-base" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
 
-          {/* Animated Lines */}
-          <div className="absolute inset-0">
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-px bg-cyan-400/20"
-                style={{ top: `${20 * i}%`, left: 0, right: 0 }}
-                animate={{
-                  opacity: [0.2, 0.5, 0.2],
-                  scaleX: [1, 1.5, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  delay: i * 0.2,
-                  repeat: Infinity,
-                }}
-              />
-            ))}
-          </div>
+          {/* Subtle Depth Layer */}
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-primary-dark-base/50" />
 
-          {/* Main Content */}
-          <div className="relative max-w-7xl mx-auto px-4 py-16">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              {/* Left Side - Text */}
+          {/* Main Content - Centered */}
+          <div className="relative max-w-6xl mx-auto px-8 py-24 text-center flex items-center justify-center min-h-[100vh]">
+            <div className="space-y-12">
+
+              {/* Partner Logos at Top */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex-1"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="flex items-center justify-center gap-8 mb-8"
               >
+                {/* Newton School of Technology Logo */}
+                <div className="relative">
+                  <img
+                    src="/images/NST.png"
+                    alt="Newton School of Technology"
+                    className="h-16 md:h-20 w-auto object-contain mr-12"
+                    style={{ filter: 'drop-shadow(0 0 10px rgba(160, 107, 255, 0.3))' }}
+                  />
+                </div>
 
-                <motion.div
-                  animate={{
-                    textShadow: [
-                      "0 0 20px rgba(34,211,238,0)",
-                      "0 0 20px rgba(34,211,238,0.5)",
-                      "0 0 20px rgba(34,211,238,0)",
-                    ]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="mb-6"
-                >
-                  <h1 className="text-4xl md:text-6xl font-bold font-mono text-cyan-400 mb-2">
-                    HACKRON 2026
-                  </h1>
-                  <p className="text-xl text-cyan-500/80">Innovate. Build. Conquer.</p>
-                </motion.div>
+                {/* X Separator */}
+                <div className="text-5xl md:text-7xl font-bold text-primary-purple opacity-60">
+                  ×
+                </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="text-3xl font-bold text-cyan-400"
-                    >
-                      24H
-                    </motion.div>
-                    <div className="text-sm text-gray-400">Duration</div>
-                  </div>
-                  <div className="text-center">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-                      className="text-3xl font-bold text-cyan-400"
-                    >
-                      50+
-                    </motion.div>
-                    <div className="text-sm text-gray-400">Teams</div>
-                  </div>
-                  <div className="text-center">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-                      className="text-3xl font-bold text-cyan-400"
-                    >
-                      75K
-                    </motion.div>
-                    <div className="text-sm text-gray-400">Prize Pool</div>
-                  </div>
+                {/* Ajeenkya DY Patil University Logo */}
+                <div className="relative">
+                  <img
+                    src="/images/adypu.png"
+                    alt="Ajeenkya DY Patil University"
+                    className="h-16 md:h-20 w-auto object-contain ml-12"
+                    style={{ filter: 'drop-shadow(0 0 10px rgba(160, 107, 255, 0.3))' }}
+                  />
                 </div>
               </motion.div>
 
-              {/* Right Side - Logo & Effects */}
+              {/* Main Title - Centered */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="relative w-64 h-64 md:w-96 md:h-96"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                className="space-y-6"
               >
-                {/* Rotating circles */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  {[...Array(3)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full"
-                      style={{
-                        transform: `scale(${0.8 + i * 0.2}) rotate(${i * 30}deg)`,
-                      }}
-                    />
-                  ))}
-                </motion.div>
+                <h1 className="text-6xl md:text-8xl font-bold text-pixel leading-tight tracking-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-purple via-primary-purple-deep to-primary-purple">
+                    HACKRON
+                  </span>
+                  <br />
+                  <span className="text-accent-cyan">2026</span>
+                </h1>
 
-                {/* Center Tech Element */}
-                <motion.div
-                  animate={{
-                    y: [0, -10, 0],
-                    filter: [
-                      'drop-shadow(0 0 20px rgba(34,211,238,0.2))',
-                      'drop-shadow(0 0 40px rgba(34,211,238,0.4))',
-                      'drop-shadow(0 0 20px rgba(34,211,238,0.2))'
-                    ]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="text-6xl text-cyan-400 font-mono font-bold">
-                    &lt;/&gt;
-                  </div>
-                </motion.div>
-
-                {/* Lightning effects */}
-                {[...Array(4)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-gradient-to-b from-cyan-400 to-transparent"
-                    style={{
-                      transformOrigin: '50% 0%',
-                      rotate: `${i * 90}deg`,
-                    }}
-                    animate={{
-                      opacity: [0, 1, 0],
-                      scaleY: [0.8, 1.2, 0.8],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      delay: i * 0.2,
-                      repeat: Infinity,
-                    }}
-                  />
-                ))}
+                {/* Subheading */}
+                <p className="text-xl md:text-2xl text-retro text-text-soft-lavender/90 font-normal leading-relaxed max-w-2xl mx-auto">
+                  24-hour innovation sprint. Build the future.
+                </p>
               </motion.div>
+
+              {/* Stats - Centered */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+                className="grid grid-cols-3 gap-12 mt-16 max-w-3xl mx-auto"
+              >
+                <div className="text-center space-y-3">
+                  <div className="text-5xl font-bold text-pixel text-primary-purple">
+                    24H
+                  </div>
+                  <div className="text-sm text-retro text-text-muted uppercase tracking-wider">Duration</div>
+                </div>
+                <div className="text-center space-y-3">
+                  <div className="text-5xl font-bold text-pixel text-primary-purple">
+                    50+
+                  </div>
+                  <div className="text-sm text-retro text-text-muted uppercase tracking-wider">Teams</div>
+                </div>
+                <div className="text-center space-y-3">
+                  <div className="text-5xl font-bold text-pixel text-primary-purple">
+                    75K
+                  </div>
+                  <div className="text-sm text-retro text-text-muted uppercase tracking-wider">Prize Pool</div>
+                </div>
+              </motion.div>
+
+              {/* Code Symbol - Centered Below */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+                className="flex items-center justify-center mt-16"
+              >
+                <div className="relative w-48 h-48 md:w-56 md:h-56">
+                  {/* Subtle Background Glow */}
+                  <div className="absolute inset-0 bg-gradient-radial from-primary-purple/20 via-transparent to-transparent blur-3xl" />
+
+                  {/* Clean Geometric Design */}
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    {/* Outer Ring */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0"
+                    >
+                      <div className="absolute inset-0 border border-primary-purple/30 rounded-full" />
+                    </motion.div>
+
+                    {/* Inner Ring */}
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-8"
+                    >
+                      <div className="absolute inset-0 border border-accent-cyan/40 rounded-full" />
+                    </motion.div>
+
+                    {/* Center Code Symbol */}
+                    <div className="relative z-10 text-5xl md:text-6xl font-mono font-bold text-primary-purple" style={{ filter: 'drop-shadow(0 0 15px rgba(160, 107, 255, 0.4))' }}>
+                      &lt;/&gt;
+                    </div>
+                  </div>
+
+                  {/* Subtle Accent Dots */}
+                  <div className="absolute top-1/4 right-4 w-2 h-2 rounded-full bg-accent-cyan opacity-70" />
+                  <div className="absolute bottom-1/4 left-4 w-2 h-2 rounded-full bg-primary-purple opacity-70" />
+                </div>
+              </motion.div>
+
             </div>
           </div>
         </motion.section>
 
+
         {/* Event Details Section */}
-        <motion.section
+        < motion.section
           ref={eventDetailsRef}
           variants={staggerContainer}
           initial="initial"
@@ -382,17 +389,14 @@ export default function Home() {
           className="relative py-20 px-4 sm:px-6 lg:px-8"
         >
           <motion.div
-            className="absolute inset-0 bg-gradient-to-b from-gray-900/0 via-gray-900 to-gray-900"
-            style={{
-              opacity: useTransform(scrollYProgress, [0, 0.2], [0, 1])
-            }}
+            className="absolute inset-0"
           />
           <div className="max-w-7xl mx-auto">
             {/* Section Title */}
             <motion.div variants={fadeInUp} className="mb-12 text-center">
-              <h2 className="text-3xl font-mono">
-                <span className="text-cyan-400">&gt; </span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+              <h2 className="text-3xl text-retro">
+                <span className="text-tekron-pink-neon">&gt; </span>
+                <span className="text-tekron-pink-neon bg-clip-text bg-gradient-to-r from-tekron-pink-neon to-tekron-purple-accent">
                   24'Hrs Hackathon Event
                 </span>
               </h2>
@@ -401,40 +405,40 @@ export default function Home() {
             {/* Event Card */}
             <motion.div
               variants={fadeInUp}
-              className="bg-black/50 backdrop-blur-sm border border-cyan-500/20 rounded-lg p-8 mb-12"
+              className="pixel-box backdrop-blur-sm p-8 mb-12"
             >
               {/* Main Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                 <div>
-                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Date</div>
-                  <div className="text-gray-300 font-mono">📅 5th March</div>
+                  <div className="text-tekron-pink-neon text-retro text-sm mb-1">&gt; Date</div>
+                  <div className="text-gray-300 text-retro">📅 5th March</div>
                 </div>
                 <div>
-                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Venue</div>
-                  <div className="text-gray-300 font-mono">📍 Lab 1 & 2</div>
+                  <div className="text-tekron-pink-neon text-retro text-sm mb-1">&gt; Venue</div>
+                  <div className="text-gray-300 text-retro">📍 Lab 1 & 2</div>
                 </div>
                 <div>
-                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Participants</div>
-                  <div className="text-gray-300 font-mono">👥 UG students</div>
+                  <div className="text-tekron-pink-neon text-retro text-sm mb-1">&gt; Participants</div>
+                  <div className="text-gray-300 text-retro">👥 UG students</div>
                 </div>
                 <div>
-                  <div className="text-cyan-400 font-mono text-sm mb-1">&gt; Prize_Pool</div>
-                  <div className="text-gray-300 font-mono">💰 75k</div>
+                  <div className="text-tekron-pink-neon text-retro text-sm mb-1">&gt; Prize_Pool</div>
+                  <div className="text-gray-300 text-retro">💰 75k</div>
                 </div>
               </div>
 
               {/* Timeline */}
               <div className="mb-12">
-                <div className="text-xl font-mono text-cyan-400 mb-6 flex items-center">
+                <div className="text-xl text-retro text-tekron-pink-neon mb-6 flex items-center">
                   <span>&gt; Event_Timeline</span>
-                  <div className="h-[1px] flex-grow ml-4 bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                  <div className="h-[1px] flex-grow ml-4 bg-gradient-to-r from-tekron-pink-neon/50 to-transparent"></div>
                 </div>
 
                 {/* Professional timeline with day separation */}
                 <div className="bg-black/30 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
                   {/* Day 1 */}
                   <div className="mb-6">
-                    <div className="text-cyan-400 font-mono text-lg mb-3 border-b border-cyan-500/20 pb-2">Day 1</div>
+                    <div className="text-tekron-purple-accent text-retro text-lg mb-3 border-b border-tekron-pink-neon/20 pb-2">Day 1</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {eventDetails.timeline.slice(0, 9).map((item, index) => (
                         <motion.div
@@ -442,14 +446,14 @@ export default function Home() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.05 * index }}
-                          className="bg-gray-900/50 border border-gray-800 rounded p-3 hover:border-purple-500/30 transition-colors"
+                          className="bg-tekron-purple-mid/50 border-2 border-tekron-pink-neon/30 rounded p-3 hover:border-tekron-pink-neon/60 transition-colors"
                         >
                           <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
-                            <div className="text-purple-400 font-mono text-sm">{item.time}</div>
+                            <div className="w-2 h-2 rounded-full bg-tekron-pink-neon mr-2"></div>
+                            <div className="text-tekron-purple-accent text-retro text-sm">{item.time}</div>
                           </div>
-                          <div className="text-gray-200 font-mono text-base mb-1">{item.event}</div>
-                          <div className="text-gray-400 text-xs font-mono">{item.desc}</div>
+                          <div className="text-gray-200 text-retro text-base mb-1">{item.event}</div>
+                          <div className="text-gray-400 text-xs text-retro">{item.desc}</div>
                         </motion.div>
                       ))}
                     </div>
@@ -457,7 +461,7 @@ export default function Home() {
 
                   {/* Day 2 */}
                   <div>
-                    <div className="text-cyan-400 font-mono text-lg mb-3 border-b border-cyan-500/20 pb-2">Day 2</div>
+                    <div className="text-tekron-purple-accent text-retro text-lg mb-3 border-b border-tekron-pink-neon/20 pb-2">Day 2</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {eventDetails.timeline.slice(9).map((item, index) => (
                         <motion.div
@@ -465,14 +469,14 @@ export default function Home() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.05 * (index + 9) }}
-                          className="bg-gray-900/50 border border-gray-800 rounded p-3 hover:border-purple-500/30 transition-colors"
+                          className="bg-tekron-purple-mid/50 border-2 border-tekron-pink-neon/30 rounded p-3 hover:border-tekron-pink-neon/60 transition-colors"
                         >
                           <div className="flex items-center mb-2">
-                            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
-                            <div className="text-purple-400 font-mono text-sm">{item.time}</div>
+                            <div className="w-2 h-2 rounded-full bg-tekron-pink-neon mr-2"></div>
+                            <div className="text-tekron-purple-accent text-retro text-sm">{item.time}</div>
                           </div>
-                          <div className="text-gray-200 font-mono text-base mb-1">{item.event}</div>
-                          <div className="text-gray-400 text-xs font-mono">{item.desc}</div>
+                          <div className="text-gray-200 text-retro text-base mb-1">{item.event}</div>
+                          <div className="text-gray-400 text-xs text-retro">{item.desc}</div>
                         </motion.div>
                       ))}
                     </div>
@@ -482,38 +486,38 @@ export default function Home() {
 
               {/* Judging Criteria */}
               <div>
-                <div className="text-xl font-mono text-cyan-400 mb-4">&gt; Judging_Criteria</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono">
+                <div className="text-xl text-retro text-tekron-pink-neon mb-4">&gt; Judging_Criteria</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-retro">
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400">01</span>
+                    <span className="text-pixel text-tekron-purple-accent">01</span>
                     <div>
                       <div className="text-gray-300">Problem Statement</div>
                       <div className="text-gray-500 text-sm">Complexity & Relevance</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400">02</span>
+                    <span className="text-pixel text-tekron-purple-accent">02</span>
                     <div>
                       <div className="text-gray-300">Approach & Implementation</div>
                       <div className="text-gray-500 text-sm">Logical Thinking & Execution</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400">03</span>
+                    <span className="text-pixel text-tekron-purple-accent">03</span>
                     <div>
                       <div className="text-gray-300">Solution Analysis</div>
                       <div className="text-gray-500 text-sm">Code Quality & Efficiency</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400">04</span>
+                    <span className="text-pixel text-tekron-purple-accent">04</span>
                     <div>
                       <div className="text-gray-300">Presentation</div>
                       <div className="text-gray-500 text-sm">Clarity & Communication</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400">05</span>
+                    <span className="text-pixel text-tekron-purple-accent">05</span>
                     <div>
                       <div className="text-gray-300">Innovation</div>
                       <div className="text-gray-500 text-sm">Creativity & Uniqueness</div>
@@ -523,14 +527,15 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
-        </motion.section>
+        </motion.section >
 
         {/* Add Login Modal */}
-        <LoginModal
+        < LoginModal
           isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
+          onClose={() => setIsLoginModalOpen(false)
+          }
         />
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }

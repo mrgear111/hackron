@@ -107,8 +107,9 @@ const Navbar = () => {
         transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
         className="w-full fixed top-0 z-50"
       >
-        {/* Cyberpunk-style background with noise texture */}
-        <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm border-b border-cyan-500/30 overflow-hidden">
+        {/* Pixel-themed background with scanline texture */}
+        <div className="absolute inset-0 bg-tekron-purple-deep/90 backdrop-blur-sm border-b border-tekron-pink-neon/30 overflow-hidden">
+
           {/* Animated grid background */}
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
 
@@ -119,12 +120,12 @@ const Navbar = () => {
           <div className="absolute inset-x-0 bottom-0">
             {/* Main border gradient */}
             <motion.div
-              className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
+              className="h-px w-full bg-gradient-to-r from-transparent via-tekron-pink-neon/50 to-transparent"
               animate={{
                 boxShadow: [
-                  "0 0 10px rgba(34,211,238,0.2)",
-                  "0 0 20px rgba(34,211,238,0.6)",
-                  "0 0 10px rgba(34,211,238,0.2)"
+                  "0 0 10px rgba(255,0,110,0.2)",
+                  "0 0 20px rgba(255,0,110,0.6)",
+                  "0 0 10px rgba(255,0,110,0.2)"
                 ]
               }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -132,7 +133,7 @@ const Navbar = () => {
 
             {/* Fast scan line */}
             <motion.div
-              className="absolute bottom-0 h-[2px] w-[10%] bg-cyan-400/80"
+              className="absolute bottom-0 h-[2px] w-[10%] bg-tekron-pink-neon/80"
               animate={{
                 x: ["-100%", "1000%"],
                 opacity: [0, 1, 0]
@@ -146,7 +147,7 @@ const Navbar = () => {
 
             {/* Slow scan line */}
             <motion.div
-              className="absolute bottom-0 h-[1px] w-[30%] bg-cyan-400/40"
+              className="absolute bottom-0 h-[1px] w-[30%] bg-tekron-purple-accent/40"
               animate={{
                 x: ["-100%", "400%"],
                 opacity: [0, 1, 0]
@@ -164,7 +165,7 @@ const Navbar = () => {
             {[...Array(30)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute top-0 w-px bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
+                className="absolute top-0 w-px bg-gradient-to-b from-transparent via-tekron-pink-neon/20 to-transparent"
                 style={{
                   left: `${i * 3.33}%`,
                   height: '100%',
@@ -201,8 +202,8 @@ const Navbar = () => {
                     className="absolute -inset-3 rounded opacity-75 blur-2xl"
                     animate={{
                       background: [
-                        "radial-gradient(circle, rgba(34,211,238,0.3) 0%, rgba(59,130,246,0.3) 50%, transparent 70%)",
-                        "radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(34,211,238,0.3) 50%, transparent 70%)",
+                        "radial-gradient(circle, rgba(255,0,110,0.3) 0%, rgba(138,43,226,0.3) 50%, transparent 70%)",
+                        "radial-gradient(circle, rgba(138,43,226,0.3) 0%, rgba(255,0,110,0.3) 50%, transparent 70%)",
                       ],
                       scale: [1, 1.1, 1],
                     }}
@@ -213,15 +214,15 @@ const Navbar = () => {
                     {/* Terminal Prompt */}
                     <motion.div
                       animate={{
-                        color: ["#22d3ee", "#3b82f6", "#22d3ee"],
+                        color: ["#ff006e", "#00f5ff", "#ff006e"],
                         textShadow: [
-                          "0 0 10px rgba(34,211,238,0.7)",
-                          "0 0 15px rgba(59,130,246,0.7)",
-                          "0 0 10px rgba(34,211,238,0.7)"
+                          "0 0 10px rgba(255,0,110,0.7)",
+                          "0 0 15px rgba(0,245,255,0.7)",
+                          "0 0 10px rgba(255,0,110,0.7)"
                         ]
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="mr-1"
+                      className="mr-1 font-pixel"
                     >
                       {">"}
                     </motion.div>
@@ -230,12 +231,12 @@ const Navbar = () => {
                     <div className="relative">
                       {/* Main text with gradient */}
                       <motion.div
-                        className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 relative z-10"
+                        className="bg-clip-text text-transparent bg-gradient-to-r from-tekron-pink-neon via-tekron-pink-bright to-tekron-purple-accent relative z-10 font-pixel"
                         animate={{
                           textShadow: [
-                            "0 0 10px rgba(34,211,238,0.5)",
-                            "0 0 20px rgba(59,130,246,0.5)",
-                            "0 0 10px rgba(34,211,238,0.5)"
+                            "0 0 10px rgba(255,0,110,0.5)",
+                            "0 0 20px rgba(0,245,255,0.5)",
+                            "0 0 10px rgba(255,0,110,0.5)"
                           ]
                         }}
                         transition={{ duration: 2, repeat: Infinity }}
@@ -300,7 +301,7 @@ const Navbar = () => {
                     <motion.div
                       className="h-[1px] w-full"
                       style={{
-                        background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)"
+                        background: "linear-gradient(90deg, transparent, rgba(255,0,110,0.5), transparent)"
                       }}
                       animate={{
                         opacity: [0.3, 0.7, 0.3]
@@ -310,7 +311,7 @@ const Navbar = () => {
                     <motion.div
                       className="h-[1px] w-[60%] mx-auto mt-1"
                       style={{
-                        background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent)"
+                        background: "linear-gradient(90deg, transparent, rgba(157,78,221,0.5), transparent)"
                       }}
                       animate={{
                         opacity: [0.2, 0.5, 0.2],
@@ -340,7 +341,7 @@ const Navbar = () => {
                           <motion.span
                             animate={{ opacity: [0, 1] }}
                             transition={{ duration: 0.8, repeat: Infinity }}
-                            className={`${isAdmin ? 'text-purple-400' : 'text-cyan-400'}`}
+                            className={`${isAdmin ? 'text-tekron-pink-neon' : 'text-tekron-purple-accent'}`}
                           >
                             ●
                           </motion.span>
