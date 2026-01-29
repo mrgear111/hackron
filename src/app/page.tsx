@@ -51,6 +51,7 @@ export default function Home() {
       { title: "Solution Analysis", desc: "Code Quality & Efficiency" },
       { title: "Presentation", desc: "Clarity & Communication" },
       { title: "Innovation", desc: "Creativity & Uniqueness" },
+      { title: "Working Demo", desc: "Functionality & Usability" },
     ]
   };
 
@@ -687,6 +688,29 @@ export default function Home() {
                 </motion.div>
               </div>
 
+              {/* Separator */}
+              <motion.div
+                variants={fadeInUp}
+                className="relative py-12 my-8"
+              >
+                {/* Decorative line with glow */}
+                <div className="relative flex items-center justify-center">
+                  {/* Left line */}
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-cyan-400/80" />
+
+                  {/* Center icon */}
+                  <div className="relative mx-6">
+                    <div className="absolute inset-0 bg-cyan-400/30 rounded-full blur-xl" />
+                    <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center backdrop-blur-sm">
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                    </div>
+                  </div>
+
+                  {/* Right line */}
+                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-cyan-400/50 to-cyan-400/80" />
+                </div>
+              </motion.div>
+
               {/* Last Year Stats */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left: Description Panel */}
@@ -777,46 +801,127 @@ export default function Home() {
                 </motion.div>
               </div>
             </div>
+            <motion.div
+              variants={fadeInUp}
+              className="relative py-12 my-8"
+            >
+              {/* Decorative line with glow */}
+              <div className="relative flex items-center justify-center">
+                {/* Left line */}
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-cyan-400/80" />
 
+                {/* Center icon */}
+                <div className="relative mx-6">
+                  <div className="absolute inset-0 bg-cyan-400/30 rounded-full blur-xl" />
+                  <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center backdrop-blur-sm">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Right line */}
+                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-cyan-400/50 to-cyan-400/80" />
+              </div>
+            </motion.div>
             {/* Quick Event Info */}
-            <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20">
+            <p className="text-center text-tekron-pink-neon font-pixel text-4xl mb-16">Quick Event Info</p>
+            <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+              {/* Date Card */}
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="bg-tekron-purple-deep/40 backdrop-blur-sm border-2 border-tekron-pink-neon/30 rounded-xl p-6 hover:border-tekron-pink-neon/60 transition-all text-center"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative group"
               >
-                <div className="text-3xl mb-2">📅</div>
-                <div className="text-tekron-pink-neon font-pixel text-sm mb-1">DATE</div>
-                <div className="text-white font-bold">5th March 2026</div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-cyan-400/30 to-blue-600/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-300" />
+                <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-cyan-400/40 rounded-2xl p-8 hover:border-cyan-400/70 transition-all text-center shadow-xl">
+                  {/* Icon Container */}
+                  <div className="flex justify-center mb-5">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-cyan-400/20 to-blue-600/20 border-2 border-cyan-400/40 flex items-center justify-center">
+                      <FaClock className="text-cyan-400 text-3xl" />
+                    </div>
+                  </div>
+                  <div className="text-cyan-300 font-pixel text-xl mb-3 tracking-wider">DATE</div>
+                  <div className="text-white font-bold text-2xl">5th March 2026</div>
+                </div>
               </motion.div>
 
+              {/* Venue Card */}
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="bg-tekron-purple-deep/40 backdrop-blur-sm border-2 border-cyan-500/30 rounded-xl p-6 hover:border-cyan-500/60 transition-all text-center"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative group"
               >
-                <div className="text-3xl mb-2">📍</div>
-                <div className="text-cyan-400 font-pixel text-sm mb-1">VENUE</div>
-                <div className="text-white font-bold">Lab 1 & 2</div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-purple-400/30 to-pink-600/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-300" />
+                <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-purple-400/40 rounded-2xl p-8 hover:border-purple-400/70 transition-all text-center shadow-xl">
+                  {/* Icon Container */}
+                  <div className="flex justify-center mb-5">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-purple-400/20 to-pink-600/20 border-2 border-purple-400/40 flex items-center justify-center">
+                      <FaMapMarkerAlt className="text-purple-400 text-3xl" />
+                    </div>
+                  </div>
+                  <div className="text-purple-300 font-pixel text-xl mb-3 tracking-wider">VENUE</div>
+                  <div className="text-white font-bold text-2xl">Lab 1 & 2</div>
+                </div>
               </motion.div>
 
+              {/* Duration Card */}
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="bg-tekron-purple-deep/40 backdrop-blur-sm border-2 border-purple-500/30 rounded-xl p-6 hover:border-purple-500/60 transition-all text-center"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative group"
               >
-                <div className="text-3xl mb-2">⏱️</div>
-                <div className="text-purple-400 font-pixel text-sm mb-1">DURATION</div>
-                <div className="text-white font-bold">24 Hours</div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-pink-400/30 to-rose-600/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-300" />
+                <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-pink-400/40 rounded-2xl p-8 hover:border-pink-400/70 transition-all text-center shadow-xl">
+                  {/* Icon Container */}
+                  <div className="flex justify-center mb-5">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-pink-400/20 to-rose-600/20 border-2 border-pink-400/40 flex items-center justify-center">
+                      <FaBolt className="text-pink-400 text-3xl" />
+                    </div>
+                  </div>
+                  <div className="text-pink-300 font-pixel text-xl mb-3 tracking-wider">DURATION</div>
+                  <div className="text-white font-bold text-2xl">24 Hours</div>
+                </div>
               </motion.div>
 
+              {/* Prize Pool Card */}
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="bg-tekron-purple-deep/40 backdrop-blur-sm border-2 border-yellow-500/30 rounded-xl p-6 hover:border-yellow-500/60 transition-all text-center"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative group"
               >
-                <div className="text-3xl mb-2">💰</div>
-                <div className="text-yellow-400 font-pixel text-sm mb-1">PRIZE_POOL</div>
-                <div className="text-white font-bold">₹75,000</div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-yellow-400/30 to-orange-600/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-300" />
+                <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-yellow-400/40 rounded-2xl p-8 hover:border-yellow-400/70 transition-all text-center shadow-xl">
+                  {/* Icon Container */}
+                  <div className="flex justify-center mb-5">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-400/20 to-orange-600/20 border-2 border-yellow-400/40 flex items-center justify-center">
+                      <FaTrophy className="text-yellow-400 text-3xl" />
+                    </div>
+                  </div>
+                  <div className="text-yellow-300 font-pixel text-xl mb-3 tracking-wider">PRIZE_POOL</div>
+                  <div className="text-white font-bold text-2xl">₹75,000</div>
+                </div>
               </motion.div>
             </motion.div>
+            <motion.div
+              variants={fadeInUp}
+              className="relative py-12 my-8"
+            >
+              {/* Decorative line with glow */}
+              <div className="relative flex items-center justify-center">
+                {/* Left line */}
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-cyan-400/80" />
 
+                {/* Center icon */}
+                <div className="relative mx-6">
+                  <div className="absolute inset-0 bg-cyan-400/30 rounded-full blur-xl" />
+                  <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center backdrop-blur-sm">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Right line */}
+                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-cyan-400/50 to-cyan-400/80" />
+              </div>
+            </motion.div>
             {/* Gamified Timeline - Central Branch Design */}
             <motion.div variants={fadeInUp} className="mb-20">
               <div className="text-center mb-16">
@@ -858,7 +963,7 @@ export default function Home() {
 
                   {/* Main central curved path with more curves */}
                   <path
-                    d="M 100 0 Q 60 200, 100 400 Q 140 600, 100 800 Q 60 1000, 100 1200 Q 140 1400, 100 1600 Q 60 1800, 100 2000 Q 140 2200, 100 2400 Q 60 2600, 100 2800 Q 140 3000, 100 3200 Q 60 3400, 100 3600 Q 140 3800, 100 4000 Q 60 4200, 100 4400 Q 140 4600, 100 4800 Q 60 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
+                    d="M 100 0 Q 40 200, 100 400 Q 160 600, 100 800 Q 40 1000, 100 1200 Q 160 1400, 100 1600 Q 40 1800, 100 2000 Q 160 2200, 100 2400 Q 40 2600, 100 2800 Q 160 3000, 100 3200 Q 40 3400, 100 3600 Q 160 3800, 100 4000 Q 40 4200, 100 4400 Q 160 4600, 100 4800 Q 40 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
                     stroke="url(#centralGradient)"
                     strokeWidth="16"
                     fill="none"
@@ -868,7 +973,7 @@ export default function Home() {
 
                   {/* Outer glow path */}
                   <path
-                    d="M 100 0 Q 60 200, 100 400 Q 140 600, 100 800 Q 60 1000, 100 1200 Q 140 1400, 100 1600 Q 60 1800, 100 2000 Q 140 2200, 100 2400 Q 60 2600, 100 2800 Q 140 3000, 100 3200 Q 60 3400, 100 3600 Q 140 3800, 100 4000 Q 60 4200, 100 4400 Q 140 4600, 100 4800 Q 60 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
+                    d="M 100 0 Q 40 200, 100 400 Q 160 600, 100 800 Q 40 1000, 100 1200 Q 160 1400, 100 1600 Q 40 1800, 100 2000 Q 160 2200, 100 2400 Q 40 2600, 100 2800 Q 160 3000, 100 3200 Q 40 3400, 100 3600 Q 160 3800, 100 4000 Q 40 4200, 100 4400 Q 160 4600, 100 4800 Q 40 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
                     stroke="url(#centralGradient)"
                     strokeWidth="10"
                     fill="none"
@@ -1022,52 +1127,52 @@ export default function Home() {
 
             {/* Judging Criteria */}
             <motion.div variants={fadeInUp}>
-              <div className="text-center mb-12">
-                <h3 className="text-3xl font-pixel text-tekron-pink-neon mb-2">&gt; JUDGING_CRITERIA</h3>
-                <p className="text-gray-400 text-retro">What makes a winning project</p>
+              <div className="text-center mb-16">
+                <div className="inline-flex items-center gap-2 bg-tekron-purple-deep/40 border border-cyan-400/30 rounded-full px-4 py-2 mb-4">
+                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="text-cyan-400 font-pixel text-sm">EVALUATION_METRICS</span>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-pixel text-white mb-4">&gt; JUDGING_CRITERIA</h3>
+                <p className="text-gray-400 text-lg max-w-2xl mx-auto">What makes a winning project</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 {eventDetails.judgingCriteria.map((criteria, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ delay: index * 0.1, type: "spring", stiffness: 300 }}
+                    whileHover={{ scale: 1.05, y: -8 }}
                     className="relative group"
                   >
-                    {/* Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon/10 to-tekron-purple-accent/10 rounded-xl blur-xl group-hover:blur-2xl transition-all" />
+                    {/* Glow Effect */}
+                    <div className="absolute -inset-1 bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-pink-500/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-all duration-300" />
 
                     {/* Card */}
-                    <div className="relative bg-tekron-purple-deep/40 backdrop-blur-sm border-2 border-tekron-pink-neon/30 rounded-xl p-6 hover:border-tekron-pink-neon/60 transition-all h-full">
-                      {/* Number Badge */}
-                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-tekron-pink-neon/20 border-2 border-tekron-pink-neon mb-4">
-                        <span className="text-tekron-pink-neon font-pixel text-lg">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
+                    <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-cyan-400/40 rounded-2xl p-8 hover:border-cyan-400/70 transition-all h-full shadow-xl">
+                      {/* Icon Container */}
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center">
+                          {index === 0 ? <FaGamepad className="text-cyan-400 text-2xl" /> :
+                            index === 1 ? <FaBolt className="text-cyan-400 text-2xl" /> :
+                              <FaSearch className="text-cyan-400 text-2xl" />}
+                        </div>
+
+                        {/* Number Badge */}
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-cyan-400/10 border-2 border-cyan-400/40">
+                          <span className="text-cyan-300 font-pixel text-lg">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Title */}
-                      <h4 className="text-white font-bold text-xl mb-2">{criteria.title}</h4>
+                      <h4 className="text-white font-bold text-4xl mb-3 leading-tight">{criteria.title}</h4>
 
                       {/* Description */}
-                      <p className="text-gray-400 text-sm">{criteria.desc}</p>
-
-                      {/* Weight Indicator */}
-                      <div className="mt-4">
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <div
-                              key={i}
-                              className={`h-1 flex-1 rounded-full ${i < 3 ? 'bg-tekron-pink-neon' : 'bg-gray-700'
-                                }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
+                      <p className="text-gray-300 text-2xl leading-relaxed mb-6">{criteria.desc}</p>
                     </div>
                   </motion.div>
                 ))}
