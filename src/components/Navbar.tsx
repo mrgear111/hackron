@@ -108,7 +108,7 @@ const Navbar = () => {
         className="w-full fixed top-[30px] z-50 px-4"
       >
         {/* Pill-shaped container with frosted glass effect */}
-        <div className="max-w-6xl mx-auto relative">
+        <div className="max-w-5xl mx-auto relative">
           {/* Glass background with blur */}
           <div className="absolute inset-0 bg-tekron-purple-deep/20 backdrop-blur-md rounded-full border border-tekron-pink-neon/20 overflow-hidden">
 

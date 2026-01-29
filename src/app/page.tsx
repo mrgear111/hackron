@@ -7,6 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/utils/animations";
 import { useRef, useEffect, useState } from "react";
 import LoginModal from "@/components/LoginModal";
+import { FaRocket, FaBullhorn, FaMapMarkerAlt, FaBolt, FaSearch, FaUtensils, FaGamepad, FaMoon, FaShieldAlt, FaCity, FaSun, FaBoxOpen, FaMicrophone, FaHamburger, FaTrophy, FaClock } from 'react-icons/fa';
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function Home() {
   };
 
 
-  const dialogueMessage = "Welcome to HACKRON 2026! Join us for a 24-hour innovation sprint on 5th March at Lab 1 & 2. Compete for 75K prize pool, network with industry leaders, and build the future. Open to all UG students. Register now!";
+  const dialogueMessage = "Welcome to HACKRON 2026! Join us for a 24-hour innovation sprint on 5th March at Lab 1 & 2. Compete for 75K prize pool, for any guidance or doubts please contact the POC's present there.";
 
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll();
@@ -816,98 +817,206 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Gamified Timeline */}
+            {/* Gamified Timeline - Central Branch Design */}
             <motion.div variants={fadeInUp} className="mb-20">
-              <div className="text-center mb-12">
-                <h3 className="text-3xl font-pixel text-tekron-pink-neon mb-2">&gt; EVENT_TIMELINE</h3>
-                <p className="text-gray-400 text-retro">Your 24-hour adventure roadmap</p>
+              <div className="text-center mb-16">
+                <h3 className="text-4xl font-pixel text-tekron-pink-neon mb-4">&gt; EVENT_TIMELINE</h3>
+                <p className="text-gray-300 text-retro text-lg">Your 24-hour adventure roadmap</p>
+                <div className="mt-4 inline-flex items-center gap-2 bg-tekron-purple-deep/60 border border-tekron-pink-neon/30 rounded-full px-6 py-2">
+                  <div className="w-2 h-2 rounded-full bg-tekron-pink-neon animate-pulse" />
+                  <span className="text-tekron-pink-neon font-pixel text-sm">15 LEVELS TO CONQUER</span>
+                </div>
               </div>
 
-              {/* Timeline Container */}
-              <div className="relative">
-                {/* Vertical Line */}
-                <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-tekron-pink-neon via-tekron-purple-accent to-tekron-pink-neon transform md:-translate-x-1/2" />
+              {/* Central Branch Timeline */}
+              <div className="relative max-w-6xl mx-auto px-4">
+                {/* Central Curved Line - SVG */}
+                <svg
+                  className="absolute left-1/2 -translate-x-1/2 top-0 h-full pointer-events-none"
+                  style={{ zIndex: 0 }}
+                  width="200"
+                  viewBox="0 0 200 6000"
+                  preserveAspectRatio="xMidYMin meet"
+                >
+                  <defs>
+                    <linearGradient id="centralGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#00f5ff" stopOpacity="1" />
+                      <stop offset="25%" stopColor="#00d4ff" stopOpacity="1" />
+                      <stop offset="50%" stopColor="#00f5ff" stopOpacity="1" />
+                      <stop offset="75%" stopColor="#00d4ff" stopOpacity="1" />
+                      <stop offset="100%" stopColor="#00f5ff" stopOpacity="1" />
+                    </linearGradient>
+
+                    <filter id="lineGlow">
+                      <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                      <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  {/* Main central curved path with more curves */}
+                  <path
+                    d="M 100 0 Q 60 200, 100 400 Q 140 600, 100 800 Q 60 1000, 100 1200 Q 140 1400, 100 1600 Q 60 1800, 100 2000 Q 140 2200, 100 2400 Q 60 2600, 100 2800 Q 140 3000, 100 3200 Q 60 3400, 100 3600 Q 140 3800, 100 4000 Q 60 4200, 100 4400 Q 140 4600, 100 4800 Q 60 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
+                    stroke="url(#centralGradient)"
+                    strokeWidth="16"
+                    fill="none"
+                    strokeLinecap="round"
+                    filter="url(#lineGlow)"
+                  />
+
+                  {/* Outer glow path */}
+                  <path
+                    d="M 100 0 Q 60 200, 100 400 Q 140 600, 100 800 Q 60 1000, 100 1200 Q 140 1400, 100 1600 Q 60 1800, 100 2000 Q 140 2200, 100 2400 Q 60 2600, 100 2800 Q 140 3000, 100 3200 Q 60 3400, 100 3600 Q 140 3800, 100 4000 Q 60 4200, 100 4400 Q 140 4600, 100 4800 Q 60 5000, 100 5200 Q 120 5400, 100 5600 L 100 6000"
+                    stroke="url(#centralGradient)"
+                    strokeWidth="10"
+                    fill="none"
+                    strokeLinecap="round"
+                    opacity="0.6"
+                  />
+                </svg>
 
                 {/* Timeline Items */}
-                <div className="space-y-12">
-                  {eventDetails.timeline.map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                        } flex-row`}
-                    >
-                      {/* Timeline Node */}
-                      <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2 z-10">
-                        <motion.div
-                          whileHover={{ scale: 1.2, rotate: 180 }}
-                          className="w-6 h-6 rounded-full bg-tekron-pink-neon border-4 border-tekron-purple-deep shadow-lg shadow-tekron-pink-neon/50"
-                          style={{
-                            boxShadow: '0 0 20px rgba(255, 0, 110, 0.6)'
-                          }}
-                        />
-                      </div>
+                <div className="relative space-y-20 py-12" style={{ zIndex: 1 }}>
+                  {eventDetails.timeline.map((item, index) => {
+                    const isLeft = index % 2 === 0;
 
-                      {/* Content Card */}
-                      <div className={`w-full md:w-5/12 ml-20 md:ml-0 ${index % 2 === 0 ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}>
-                        <motion.div
-                          whileHover={{ scale: 1.03, y: -5 }}
-                          className="relative group"
-                        >
+                    return (
+                      <div
+                        key={index}
+                        className={`relative flex items-center ${isLeft ? 'justify-start' : 'justify-end'}`}
+                      >
+                        {/* Branch Line connecting to center */}
+                        <div className={`absolute top-1/2 ${isLeft ? 'left-1/2 right-0' : 'left-0 right-1/2'} h-1`}>
+                          <div className={`h-full bg-gradient-to-r ${isLeft ? 'from-cyan-400/80 to-transparent' : 'from-transparent to-cyan-400/80'}`} />
+                        </div>
+
+                        {/* Center Node */}
+                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                          <div className="w-6 h-6 rounded-full bg-cyan-400 border-4 border-tekron-purple-deep shadow-lg shadow-cyan-400/70">
+                            <div className="w-full h-full rounded-full bg-cyan-300 animate-pulse" />
+                          </div>
+                        </div>
+
+                        {/* Level Card */}
+                        <div className={`relative group ${isLeft ? 'mr-auto pr-8 md:pr-16' : 'ml-auto pl-8 md:pl-16'} w-full md:w-[48%]`}>
                           {/* Glow Effect */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon/10 to-tekron-purple-accent/10 rounded-lg blur-xl group-hover:blur-2xl transition-all" />
+                          <div className="absolute -inset-2 bg-gradient-to-br from-tekron-pink-neon/20 via-tekron-purple-accent/20 to-cyan-500/20 rounded-3xl blur-xl opacity-60" />
 
-                          {/* Card */}
-                          <div className="relative bg-tekron-purple-deep/60 backdrop-blur-md border-2 border-tekron-pink-neon/30 rounded-lg p-6 hover:border-tekron-pink-neon/60 transition-all">
+                          {/* Level Card Container */}
+                          <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-cyan-400/40 rounded-2xl p-8 shadow-2xl hover:border-cyan-400/70 transition-all duration-300">
+
+                            {/* Corner Accents */}
+                            <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-lg" />
+                            <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-lg" />
+                            <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-lg" />
+                            <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-cyan-400/60 rounded-br-lg" />
+
+                            {/* Level Number Badge */}
+                            <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? '-right-12' : '-left-12'}`}>
+                              <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon to-tekron-purple-accent rounded-full blur-md opacity-75" />
+                                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-tekron-pink-neon via-purple-500 to-tekron-purple-accent flex items-center justify-center border-4 border-tekron-purple-deep shadow-2xl shadow-tekron-pink-neon/60">
+                                  <span className="text-white font-pixel text-xl drop-shadow-lg">
+                                    {String(index + 1).padStart(2, '0')}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Level Icon - Font Awesome */}
+                            <div className="flex justify-center mb-5">
+                              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center backdrop-blur-sm">
+                                {index === 0 ? <FaRocket className="text-cyan-400 text-3xl" /> :
+                                  index === 1 ? <FaBullhorn className="text-cyan-400 text-3xl" /> :
+                                    index === 2 ? <FaMapMarkerAlt className="text-cyan-400 text-3xl" /> :
+                                      index === 3 ? <FaBolt className="text-cyan-400 text-3xl" /> :
+                                        index === 4 ? <FaSearch className="text-cyan-400 text-3xl" /> :
+                                          index === 5 ? <FaUtensils className="text-cyan-400 text-3xl" /> :
+                                            index === 6 ? <FaSearch className="text-cyan-400 text-3xl" /> :
+                                              index === 7 ? <FaUtensils className="text-cyan-400 text-3xl" /> :
+                                                index === 8 ? <FaShieldAlt className="text-cyan-400 text-3xl" /> :
+                                                  index === 9 ? <FaMoon className="text-cyan-400 text-3xl" /> :
+                                                    index === 10 ? <FaSun className="text-cyan-400 text-3xl" /> :
+                                                      index === 11 ? <FaBoxOpen className="text-cyan-400 text-3xl" /> :
+                                                        index === 12 ? <FaMicrophone className="text-cyan-400 text-3xl" /> :
+                                                          index === 13 ? <FaHamburger className="text-cyan-400 text-3xl" /> :
+                                                            index === 14 ? <FaTrophy className="text-cyan-400 text-3xl" /> : <FaClock className="text-cyan-400 text-3xl" />}
+                              </div>
+                            </div>
+
                             {/* Time Badge */}
-                            <div className="inline-block bg-tekron-pink-neon/20 border border-tekron-pink-neon/40 rounded-full px-4 py-1 mb-3">
-                              <span className="text-tekron-pink-neon font-pixel text-sm">{item.time}</span>
+                            <div className="flex justify-center mb-4">
+                              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400/20 to-blue-600/20 border-2 border-cyan-400/50 rounded-full px-5 py-2 backdrop-blur-sm">
+                                <FaClock className="text-cyan-400 text-sm" />
+                                <span className="text-cyan-300 font-pixel text-sm tracking-wider">{item.time}</span>
+                              </div>
                             </div>
 
                             {/* Event Title */}
-                            <h4 className="text-white font-bold text-lg mb-2">{item.event}</h4>
+                            <h4 className="text-white font-bold text-center text-4xl mb-4 min-h-[3rem] flex items-center justify-center leading-tight px-2">
+                              {item.event}
+                            </h4>
 
-                            {/* Description */}
-                            <p className="text-gray-400 text-sm">{item.desc}</p>
+                            {/* Description (if exists) */}
+                            {item.desc && (
+                              <p className="text-gray-300 text-sm text-center mb-3 leading-relaxed">{item.desc}</p>
+                            )}
 
-                            {/* Progress Indicator */}
-                            <div className="mt-4 flex items-center gap-2">
-                              <div className="flex-grow h-1 bg-tekron-purple-mid rounded-full overflow-hidden">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  whileInView={{ width: '100%' }}
-                                  viewport={{ once: true }}
-                                  transition={{ delay: index * 0.1 + 0.3, duration: 0.8 }}
-                                  className="h-full bg-gradient-to-r from-tekron-pink-neon to-tekron-purple-accent"
-                                />
+                            {/* Level Progress Indicator */}
+                            <div className="flex justify-center gap-1.5 mb-4">
+                              {[...Array(3)].map((_, i) => (
+                                <div key={i} className="w-2 h-2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
+                              ))}
+                            </div>
+
+                            {/* Progress Bar */}
+                            <div className="mt-5 mb-4">
+                              <div className="h-1.5 bg-purple-950/50 rounded-full overflow-hidden border border-cyan-400/20">
+                                <div className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 w-full shadow-lg shadow-cyan-400/30" />
                               </div>
-                              <span className="text-tekron-pink-neon font-pixel text-xs">
-                                {Math.round((index + 1) / eventDetails.timeline.length * 100)}%
-                              </span>
+                            </div>
+
+                            {/* Level Status */}
+                            <div className="mt-4 text-center">
+                              <div className="inline-flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/30 rounded-full px-5 py-2">
+                                <span className="text-cyan-300 font-pixel text-xs tracking-wider">
+                                  LEVEL {index + 1}/{eventDetails.timeline.length}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
+                    );
+                  })}
 
-                {/* End Marker */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  className="relative mt-12 flex justify-center md:justify-center"
-                >
-                  <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-tekron-pink-neon to-tekron-purple-accent flex items-center justify-center shadow-lg shadow-tekron-pink-neon/50">
-                      <span className="text-2xl">🏆</span>
+                  {/* Final Trophy */}
+                  <div className="relative flex justify-center pt-16 pb-8">
+                    <div className="relative group">
+                      {/* Trophy glow */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/40 via-orange-500/40 to-yellow-600/40 rounded-full blur-2xl" />
+
+                      {/* Trophy container */}
+                      <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-500 flex items-center justify-center border-[6px] border-yellow-200 shadow-2xl shadow-yellow-500/50">
+                        {/* Inner glow */}
+                        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-yellow-200/40 to-transparent" />
+
+                        {/* Trophy emoji */}
+                        <span className="text-6xl relative z-10 drop-shadow-2xl">🏆</span>
+                      </div>
+
+                      {/* Victory text */}
+                      <div className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-center">
+                        <span className="text-yellow-400 font-pixel text-2xl drop-shadow-lg tracking-wider">VICTORY!</span>
+                        <div className="mt-2">
+                          <span className="text-white-300 font-pixel text-xs">COMPLETE_ALL_LEVELS</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
 
