@@ -17,6 +17,7 @@ export default function Home() {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [displayedText, setDisplayedText] = useState('');
   const [dialogueGlitch, setDialogueGlitch] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const eventDetails = {
     mainInfo: [
@@ -67,6 +68,24 @@ export default function Home() {
 
   useEffect(() => {
     // Initialize any Firebase-dependent code here
+  }, []);
+
+  // Initialize window size and track resize
+  useEffect(() => {
+    // Set initial window size
+    const updateWindowSize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    // Initialize on mount
+    updateWindowSize();
+
+    // Add resize listener
+    window.addEventListener('resize', updateWindowSize);
+    return () => window.removeEventListener('resize', updateWindowSize);
   }, []);
 
   // Track mouse position for cloud parallax
@@ -268,8 +287,8 @@ export default function Home() {
             <motion.div
               className="absolute inset-0 z-20"
               animate={{
-                x: (window.innerWidth / 2 - mousePosition.x) * 0.03,
-                y: (window.innerHeight - mousePosition.y) * 0.03
+                x: (windowSize.width / 2 - mousePosition.x) * 0.03,
+                y: (windowSize.height - mousePosition.y) * 0.03
               }}
             >
               <Image
@@ -288,8 +307,8 @@ export default function Home() {
             <motion.div
               className="absolute inset-0 z-10"
               animate={{
-                x: (window.innerWidth / 2 - mousePosition.x) * 0.02,
-                y: (window.innerHeight / 2 - mousePosition.y) * 0.02
+                x: (windowSize.width / 2 - mousePosition.x) * 0.02,
+                y: (windowSize.height / 2 - mousePosition.y) * 0.02
               }}
             >
               <Image
