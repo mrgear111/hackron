@@ -198,7 +198,7 @@ const Navbar = () => {
                       transition={{
                         duration: 1.2,
                         repeat: Infinity,
-                        ease: "steps(1)"
+                        ease: "linear"
                       }}
                     />
                   </div>
