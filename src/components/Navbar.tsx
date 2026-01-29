@@ -105,222 +105,114 @@ const Navbar = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-        className="w-full fixed top-0 z-50"
+        className="w-full fixed top-[30px] z-50 px-4"
       >
-        {/* Pixel-themed background with scanline texture */}
-        <div className="absolute inset-0 bg-tekron-purple-deep/90 backdrop-blur-sm border-b border-tekron-pink-neon/30 overflow-hidden">
+        {/* Pill-shaped container with frosted glass effect */}
+        <div className="max-w-6xl mx-auto relative">
+          {/* Glass background with blur */}
+          <div className="absolute inset-0 bg-tekron-purple-deep/20 backdrop-blur-md rounded-full border border-tekron-pink-neon/20 overflow-hidden">
 
-          {/* Animated grid background */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
+            {/* Animated grid background */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
 
-          {/* Animated noise overlay */}
-          <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay" />
+            {/* Animated noise overlay */}
+            <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay" />
 
-          {/* Glowing border with dual scan lines */}
-          <div className="absolute inset-x-0 bottom-0">
-            {/* Main border gradient */}
-            <motion.div
-              className="h-px w-full bg-gradient-to-r from-transparent via-tekron-pink-neon/50 to-transparent"
-              animate={{
-                boxShadow: [
-                  "0 0 10px rgba(255,0,110,0.2)",
-                  "0 0 20px rgba(255,0,110,0.6)",
-                  "0 0 10px rgba(255,0,110,0.2)"
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-
-            {/* Fast scan line */}
-            <motion.div
-              className="absolute bottom-0 h-[2px] w-[10%] bg-tekron-pink-neon/80"
-              animate={{
-                x: ["-100%", "1000%"],
-                opacity: [0, 1, 0]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-
-            {/* Slow scan line */}
-            <motion.div
-              className="absolute bottom-0 h-[1px] w-[30%] bg-tekron-purple-accent/40"
-              animate={{
-                x: ["-100%", "400%"],
-                opacity: [0, 1, 0]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-          </div>
-
-          {/* Vertical data streams */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(30)].map((_, i) => (
+            {/* Glowing border effect */}
+            <div className="absolute inset-0">
               <motion.div
-                key={i}
-                className="absolute top-0 w-px bg-gradient-to-b from-transparent via-tekron-pink-neon/20 to-transparent"
-                style={{
-                  left: `${i * 3.33}%`,
-                  height: '100%',
-                  opacity: 0.1
-                }}
+                className="absolute inset-0 rounded-full"
                 animate={{
-                  y: ["-100%", "100%"],
-                  opacity: [0, 0.2, 0]
+                  boxShadow: [
+                    "inset 0 0 20px rgba(255,0,110,0.1), 0 0 30px rgba(255,0,110,0.1)",
+                    "inset 0 0 30px rgba(255,0,110,0.2), 0 0 40px rgba(255,0,110,0.2)",
+                    "inset 0 0 20px rgba(255,0,110,0.1), 0 0 30px rgba(255,0,110,0.1)"
+                  ]
                 }}
-                transition={{
-                  duration: Math.random() * 2 + 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 2,
-                  ease: "linear"
-                }}
+                transition={{ duration: 3, repeat: Infinity }}
               />
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Main content */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+            {/* Subtle gradient overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-r from-tekron-purple-deep/10 via-transparent to-tekron-pink-neon/10 rounded-full" />
+          </div>
+
+          {/* Main content */}
+          <div className="relative flex items-center justify-between h-16 px-6">
             {/* Enhanced Logo */}
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="flex items-center"
             >
-              <Link href="/" className="flex items-center gap-2">
-                <motion.div className="relative">
-                  {/* Main glowing background */}
-                  <motion.div
-                    className="absolute -inset-3 rounded opacity-75 blur-2xl"
-                    animate={{
-                      background: [
-                        "radial-gradient(circle, rgba(255,0,110,0.3) 0%, rgba(138,43,226,0.3) 50%, transparent 70%)",
-                        "radial-gradient(circle, rgba(138,43,226,0.3) 0%, rgba(255,0,110,0.3) 50%, transparent 70%)",
-                      ],
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  />
-
-                  <div className="relative flex items-center text-2xl font-bold font-mono">
-                    {/* Terminal Prompt */}
-                    <motion.div
+              <Link href="/" className="flex items-center gap-3">
+                <div className="relative">
+                  {/* HACKRON Text */}
+                  <div className="relative flex items-center">
+                    {/* Terminal Prompt - Subtle */}
+                    <motion.span
+                      className="text-tekron-pink-neon/80 font-pixel text-xl mr-2"
                       animate={{
-                        color: ["#ff006e", "#00f5ff", "#ff006e"],
-                        textShadow: [
-                          "0 0 10px rgba(255,0,110,0.7)",
-                          "0 0 15px rgba(0,245,255,0.7)",
-                          "0 0 10px rgba(255,0,110,0.7)"
-                        ]
+                        opacity: [0.6, 1, 0.6]
                       }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="mr-1 font-pixel"
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      {">"}
-                    </motion.div>
+                      &gt;
+                    </motion.span>
 
-                    {/* HACKRON Text */}
+                    {/* Main HACKRON Text */}
                     <div className="relative">
-                      {/* Main text with gradient */}
-                      <motion.div
-                        className="bg-clip-text text-transparent bg-gradient-to-r from-tekron-pink-neon via-tekron-pink-bright to-tekron-purple-accent relative z-10 font-pixel"
-                        animate={{
-                          textShadow: [
-                            "0 0 10px rgba(255,0,110,0.5)",
-                            "0 0 20px rgba(0,245,255,0.5)",
-                            "0 0 10px rgba(255,0,110,0.5)"
-                          ]
+                      {/* Base text with solid color and glow */}
+                      <h1
+                        className="text-2xl font-bold font-pixel tracking-wide text-tekron-pink-neon"
+                        style={{
+                          textShadow: '0 0 20px rgba(255, 0, 110, 0.5), 0 0 40px rgba(255, 0, 110, 0.3)'
                         }}
-                        transition={{ duration: 2, repeat: Infinity }}
                       >
                         HACKRON
-                      </motion.div>
+                      </h1>
 
-                      {/* Glitch Effect Layers */}
+                      {/* Occasional subtle glitch - only triggers sometimes */}
                       <motion.div
-                        className="absolute inset-0 text-cyan-400/30"
+                        className="absolute inset-0 text-2xl font-bold font-pixel tracking-wide text-cyan-400/50"
                         animate={{
-                          x: [0, -2, 0, 2, 0],
-                          opacity: [0, 1, 0]
+                          x: [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0],
+                          opacity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0]
                         }}
                         transition={{
-                          duration: 0.3,
+                          duration: 5,
                           repeat: Infinity,
-                          repeatType: "reverse",
-                          times: [0, 0.2, 0.4, 0.6, 1]
-                        }}
-                      >
-                        HACKRON
-                      </motion.div>
-                      <motion.div
-                        className="absolute inset-0 text-blue-400/30"
-                        animate={{
-                          x: [0, 2, 0, -2, 0],
-                          opacity: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 0.4,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                          times: [0, 0.2, 0.4, 0.6, 1]
+                          ease: "linear"
                         }}
                       >
                         HACKRON
                       </motion.div>
                     </div>
 
-                    {/* Animated Cursor */}
+                    {/* Blinking cursor */}
                     <motion.div
-                      className="ml-1 w-[3px] h-[24px] bg-cyan-400"
+                      className="ml-2 w-[2px] h-5 bg-tekron-pink-neon"
                       animate={{
-                        opacity: [1, 0],
-                        backgroundColor: ["#22d3ee", "#3b82f6"],
-                        boxShadow: [
-                          "0 0 10px rgba(34,211,238,0.7)",
-                          "0 0 15px rgba(59,130,246,0.7)"
-                        ]
+                        opacity: [1, 1, 0, 0]
                       }}
                       transition={{
-                        duration: 0.8,
+                        duration: 1.2,
                         repeat: Infinity,
-                        repeatType: "reverse"
+                        ease: "steps(1)"
                       }}
                     />
                   </div>
 
-                  {/* Decorative circuit lines */}
-                  <div className="absolute -bottom-2 left-0 w-full">
-                    <motion.div
-                      className="h-[1px] w-full"
-                      style={{
-                        background: "linear-gradient(90deg, transparent, rgba(255,0,110,0.5), transparent)"
-                      }}
-                      animate={{
-                        opacity: [0.3, 0.7, 0.3]
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <motion.div
-                      className="h-[1px] w-[60%] mx-auto mt-1"
-                      style={{
-                        background: "linear-gradient(90deg, transparent, rgba(157,78,221,0.5), transparent)"
-                      }}
-                      animate={{
-                        opacity: [0.2, 0.5, 0.2],
-                        width: ["60%", "40%", "60%"]
-                      }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    />
-                  </div>
-                </motion.div>
+                  {/* Subtle underline accent */}
+                  <motion.div
+                    className="h-[1px] mt-1 bg-gradient-to-r from-transparent via-tekron-pink-neon/40 to-transparent"
+                    animate={{
+                      opacity: [0.3, 0.6, 0.3],
+                      scaleX: [0.8, 1, 0.8]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </div>
               </Link>
             </motion.div>
 
@@ -585,46 +477,6 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-
-        {/* Cyberpunk corner decorations */}
-        <div className="absolute top-0 left-0 w-16 h-16">
-          <motion.div
-            className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 border-cyan-500/30"
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              boxShadow: [
-                "0 0 5px rgba(34,211,238,0.2)",
-                "0 0 10px rgba(34,211,238,0.4)",
-                "0 0 5px rgba(34,211,238,0.2)"
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-        <div className="absolute top-0 right-0 w-16 h-16">
-          <motion.div
-            className="absolute top-2 right-2 w-8 h-8 border-r-2 border-t-2 border-cyan-500/30"
-            animate={{
-              opacity: [0.3, 0.6, 0.3]
-            }}
-            transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-          />
-        </div>
-
-        {/* System status indicators */}
-        <motion.div
-          className="absolute top-2 right-20 font-mono text-[10px] text-cyan-500/50"
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        >
-          <span className="mr-2">[sys.status: online]</span>
-          <motion.span
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 1, repeat: Infinity }}
-          >
-            ●
-          </motion.span>
-        </motion.div>
       </motion.nav>
 
       <LoginModal
