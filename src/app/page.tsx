@@ -11,6 +11,13 @@ import LoginModal from "@/components/LoginModal";
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dialogueIndex, setDialogueIndex] = useState(0);
+  const [isDialogueOpen, setIsDialogueOpen] = useState(false);
+  const [isCharacterHovered, setIsCharacterHovered] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [displayedText, setDisplayedText] = useState('');
+  const [dialogueGlitch, setDialogueGlitch] = useState(false);
+
   const eventDetails = {
     mainInfo: [
       { icon: "🚀", label: "24'Hrs Hackathon", value: "Non-Stop Coding" },
@@ -45,8 +52,12 @@ export default function Home() {
     ]
   };
 
+
+  const dialogueMessage = "Welcome to HACKRON 2026! Join us for a 24-hour innovation sprint on 5th March at Lab 1 & 2. Compete for 75K prize pool, network with industry leaders, and build the future. Open to all UG students. Register now!";
+
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   // Parallax effect for background elements
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
@@ -58,10 +69,44 @@ export default function Home() {
     // Initialize any Firebase-dependent code here
   }, []);
 
+  // Track mouse position for cloud parallax
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Typing effect for dialogue
+  useEffect(() => {
+    setDisplayedText('');
+
+    let currentIndex = 0;
+    const typeInterval = setInterval(() => {
+      if (currentIndex < dialogueMessage.length) {
+        setDisplayedText(dialogueMessage.slice(0, currentIndex + 1));
+        currentIndex++;
+
+        if (Math.random() < 0.1) {
+          setDialogueGlitch(true);
+          setTimeout(() => setDialogueGlitch(false), 100);
+        }
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 30);
+
+    return () => clearInterval(typeInterval);
+  }, []);
+
   useEffect(() => {
     // Simulate loading time (you can remove this setTimeout if you have actual loading tasks)
     const timer = setTimeout(() => {
       setLoading(false);
+      // Show dialogue after loading is complete
+      setTimeout(() => setIsDialogueOpen(true), 500);
     }, 2500);
 
     return () => clearTimeout(timer);
@@ -69,8 +114,6 @@ export default function Home() {
 
   return (
     <div className="bg-gradient-to-b from-tekron-purple-deep via-tekron-purple-mid to-tekron-purple-deep min-h-screen overflow-hidden relative">
-      {/* CRT Scanlines Overlay */}
-      <div className="crt-scanlines" />
 
       {/* Cloud Background */}
       <div className="cloud-bg">
@@ -81,27 +124,6 @@ export default function Home() {
 
       {/* Pixel Dust */}
       <div className="pixel-dust" />
-
-      {/* Background Video with Pixelation */}
-      <div className="fixed inset-0 -z-10">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/bg.mp4"
-          className="w-full h-full object-cover opacity-20"
-          style={{
-            filter: 'blur(2px) contrast(1.2)',
-            imageRendering: 'pixelated'
-          }}
-        >
-          <source src="/bg.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        {/* Purple overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0b2e]/80 via-[#2d1b4e]/60 to-[#1a0b2e]/80" />
-      </div>
 
       {/* Loading Animation */}
       {loading && (
@@ -225,8 +247,8 @@ export default function Home() {
       <motion.div
         className="fixed inset-0 bg-grid-pattern pointer-events-none"
         style={{ opacity: gridOpacity, y: bgY }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: loading ? 0 : 1 }}
+        initial={{ opacity: 0.5 }}
+        // animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       />
       <div className="fixed inset-0 pointer-events-none"></div>
@@ -240,6 +262,52 @@ export default function Home() {
           animate={{ opacity: 1 }}
           className="relative min-h-[100vh] mb-20 overflow-hidden"
         >
+          {/* Background Clouds with Mouse Movement - Only in Hero */}
+          <div className="absolute inset-0 -z-10">
+            {/* Cloud 1 - Moves slower */}
+            <motion.div
+              className="absolute inset-0 z-20"
+              animate={{
+                x: (window.innerWidth / 2 - mousePosition.x) * 0.03,
+                y: (window.innerHeight - mousePosition.y) * 0.03
+              }}
+            >
+              <Image
+                src="/images/1.webp"
+                alt="Cloud 1"
+                fill
+                className="object-cover"
+                style={{
+                  imageRendering: 'auto'
+                }}
+                priority
+              />
+            </motion.div>
+
+            {/* Cloud 2 - Moves faster for parallax effect */}
+            <motion.div
+              className="absolute inset-0 z-10"
+              animate={{
+                x: (window.innerWidth / 2 - mousePosition.x) * 0.02,
+                y: (window.innerHeight / 2 - mousePosition.y) * 0.02
+              }}
+            >
+              <Image
+                src="/images/5.webp"
+                alt="Cloud 2"
+                fill
+                className="object-cover"
+                style={{
+                  imageRendering: 'auto'
+                }}
+                priority
+              />
+            </motion.div>
+
+            {/* Purple overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-primary-dark-base/80 via-bg-deep-night/60 to-primary-dark-base/80" />
+          </div>
+
           {/* Subtle Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-primary-dark-base via-bg-deep-night/40 to-primary-dark-base" />
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
@@ -377,6 +445,124 @@ export default function Home() {
 
             </div>
           </div>
+
+          {/* Character with Dialogue Bubble - Only in Hero */}
+          {isDialogueOpen && (
+            <div className="hidden sm:block absolute bottom-[630px] right-[10px] z-50">
+              <div className="relative px-8 py-6 bg-primary-purple/90 border-2 border-accent-cyan rounded-lg" style={{
+                boxShadow: '0 0 20px rgba(160, 107, 255, 0.5)',
+                imageRendering: 'pixelated',
+              }}>
+                {/* Close button */}
+                <button
+                  onClick={() => setIsDialogueOpen(false)}
+                  className="absolute top-2 right-2 text-pixel text-accent-cyan hover:text-ui-white transition-colors"
+                  style={{ fontSize: '12px', cursor: 'pointer', lineHeight: '1' }}
+                >
+                  ×
+                </button>
+
+                {/* Dialogue text with typing effect */}
+                <p className={`text-pixel mb-4 ${dialogueGlitch ? 'opacity-50' : ''}`} style={{
+                  fontSize: '10px',
+                  lineHeight: '1.8',
+                  color: '#F0E4FF',
+                  textShadow: '1px 1px 0px #000000, 0 0 10px rgba(160, 107, 255, 0.3)',
+                  imageRendering: 'pixelated',
+                  maxWidth: '300px',
+                }}>
+                  {displayedText}
+                  {displayedText.length < dialogueMessage.length && (
+                    <span className="inline-block animate-pulse">|</span>
+                  )}
+                </p>
+
+                {/* Dialogue tail */}
+                <div
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full"
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderLeft: '16px solid transparent',
+                    borderRight: '16px solid transparent',
+                    borderTop: '16px solid rgba(160, 107, 255, 0.9)',
+                    filter: 'drop-shadow(0 0 8px rgba(160, 107, 255, 0.4))',
+                    imageRendering: 'pixelated',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Character - Only in Hero */}
+          <div
+            className="hidden sm:block absolute bottom-0 right-[-80px] z-30 cursor-pointer"
+            onClick={() => setIsDialogueOpen(!isDialogueOpen)}
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const mouseX = e.clientX - rect.left;
+              const centerX = rect.width * 0.2;
+
+              if (mouseX > centerX) {
+                setIsCharacterHovered(true);
+                setCursorPosition({ x: e.clientX, y: e.clientY });
+              } else {
+                setIsCharacterHovered(false);
+              }
+            }}
+            onMouseLeave={() => setIsCharacterHovered(false)}
+            style={{ cursor: isCharacterHovered ? 'none' : 'pointer' }}
+          >
+            <motion.div
+              animate={{
+                y: [0, -10, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              style={{
+                width: 'clamp(400px, 33vw, 800px)',
+                position: 'relative',
+                imageRendering: 'pixelated',
+              }}
+            >
+              <Image
+                src="/images/main_Chr.png"
+                alt="Assistant character"
+                width={800}
+                height={800}
+                className="w-full h-auto block"
+                style={{ imageRendering: 'pixelated' }}
+                priority
+              />
+            </motion.div>
+          </div>
+
+          {/* Custom cursor on character hover - Only in Hero */}
+          {isCharacterHovered && (
+            <div
+              className="absolute pointer-events-none z-50 text-pixel"
+              style={{
+                left: `${cursorPosition.x + 15}px`,
+                top: `${cursorPosition.y + 15}px`,
+                transform: 'translate(0, 0)',
+              }}
+            >
+              <div style={{
+                background: 'rgba(160, 107, 255, 0.9)',
+                color: '#F0E4FF',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                fontSize: '10px',
+                boxShadow: '0 0 15px rgba(160, 107, 255, 0.6)',
+                whiteSpace: 'nowrap',
+              }}>
+                NEED HELP?
+              </div>
+            </div>
+          )}
         </motion.section>
 
 
