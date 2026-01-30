@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   },
 };
 
+import SmoothScrolling from "@/components/SmoothScrolling";
+
 export default function RootLayout({
   children,
 }: {
@@ -29,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`} suppressHydrationWarning>
-        <main className="flex-grow">
-          {children}
-        </main>
-        <ClientFooter />
+        <SmoothScrolling>
+          <main className="flex-grow">
+            {children}
+          </main>
+          <ClientFooter />
+        </SmoothScrolling>
       </body>
     </html>
   );
