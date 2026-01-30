@@ -75,22 +75,19 @@ export default function Problems() {
         return;
       }
 
+      // Allow access to all authenticated users
+      setLoading(false);
+
+      // Check admin status for UI purposes only (no redirect)
       try {
-        // Check if user is admin using their UID
         const adminRef = ref(db, `admins/${user.uid}`);
         const adminSnapshot = await get(adminRef);
 
         if (adminSnapshot.exists()) {
           setIsAdmin(true);
-        } else {
-          console.log("Not an admin, redirecting");
-          router.push('/');
         }
       } catch (error) {
-        console.error("Error checking permissions:", error);
-        router.push('/');
-      } finally {
-        setLoading(false);
+        console.error("Error checking admin status:", error);
       }
     });
 
@@ -98,8 +95,7 @@ export default function Problems() {
   }, [router]);
 
   useEffect(() => {
-    if (!isAdmin) return;
-
+    // Fetch counts for all authenticated users
     const teamsRef = ref(db, 'teams');
     const unsubscribe = onValue(teamsRef, (snapshot) => {
       const data = snapshot.val();
@@ -115,7 +111,6 @@ export default function Problems() {
             // The saved string format in team-dashboard is "Title: Description"
             // We split by ':' to get the title part safely
             const submissionTitle = submission.problemStatement.split(':')[0].trim();
-            console.log(`Processing submission: "${submission.problemStatement}" -> Extracted title: "${submissionTitle}"`);
 
             const matchedProblem = problemStatements.find(p =>
               p.title.trim() === submissionTitle
@@ -123,22 +118,18 @@ export default function Problems() {
 
             if (matchedProblem) {
               counts[matchedProblem.id] = (counts[matchedProblem.id] || 0) + 1;
-              console.log(`Matched problem ID ${matchedProblem.id}: "${matchedProblem.title}". Current count: ${counts[matchedProblem.id]}`);
-            } else {
-              console.log(`No match found for submission title: "${submissionTitle}"`);
             }
           }
         });
       }
 
       setProblemCounts(counts);
-      console.log("Final problem counts:", counts);
     }, (error) => {
       console.error("Error fetching team counts:", error);
     });
 
     return () => unsubscribe();
-  }, [isAdmin]);
+  }, []); // Run once on mount
 
   if (loading) {
     return (
@@ -170,9 +161,6 @@ export default function Problems() {
       </div>
     );
   }
-
-  // Double check to prevent flash of content
-  if (!isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-black font-sans selection:bg-cyan-500/30">

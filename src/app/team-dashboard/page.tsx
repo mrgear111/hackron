@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
-import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket } from 'react-icons/fa';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket, FaLightbulb, FaLock } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -810,37 +810,62 @@ export default function TeamDashboard() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Problem Statement Selection */}
                     <div>
-                      <label className="block text-cyan-400 font-mono text-lg mb-2">
-                        {`> Problem_Statement:`}
-                      </label>
-                      <select
-                        value={formData.problemStatement || problemStatements[0]}
-                        onChange={handleProblemStatementChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
-                      >
-                        {problemStatements.map((statement, index) => {
-                          const count = problemCounts[statement] || 0;
-                          const isFull = count >= 11;
-                          const isSelected = formData.problemStatement === statement;
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg">
+                          {`> Problem_Statement:`}
+                        </label>
+                        <Link href="/problems" target="_blank" className="text-sm font-mono text-cyan-500 hover:text-cyan-400 flex items-center gap-1 hover:underline">
+                          <FaLightbulb size={12} /> View Detailed Problems
+                        </Link>
+                      </div>
 
-                          // Disable if full AND not currently selected (so they don't lose their own selection)
-                          const isDisabled = isFull && !isSelected;
+                      {teamData?.projectSubmission?.problemStatement ? (
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={teamData.projectSubmission.problemStatement.split(':')[0]}
+                            disabled
+                            className="w-full bg-black/30 border border-purple-500/30 rounded px-4 py-3 text-gray-400 font-mono text-lg cursor-not-allowed"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-purple-400 text-xs font-mono">
+                            <FaLock /> LOCKED
+                          </div>
+                          <p className="mt-2 text-xs text-red-400 font-mono">
+                            * Problem statement selection cannot be changed once submitted.
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <select
+                            value={formData.problemStatement || problemStatements[0]}
+                            onChange={handleProblemStatementChange}
+                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
+                          >
+                            {problemStatements.map((statement, index) => {
+                              const count = problemCounts[statement] || 0;
+                              const isFull = count >= 11;
+                              const isSelected = formData.problemStatement === statement;
 
-                          return (
-                            <option
-                              key={index}
-                              value={statement}
-                              disabled={isDisabled}
-                              className={`bg-gray-900 text-lg ${isDisabled ? 'text-gray-600' : 'text-gray-300'}`}
-                            >
-                              {statement.split(':')[0]} {isFull ? '(FULL)' : `(${count}/11)`}
-                            </option>
-                          );
-                        })}
-                      </select>
-                      <p className="mt-2 text-xs text-gray-500 font-mono">
-                        {formData.problemStatement || problemStatements[0]}
-                      </p>
+                              // Disable if full AND not currently selected (so they don't lose their own selection)
+                              const isDisabled = isFull && !isSelected;
+
+                              return (
+                                <option
+                                  key={index}
+                                  value={statement}
+                                  disabled={isDisabled}
+                                  className={`bg-gray-900 text-lg ${isDisabled ? 'text-gray-600' : 'text-gray-300'}`}
+                                >
+                                  {statement.split(':')[0]} {isFull ? '(FULL)' : `(${count}/11)`}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <p className="mt-2 text-xs text-gray-500 font-mono">
+                            {formData.problemStatement || problemStatements[0]}
+                          </p>
+                        </>
+                      )}
                     </div>
 
                     {/* URLs Grid */}
