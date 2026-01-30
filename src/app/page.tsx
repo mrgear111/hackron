@@ -7,7 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/utils/animations";
 import { useRef, useEffect, useState } from "react";
 import LoginModal from "@/components/LoginModal";
-import { FaRocket, FaBullhorn, FaMapMarkerAlt, FaBolt, FaSearch, FaUtensils, FaGamepad, FaMoon, FaShieldAlt, FaCity, FaSun, FaBoxOpen, FaMicrophone, FaHamburger, FaTrophy, FaClock } from 'react-icons/fa';
+import { FaRocket, FaBullhorn, FaMapMarkerAlt, FaBolt, FaSearch, FaUtensils, FaGamepad, FaMoon, FaShieldAlt, FaCity, FaSun, FaBoxOpen, FaMicrophone, FaHamburger, FaTrophy, FaClock, FaCode } from 'react-icons/fa';
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -23,27 +23,21 @@ export default function Home() {
   const eventDetails = {
     mainInfo: [
       { icon: "🚀", label: "24'Hrs Hackathon", value: "Non-Stop Coding" },
-      { icon: "📅", label: "Date", value: "5th March" },
+      { icon: "📅", label: "Date", value: "31st Jan - 1st Feb" },
       { icon: "📍", label: "Venue", value: "Lab 1 & 2" },
       { icon: "👥", label: "Participants", value: "UG students" },
       { icon: "💰", label: "Prize Pool", value: "75k" },
     ],
     timeline: [
-      { time: "07:30 - 09:00", event: "Registration", desc: "" },
-      { time: "09:00 - 10:00", event: "Opening and briefing", desc: "" },
-      { time: "10:00 - 10:30", event: "Settling down and allocation", desc: "" },
-      { time: "10:30", event: "Start of Hackathon", desc: "" },
-      { time: "13:00 - 13:30", event: "Checkpoint 1", desc: "" },
-      { time: "14:00 - 15:00", event: "Lunch", desc: "" },
-      { time: "18:00 - 19:00", event: "Checkpoint 2", desc: "" },
-      { time: "20:30 - 21:00", event: "Dinner", desc: "" },
-      { time: "22:00 - 22:30", event: "Security Check", desc: "" },
-      { time: "00:00 - 01:00", event: "Checkpoint 3", desc: "" },
-      { time: "07:00 - 08:00", event: "Checkpoint 4", desc: "" },
-      { time: "10:00 - 11:00", event: "Project Submission", desc: "" },
-      { time: "11:00 - 14:00", event: "Solution Presentation", desc: "" },
-      { time: "14:00 - 15:00", event: "Lunch", desc: "" },
-      { time: "15:00 - 16:00", event: "Prize distribution + closing", desc: "" },
+      { time: "10:00 AM - 12:00 PM", event: "Workshop / Problem Announcement", desc: "Day 1: Jan 31" },
+      { time: "12:00 PM - 4:00 PM", event: "Building Time", desc: "Day 1: Jan 31" },
+      { time: "4:00 PM - 6:00 PM", event: "Checkpoint 1", desc: "Day 1: Jan 31" },
+      { time: "7:00 PM - 9:00 PM", event: "Break for Concert", desc: "Day 1: Jan 31" },
+      { time: "1:00 AM - 3:00 AM", event: "Checkpoint 2", desc: "Day 2: Feb 1" },
+      { time: "10:00 AM - 12:00 PM", event: "Submission Window Opens", desc: "Day 2: Feb 1" },
+      { time: "12:00 PM - 1:00 PM", event: "Announcement of Top 10 Teams", desc: "Day 2: Feb 1" },
+      { time: "1:00 PM - 2:30 PM", event: "Presentation (5 min/team)", desc: "Day 2: Feb 1" },
+      { time: "2:30 PM - 3:00 PM", event: "Result Declaration & Prize Distribution", desc: "Day 2: Feb 1" },
     ],
     judgingCriteria: [
       { title: "Problem Statement", desc: "Complexity & Relevance" },
@@ -56,7 +50,7 @@ export default function Home() {
   };
 
 
-  const dialogueMessage = "Welcome to HACKRON 2026! Join us for a 24-hour innovation sprint on 5th March at Lab 1 & 2. Compete for 75K prize pool, for any guidance or doubts please contact the POC's present there.";
+  const dialogueMessage = "Welcome to HACKRON 2026! Join us for an innovation sprint on 31st Jan - 1st Feb at Lab 1 & 2. Compete for 75K prize pool, for any guidance or doubts please contact the POC's present there.";
 
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll();
@@ -1030,45 +1024,46 @@ export default function Home() {
                               </div>
                             </div>
 
-                            {/* Level Icon - Font Awesome */}
-                            <div className="flex justify-center mb-5">
-                              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-purple-600/20 border-2 border-cyan-400/40 flex items-center justify-center backdrop-blur-sm">
-                                {index === 0 ? <FaRocket className="text-cyan-400 text-3xl" /> :
-                                  index === 1 ? <FaBullhorn className="text-cyan-400 text-3xl" /> :
-                                    index === 2 ? <FaMapMarkerAlt className="text-cyan-400 text-3xl" /> :
-                                      index === 3 ? <FaBolt className="text-cyan-400 text-3xl" /> :
-                                        index === 4 ? <FaSearch className="text-cyan-400 text-3xl" /> :
-                                          index === 5 ? <FaUtensils className="text-cyan-400 text-3xl" /> :
-                                            index === 6 ? <FaSearch className="text-cyan-400 text-3xl" /> :
-                                              index === 7 ? <FaUtensils className="text-cyan-400 text-3xl" /> :
-                                                index === 8 ? <FaShieldAlt className="text-cyan-400 text-3xl" /> :
-                                                  index === 9 ? <FaMoon className="text-cyan-400 text-3xl" /> :
-                                                    index === 10 ? <FaSun className="text-cyan-400 text-3xl" /> :
-                                                      index === 11 ? <FaBoxOpen className="text-cyan-400 text-3xl" /> :
-                                                        index === 12 ? <FaMicrophone className="text-cyan-400 text-3xl" /> :
-                                                          index === 13 ? <FaHamburger className="text-cyan-400 text-3xl" /> :
-                                                            index === 14 ? <FaTrophy className="text-cyan-400 text-3xl" /> : <FaClock className="text-cyan-400 text-3xl" />}
+                            {/* Level Icon - Task Specific */}
+                            <div className="flex justify-center mb-6">
+                              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-400/30 to-purple-600/30 border-2 border-cyan-400/60 flex items-center justify-center backdrop-blur-sm shadow-lg shadow-cyan-400/20">
+                                {index === 0 ? <FaBullhorn className="text-cyan-400 text-4xl" /> :
+                                  index === 1 ? <FaCode className="text-purple-400 text-4xl" /> :
+                                    index === 2 ? <FaSearch className="text-cyan-400 text-4xl" /> :
+                                      index === 3 ? <FaMicrophone className="text-pink-400 text-4xl" /> :
+                                        index === 4 ? <FaSearch className="text-cyan-400 text-4xl" /> :
+                                          index === 5 ? <FaBoxOpen className="text-green-400 text-4xl" /> :
+                                            index === 6 ? <FaTrophy className="text-yellow-400 text-4xl" /> :
+                                              index === 7 ? <FaMicrophone className="text-purple-400 text-4xl" /> :
+                                                <FaTrophy className="text-yellow-400 text-4xl" />}
                               </div>
                             </div>
 
                             {/* Time Badge */}
-                            <div className="flex justify-center mb-4">
-                              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400/20 to-blue-600/20 border-2 border-cyan-400/50 rounded-full px-5 py-2 backdrop-blur-sm">
-                                <FaClock className="text-cyan-400 text-sm" />
-                                <span className="text-cyan-300 font-pixel text-sm tracking-wider">{item.time}</span>
+                            <div className="flex justify-center mb-5">
+                              <div className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-400/30 to-blue-600/30 border-2 border-cyan-400/60 rounded-full px-6 py-3 backdrop-blur-sm shadow-md">
+                                <FaClock className="text-cyan-300 text-lg" />
+                                <span className="text-cyan-100 font-mono font-bold text-base tracking-wide">
+                                  {item.time}
+                                </span>
                               </div>
                             </div>
 
                             {/* Event Title */}
-                            <h4 className="text-white font-bold text-center text-4xl mb-4 min-h-[3rem] flex items-center justify-center leading-tight px-2">
+                            <h3 className="text-center text-2xl font-bold text-white mb-3 font-pixel tracking-wide">
                               {item.event}
-                            </h4>
+                            </h3>
 
-                            {/* Description (if exists) */}
+                            {/* Day Label */}
                             {item.desc && (
-                              <p className="text-gray-300 text-sm text-center mb-3 leading-relaxed">{item.desc}</p>
+                              <div className="flex justify-center">
+                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/30 to-pink-500/30 border border-purple-400/50 rounded-full px-4 py-2 backdrop-blur-sm">
+                                  <span className="text-purple-200 font-mono text-sm font-semibold">
+                                    {item.desc}
+                                  </span>
+                                </div>
+                              </div>
                             )}
-
                             {/* Level Progress Indicator */}
                             <div className="flex justify-center gap-1.5 mb-4">
                               {[...Array(3)].map((_, i) => (

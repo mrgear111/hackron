@@ -396,16 +396,16 @@ export default function TeamDashboard() {
 
                 <div className="flex-1">
                   <h3 className={`font-mono text-lg mb-2 ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                      ? 'text-red-400 animate-pulse'
-                      : 'text-cyan-400'
+                    ? 'text-red-400 animate-pulse'
+                    : 'text-cyan-400'
                     }`}>
                     {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
                       ? `> Urgent_Alert`
                       : `> System_Alert`}
                   </h3>
                   <p className={`font-mono text-sm whitespace-pre-line ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                      ? 'text-red-300'
-                      : 'text-gray-300'
+                    ? 'text-red-300'
+                    : 'text-gray-300'
                     }`}>
                     {adminBroadcast ? adminBroadcast.text : motivationalQuotes[currentQuote].text}
                   </p>
