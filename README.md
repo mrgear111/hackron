@@ -1,6 +1,6 @@
 # HACKRON - 24-Hour Hackathon Platform
 
-A cyberpunk-themed hackathon management platform for NST 24-hour coding competition, featuring a terminal-style interface and real-time dashboard.
+A pixelated-themed hackathon management platform for NST 24-hour coding competition, featuring a terminal-style interface and real-time dashboard.
 
 ![Hackron Banner](public/banner.png)
 
