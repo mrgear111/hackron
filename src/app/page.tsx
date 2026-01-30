@@ -721,13 +721,13 @@ export default function Home() {
                     <div className="space-y-6">
                       <div>
                         <p className="text-gray-300 text-3xl leading-relaxed">
-                          <span className="text-tekron-pink-neon font-bold">Hackron</span> is not just an event—it is a continuously evolving tech ecosystem. Built on innovation, collaboration, and scale, Hackron has established itself as a platform where ideas meet execution and talent meets opportunity.
+                          <span className="text-tekron-pink-neon font-bold">Hackron</span> was not just an event—it is a continuously evolving tech ecosystem. Built on innovation, collaboration, and scale, Hackron has established itself as a platform where ideas meet execution and talent meets opportunity.
                         </p>
                       </div>
 
                       <div>
                         <p className="text-gray-300 text-3xl leading-relaxed">
-                          With strong year-on-year growth, multi-college participation, and large-scale digital outreach, <span className="text-cyan-400">Hackron has created a legacy</span>. Over the past editions, the event has successfully positioned its impact—connecting brands with a highly engaged, future-ready audience of engineers, developers, creators, and innovators.
+                          With strong year-on growth, multi-college participation, and large-scale digital outreach, HACKRON last year was a banger event. Over the past edition, the event successfully positioned its impact by connecting with blinkit and solving their porblem statements in 24 Hours and was a huge success.
                         </p>
                       </div>
 

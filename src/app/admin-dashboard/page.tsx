@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FirebaseError } from 'firebase/app';
-import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList, FaBell } from 'react-icons/fa';
+import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList, FaBell, FaSave, FaCheckCircle, FaEdit, FaCalculator, FaExclamationTriangle } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -16,6 +16,7 @@ interface TeamData {
   createdAt: string;
   projectSubmission?: {
     liveDemo: string;
+    demoVideoUrl?: string; // Added field
     presentationUrl: string;
     videoWalkthrough: string;
     codeRepository: string;
@@ -32,8 +33,51 @@ interface TeamData {
   };
   checkpoints?: Record<string, boolean>;
   submissionUrl?: string;
+  evaluation?: TeamEvaluation;
 }
 
+interface Checkpoint1Evaluation {
+  score_updater: number;
+  comments?: string;
+}
+
+interface Checkpoint2Evaluation {
+  tech_stack?: string;
+  admin_tech_stack_score: number;
+  implementation_score: number;
+  comments?: string;
+}
+
+interface FinalCheckpointEvaluation {
+  demo_link?: string;
+  prod_link?: string;
+  ppt_link?: string;
+  code_quality_score: number;
+  prod_working_score: number;
+  solution_relevance_score: number;
+  ppt_score: number;
+  comments?: string;
+}
+
+interface BonusEvaluation {
+  modality: number;
+  accuracy: number;
+  multi_level_orchestrator: number;
+  comments?: string;
+}
+
+interface TeamEvaluation {
+  checkpoint1?: Checkpoint1Evaluation;
+  checkpoint2?: Checkpoint2Evaluation;
+  final_checkpoint?: FinalCheckpointEvaluation;
+  bonus?: BonusEvaluation;
+  total_score: number;
+  status: 'draft' | 'final';
+  lastUpdatedBy?: string;
+  lastUpdatedAt?: string;
+}
+
+// Keeping TeamScore for backward compatibility if needed, but mainly using TeamEvaluation now
 interface TeamScore {
   innovation: number;
   implementation: number;
@@ -64,6 +108,128 @@ export default function AdminDashboard() {
   const [activeFilter, setActiveFilter] = useState<"all" | "projectSubmitted" | "submissionUrl">("all");
   const [judgedTeams, setJudgedTeams] = useState<Record<string, boolean>>({});
   const [teamCheckpoints, setTeamCheckpoints] = useState<Record<string, Record<string, boolean>>>({});
+  const [evaluationTab, setEvaluationTab] = useState<'c1' | 'c2' | 'final' | 'bonus' | 'summary'>('c1');
+
+  // Initialization helper
+  const getInitialEvaluation = (existing?: TeamEvaluation): TeamEvaluation => {
+    return existing || {
+      total_score: 0,
+      status: 'draft',
+      checkpoint1: { score_updater: 0 },
+      checkpoint2: { admin_tech_stack_score: 0, implementation_score: 0, tech_stack: '' },
+      final_checkpoint: {
+        code_quality_score: 0,
+        prod_working_score: 0,
+        solution_relevance_score: 0,
+        ppt_score: 0
+      },
+      bonus: { modality: 0, accuracy: 0, multi_level_orchestrator: 0 }
+    };
+  };
+
+  const calculateTotalScore = (evalData: TeamEvaluation): number => {
+    let total = 0;
+    // Checkpoint 1
+    if (evalData.checkpoint1) total += Number(evalData.checkpoint1.score_updater || 0);
+
+    // Checkpoint 2
+    if (evalData.checkpoint2) {
+      total += Number(evalData.checkpoint2.admin_tech_stack_score || 0);
+      total += Number(evalData.checkpoint2.implementation_score || 0);
+    }
+
+    // Final
+    if (evalData.final_checkpoint) {
+      total += Number(evalData.final_checkpoint.code_quality_score || 0);
+      total += Number(evalData.final_checkpoint.prod_working_score || 0);
+      total += Number(evalData.final_checkpoint.solution_relevance_score || 0);
+      total += Number(evalData.final_checkpoint.ppt_score || 0);
+    }
+
+    // Bonus
+    if (evalData.bonus) {
+      total += Number(evalData.bonus.modality || 0);
+      total += Number(evalData.bonus.accuracy || 0);
+      total += Number(evalData.bonus.multi_level_orchestrator || 0);
+    }
+
+    return total;
+  };
+
+  const handleSaveEvaluation = async (teamId: string, newEval: TeamEvaluation, status: 'draft' | 'final') => {
+    try {
+      if (!auth.currentUser) return;
+
+      const totalScore = calculateTotalScore(newEval);
+      const evalToSave: TeamEvaluation = {
+        ...newEval,
+        total_score: totalScore,
+        status,
+        lastUpdatedBy: auth.currentUser.email || 'unknown',
+        lastUpdatedAt: new Date().toISOString()
+      };
+
+      // Validation for final submission
+      if (status === 'final') {
+        // Check range 0-10 for regular scores, 0-5 for bonus
+        // This is a basic check, detailed validation can be added
+        if (
+          (evalToSave.checkpoint1?.score_updater ?? 0) < 0 || (evalToSave.checkpoint1?.score_updater ?? 0) > 10 ||
+          (evalToSave.checkpoint2?.admin_tech_stack_score ?? 0) < 0 || (evalToSave.checkpoint2?.admin_tech_stack_score ?? 0) > 10
+          // ... add other checks
+        ) {
+          alert("Validation Error: specific scores must be within 0-10 range.");
+          return;
+        }
+      }
+
+      const evalRef = ref(db, `teams/${teamId}/evaluation`);
+      await set(evalRef, evalToSave);
+
+      // Update local state
+      setTeams(prev => ({
+        ...prev,
+        [teamId]: {
+          ...prev[teamId],
+          evaluation: evalToSave
+        }
+      }));
+
+      alert(`Evaluation ${status === 'draft' ? 'saved as draft' : 'finalized'} successfully!`);
+    } catch (error) {
+      console.error("Error saving evaluation:", error);
+      alert("Failed to save evaluation");
+    }
+  };
+
+  const updateEvaluationField = (teamId: string, fieldPath: string, value: any) => {
+    setTeams(prev => {
+      const team = prev[teamId];
+      if (!team) return prev;
+
+      const newEval = getInitialEvaluation(team.evaluation);
+      // Helper to set nested value
+      const parts = fieldPath.split('.');
+      let current: any = newEval;
+      for (let i = 0; i < parts.length - 1; i++) {
+        // Ensure intermediate objects exist (though getInitialEvaluation handles most)
+        if (!current[parts[i]]) current[parts[i]] = {};
+        current = current[parts[i]];
+      }
+      current[parts[parts.length - 1]] = value;
+
+      // Auto-update total score on the fly for preview
+      newEval.total_score = calculateTotalScore(newEval);
+
+      return {
+        ...prev,
+        [teamId]: {
+          ...team,
+          evaluation: newEval
+        }
+      };
+    });
+  };
 
   // Notification State
   const [notificationMsg, setNotificationMsg] = useState('');
@@ -644,158 +810,434 @@ export default function AdminDashboard() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       transition={{ duration: 0.3 }}
-                      className="border-t border-gray-800"
+                      className="border-t border-gray-800 bg-black/40"
                     >
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
-                        {/* Left Column */}
-                        <div className="space-y-6">
-                          {/* Basic Info Section */}
-                          <div className="bg-black/30 rounded-lg p-4 border border-gray-800">
-                            <h4 className="text-cyan-400 font-mono text-sm mb-3 flex items-center">
-                              <FaUser className="mr-2" />
-                              Team Information
-                            </h4>
-                            <div className="space-y-2 ml-4">
-                              <p className="text-gray-300 font-mono text-sm">
-                                <span className="text-purple-400">Team Name:</span> {team.teamName}
-                              </p>
-                              <p className="text-gray-300 font-mono text-sm">
-                                <span className="text-purple-400">Email:</span> {team.email}
-                              </p>
-                              <p className="text-gray-300 font-mono text-sm">
-                                <span className="text-purple-400">Registered:</span> {new Date(team.createdAt).toLocaleString()}
-                              </p>
+                      {(() => {
+                        const evalData = getInitialEvaluation(team.evaluation);
+                        const isFinalized = evalData.status === 'final';
+
+                        return (
+                          <div className="p-6">
+
+                            {/* Evaluation Status Header */}
+                            <div className="flex justify-between items-center mb-6 bg-black/40 p-4 rounded-lg border border-gray-800">
+                              <div className="flex items-center gap-4">
+                                <h3 className="text-xl font-mono text-cyan-400 flex items-center gap-2">
+                                  <FaCalculator className="text-cyan-500" />
+                                  Evaluation Console
+                                </h3>
+                                <span className={`px-3 py-1 rounded-full text-xs font-mono border ${evalData.status === 'final'
+                                  ? 'bg-green-500/10 border-green-500/50 text-green-400'
+                                  : 'bg-yellow-500/10 border-yellow-500/50 text-yellow-400'
+                                  }`}>
+                                  Status: {evalData.status.toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                  <p className="text-xs text-gray-500 font-mono">Current Total</p>
+                                  <p className="text-2xl font-mono text-purple-400 font-bold">{evalData.total_score}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                  {!isFinalized && (
+                                    <button
+                                      onClick={() => handleSaveEvaluation(id, evalData, 'draft')}
+                                      className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded border border-gray-700 font-mono text-sm flex items-center gap-2"
+                                    >
+                                      <FaEdit />
+                                      Save Draft
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => handleSaveEvaluation(id, evalData, 'final')}
+                                    disabled={isFinalized}
+                                    className={`px-4 py-2 rounded font-mono text-sm flex items-center gap-2 border ${isFinalized
+                                      ? 'bg-green-900/20 border-green-500/30 text-green-500 cursor-not-allowed'
+                                      : 'bg-cyan-600/20 hover:bg-cyan-600/30 border-cyan-500/50 text-cyan-400'
+                                      }`}
+                                  >
+                                    {isFinalized ? <FaCheckCircle /> : <FaSave />}
+                                    {isFinalized ? 'Finalized' : 'Finalize Evaluation'}
+                                  </button>
+                                  {isFinalized && (
+                                    <button
+                                      onClick={() => handleSaveEvaluation(id, evalData, 'draft')}
+                                      className="px-3 py-2 bg-red-900/20 hover:bg-red-900/30 text-red-400 rounded border border-red-500/30 font-mono text-xs"
+                                      title="Revert to Draft (Unlock)"
+                                    >
+                                      Unlock
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Tabs Navigation */}
+                            <div className="flex border-b border-gray-800 mb-6 overflow-x-auto">
+                              {[
+                                { id: 'c1', label: 'Checkpoint 1' },
+                                { id: 'c2', label: 'Checkpoint 2' },
+                                { id: 'final', label: 'Final Checkpoint' },
+                                { id: 'bonus', label: 'Bonus' },
+                                { id: 'summary', label: 'Summary' }
+                              ].map((tab) => (
+                                <button
+                                  key={tab.id}
+                                  onClick={() => setEvaluationTab(tab.id as any)}
+                                  className={`px-6 py-3 font-mono text-sm transition-colors border-b-2 ${evaluationTab === tab.id
+                                    ? 'border-cyan-500 text-cyan-400 bg-cyan-900/10'
+                                    : 'border-transparent text-gray-500 hover:text-gray-300 hover:bg-gray-800/30'
+                                    }`}
+                                >
+                                  {tab.label}
+                                </button>
+                              ))}
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className="bg-black/30 rounded-xl border border-gray-800 p-6 min-h-[400px]">
+
+                              {/* CHECKPOINT 1 */}
+                              {evaluationTab === 'c1' && (
+                                <div className="space-y-6 max-w-2xl">
+                                  <div className="border-l-4 border-cyan-500 pl-4 py-2 bg-cyan-900/10 mb-6">
+                                    <h4 className="text-lg font-mono text-cyan-400">Checkpoint 1: Early Progress</h4>
+                                    <p className="text-sm text-gray-400 mt-1">Evaluate the team's initial progress and understanding.</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-400 font-mono text-sm mb-2">Progress Score (0-10) *</label>
+                                    <input
+                                      type="number"
+                                      min="0" max="10"
+                                      value={evalData.checkpoint1?.score_updater ?? 0}
+                                      onChange={(e) => updateEvaluationField(id, 'checkpoint1.score_updater', parseInt(e.target.value) || 0)}
+                                      className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none"
+                                      disabled={isFinalized}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-400 font-mono text-sm mb-2">Comments (Optional)</label>
+                                    <textarea
+                                      value={evalData.checkpoint1?.comments || ''}
+                                      onChange={(e) => updateEvaluationField(id, 'checkpoint1.comments', e.target.value)}
+                                      className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none h-24"
+                                      placeholder="Add evaluation comments..."
+                                      disabled={isFinalized}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* CHECKPOINT 2 */}
+                              {evaluationTab === 'c2' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                  <div className="space-y-6">
+                                    <div className="border-l-4 border-purple-500 pl-4 py-2 bg-purple-900/10 mb-6">
+                                      <h4 className="text-lg font-mono text-purple-400">Participant Submission</h4>
+                                    </div>
+                                    <div>
+                                      <label className="block text-gray-500 font-mono text-xs mb-1">Tech Stack Used</label>
+                                      <div className="bg-black/50 border border-gray-700 rounded p-3 text-gray-300 font-mono text-sm min-h-[100px]">
+                                        {team.projectSubmission?.techStack || "No details provided yet."}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-6">
+                                    <div className="border-l-4 border-cyan-500 pl-4 py-2 bg-cyan-900/10 mb-6">
+                                      <h4 className="text-lg font-mono text-cyan-400">Admin Evaluation</h4>
+                                    </div>
+                                    <div>
+                                      <label className="block text-gray-400 font-mono text-sm mb-2">Tech Stack Appropriateness (0-10)</label>
+                                      <input
+                                        type="number" min="0" max="10"
+                                        value={evalData.checkpoint2?.admin_tech_stack_score ?? 0}
+                                        onChange={(e) => updateEvaluationField(id, 'checkpoint2.admin_tech_stack_score', parseInt(e.target.value) || 0)}
+                                        className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none"
+                                        disabled={isFinalized}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-gray-400 font-mono text-sm mb-2">Implementation Quality (0-10)</label>
+                                      <input
+                                        type="number" min="0" max="10"
+                                        value={evalData.checkpoint2?.implementation_score ?? 0}
+                                        onChange={(e) => updateEvaluationField(id, 'checkpoint2.implementation_score', parseInt(e.target.value) || 0)}
+                                        className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none"
+                                        disabled={isFinalized}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-gray-400 font-mono text-sm mb-2">Comments (Optional)</label>
+                                      <textarea
+                                        value={evalData.checkpoint2?.comments || ''}
+                                        onChange={(e) => updateEvaluationField(id, 'checkpoint2.comments', e.target.value)}
+                                        className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none h-24"
+                                        placeholder="Add evaluation comments..."
+                                        disabled={isFinalized}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* FINAL CHECKPOINT */}
+                              {evaluationTab === 'final' && (
+                                <div className="space-y-8">
+                                  {/* Project Context Section (Read-Only) */}
+                                  <div className="bg-black/40 rounded-lg border border-gray-800 p-6">
+                                    <div className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-900/10 mb-6">
+                                      <h4 className="text-lg font-mono text-blue-400">Project Context</h4>
+                                      <p className="text-sm text-gray-400">Review the team's submission details.</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                      <div className="space-y-4">
+                                        <div>
+                                          <h5 className="text-gray-500 font-mono text-md uppercase mb-2">Problem Statement</h5>
+                                          <p className="text-gray-300 font-mono text-lg bg-black/50 p-3 rounded border border-gray-800">
+                                            {team.projectSubmission?.problemStatement || "Not specified"}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="text-gray-500 font-mono text-md uppercase mb-2">Solution Description</h5>
+                                          <p className="text-gray-300 font-mono text-lg bg-black/50 p-3 rounded border border-gray-800">
+                                            {team.projectSubmission?.solution || "Not specified"}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-4">
+                                        {team.projectSubmission?.videoWalkthrough && (
+                                          <div>
+                                            <h5 className="text-gray-500 font-mono text-md uppercase mb-2">Video Walkthrough</h5>
+                                            <a
+                                              href={team.projectSubmission.videoWalkthrough}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="flex items-center gap-3 bg-black/50 p-3 rounded border border-gray-800 hover:border-cyan-500/50 transition-colors group"
+                                            >
+                                              <div className="w-8 h-8 rounded bg-red-900/20 flex items-center justify-center text-red-500">
+                                                <FaVideo />
+                                              </div>
+                                              <span className="text-cyan-400 text-sm font-mono group-hover:underline truncate">
+                                                {team.projectSubmission.videoWalkthrough}
+                                              </span>
+                                            </a>
+                                          </div>
+                                        )}
+
+                                        {/* Additional Details Grid */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                          {(team.projectSubmission?.challenges || team.projectSubmission?.learnings) && (
+                                            <div className="col-span-2">
+                                              <h5 className="text-gray-500 font-mono text-md uppercase mb-2">Additional Info</h5>
+                                              <div className="space-y-2">
+                                                {team.projectSubmission.challenges && (
+                                                  <div className="bg-black/50 p-3 rounded border border-gray-800">
+                                                    <span className="text-purple-400 text-md block mb-1">Challenges:</span>
+                                                    <span className="text-gray-300 text-lg">{team.projectSubmission.challenges}</span>
+                                                  </div>
+                                                )}
+                                                {team.projectSubmission.learnings && (
+                                                  <div className="bg-black/50 p-3 rounded border border-gray-800">
+                                                    <span className="text-green-400 text-md block mb-1">Learnings:</span>
+                                                    <span className="text-gray-300 text-lg">{team.projectSubmission.learnings}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-6">
+                                      <div className="border-l-4 border-purple-500 pl-4 py-2 bg-purple-900/10 mb-6">
+                                        <h4 className="text-lg font-mono text-purple-400">Initial Submission Links</h4>
+                                      </div>
+                                      <div className="space-y-3">
+                                        {[
+                                          { label: 'Live Demo', val: team.projectSubmission?.liveDemo, icon: <FaRocket /> },
+                                          { label: 'Demo Video', val: team.projectSubmission?.demoVideoUrl, icon: <FaVideo /> },
+                                          { label: 'Presentation', val: team.projectSubmission?.presentationUrl, icon: <FaFileAlt /> },
+                                          { label: 'Repo', val: team.githubRepo?.repoUrl || team.projectSubmission?.codeRepository, icon: <FaCode /> }
+                                        ].map((item, idx) => (
+                                          <div key={idx} className="flex justify-between items-center bg-black/50 p-3 rounded border border-gray-800">
+                                            <span className="text-gray-400 font-mono text-sm flex items-center gap-2">
+                                              {item.icon} {item.label}
+                                            </span>
+                                            {item.val ? (
+                                              <a href={item.val} target="_blank" className="text-cyan-400 text-xs hover:underline flex items-center gap-1">
+                                                Open Link <FaLink />
+                                              </a>
+                                            ) : (
+                                              <span className="text-red-500 text-xs flex items-center gap-1">
+                                                <FaExclamationTriangle /> Missing
+                                              </span>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* Final Submission override inputs if needed */}
+                                      <div className="mt-8 pt-6 border-t border-gray-800">
+                                        <h5 className="text-gray-500 font-mono text-xs mb-4 uppercase">Final Deliverables (Admin Verified)</h5>
+                                        <div className="space-y-3">
+                                          <input
+                                            type="text" placeholder="Verified Demo Link"
+                                            value={evalData.final_checkpoint?.demo_link ?? ""}
+                                            onChange={(e) => updateEvaluationField(id, 'final_checkpoint.demo_link', e.target.value)}
+                                            className="w-full bg-black/50 border border-gray-700 rounded p-2 text-sm text-white font-mono focus:border-purple-500 focus:outline-none"
+                                            disabled={isFinalized}
+                                          />
+                                          <input
+                                            type="text" placeholder="Verified Presentation Link"
+                                            value={evalData.final_checkpoint?.ppt_link ?? ""}
+                                            onChange={(e) => updateEvaluationField(id, 'final_checkpoint.ppt_link', e.target.value)}
+                                            className="w-full bg-black/50 border border-gray-700 rounded p-2 text-sm text-white font-mono focus:border-purple-500 focus:outline-none"
+                                            disabled={isFinalized}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                      <div className="border-l-4 border-cyan-500 pl-4 py-2 bg-cyan-900/10 mb-6">
+                                        <h4 className="text-lg font-mono text-cyan-400">Final Scoring</h4>
+                                      </div>
+                                      {[
+                                        { field: 'code_quality_score', label: 'Code Quality' },
+                                        { field: 'prod_working_score', label: 'Production Working Quality' },
+                                        { field: 'solution_relevance_score', label: 'Solution Relevance' },
+                                        { field: 'ppt_score', label: 'Presentation Quality' }
+                                      ].map((criteria) => (
+                                        <div key={criteria.field}>
+                                          <label className="block text-gray-400 font-mono text-sm mb-2">{criteria.label} (0-10)</label>
+                                          <input
+                                            type="number" min="0" max="10"
+                                            value={(evalData.final_checkpoint as any)?.[criteria.field] ?? 0}
+                                            onChange={(e) => updateEvaluationField(id, `final_checkpoint.${criteria.field}`, parseInt(e.target.value) || 0)}
+                                            className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none"
+                                            disabled={isFinalized}
+                                          />
+                                        </div>
+                                      ))}
+                                      <div>
+                                        <label className="block text-gray-400 font-mono text-sm mb-2">Comments (Optional)</label>
+                                        <textarea
+                                          value={evalData.final_checkpoint?.comments || ''}
+                                          onChange={(e) => updateEvaluationField(id, 'final_checkpoint.comments', e.target.value)}
+                                          className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-cyan-500 focus:outline-none h-24"
+                                          placeholder="Add evaluation comments..."
+                                          disabled={isFinalized}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* BONUS */}
+                              {evaluationTab === 'bonus' && (
+                                <div className="max-w-2xl mx-auto space-y-6">
+                                  <div className="border-l-4 border-yellow-500 pl-4 py-2 bg-yellow-900/10 mb-6">
+                                    <h4 className="text-lg font-mono text-yellow-400">Bonus Points (Optional)</h4>
+                                    <p className="text-sm text-gray-400">Additional points for exceptional achievements.</p>
+                                  </div>
+                                  {[
+                                    { field: 'modality', label: 'Modality (Innovative Approach)' },
+                                    { field: 'accuracy', label: 'Accuracy / Performance' },
+                                    { field: 'multi_level_orchestrator', label: 'Multi-Level Orchestrator' }
+                                  ].map((criteria) => (
+                                    <div key={criteria.field}>
+                                      <label className="block text-gray-400 font-mono text-sm mb-2">{criteria.label} (0-5)</label>
+                                      <input
+                                        type="number" min="0" max="5"
+                                        value={(evalData.bonus as any)?.[criteria.field] ?? 0}
+                                        onChange={(e) => updateEvaluationField(id, `bonus.${criteria.field}`, parseInt(e.target.value) || 0)}
+                                        className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-yellow-500 focus:outline-none"
+                                        disabled={isFinalized}
+                                      />
+                                    </div>
+                                  ))}
+                                  <div>
+                                    <label className="block text-gray-400 font-mono text-sm mb-2">Comments (Optional)</label>
+                                    <textarea
+                                      value={evalData.bonus?.comments || ''}
+                                      onChange={(e) => updateEvaluationField(id, 'bonus.comments', e.target.value)}
+                                      className="w-full bg-black/50 border border-gray-700 rounded p-3 text-white font-mono focus:border-yellow-500 focus:outline-none h-24"
+                                      placeholder="Add evaluation comments..."
+                                      disabled={isFinalized}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* SUMMARY */}
+                              {evaluationTab === 'summary' && (
+                                <div className="space-y-6">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                      <h4 className="text-lg font-mono text-cyan-400 mb-4 border-b border-gray-800 pb-2">Score Breakdown</h4>
+                                      <div className="space-y-3 font-mono text-sm">
+                                        <div className="flex justify-between text-gray-400">
+                                          <span>Checkpoint 1</span>
+                                          <span className="text-white">{evalData.checkpoint1?.score_updater || 0}</span>
+                                        </div>
+                                        <div className="flex justify-between text-gray-400">
+                                          <span>Checkpoint 2 (Tech + Impl)</span>
+                                          <span className="text-white">
+                                            {(evalData.checkpoint2?.admin_tech_stack_score || 0) + (evalData.checkpoint2?.implementation_score || 0)}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between text-gray-400">
+                                          <span>Final Checkpoint</span>
+                                          <span className="text-white">
+                                            {(evalData.final_checkpoint?.code_quality_score || 0) +
+                                              (evalData.final_checkpoint?.prod_working_score || 0) +
+                                              (evalData.final_checkpoint?.solution_relevance_score || 0) +
+                                              (evalData.final_checkpoint?.ppt_score || 0)}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between text-yellow-400">
+                                          <span>Bonus</span>
+                                          <span>
+                                            {(evalData.bonus?.modality || 0) +
+                                              (evalData.bonus?.accuracy || 0) +
+                                              (evalData.bonus?.multi_level_orchestrator || 0)}
+                                          </span>
+                                        </div>
+                                        <div className="border-t border-gray-700 pt-3 mt-3 flex justify-between text-lg font-bold text-cyan-400">
+                                          <span>TOTAL SCORE</span>
+                                          <span>{evalData.total_score}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+                                      <h4 className="text-lg font-mono text-purple-400 mb-4">Evaluation Metadata</h4>
+                                      <div className="space-y-2 font-mono text-xs text-gray-500">
+                                        <p>Last Updated: {evalData.lastUpdatedAt ? new Date(evalData.lastUpdatedAt).toLocaleString() : 'Never'}</p>
+                                        <p>Updated By: {evalData.lastUpdatedBy || 'N/A'}</p>
+                                        <p>Status: <span className={evalData.status === 'final' ? 'text-green-500' : 'text-yellow-500'}>{evalData.status.toUpperCase()}</span></p>
+                                      </div>
+
+                                      <div className="mt-8 p-4 bg-blue-900/10 border border-blue-500/20 rounded">
+                                        <p className="text-blue-400 text-sm">
+                                          <span className="font-bold">Note:</span> Ensuring fair and transparent evaluation.
+                                          Finalized scores are locked but can be unlocked by Admins if necessary.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
                             </div>
                           </div>
-
-                          {/* Project Details Section */}
-                          {team.projectSubmission && (
-                            <div className="bg-black/30 rounded-lg p-4 border border-gray-800">
-                              <h4 className="text-cyan-400 font-mono text-sm mb-3 flex items-center">
-                                <FaFileCode className="mr-2" />
-                                Project Details
-                              </h4>
-                              <div className="space-y-4 ml-4">
-                                <div>
-                                  <h5 className="text-purple-400 font-mono text-xs mb-1">Problem Statement:</h5>
-                                  <p className="text-gray-300 font-mono text-sm">
-                                    {team.projectSubmission.problemStatement}
-                                  </p>
-                                </div>
-                                <div>
-                                  <h5 className="text-purple-400 font-mono text-xs mb-1">Solution:</h5>
-                                  <p className="text-gray-300 font-mono text-sm">
-                                    {team.projectSubmission.solution}
-                                  </p>
-                                </div>
-                                <div>
-                                  <h5 className="text-purple-400 font-mono text-xs mb-1">Tech Stack:</h5>
-                                  <p className="text-gray-300 font-mono text-sm">
-                                    {team.projectSubmission.techStack}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Right Column */}
-                        <div className="space-y-6">
-                          {/* Project URLs Section */}
-                          {team.projectSubmission && (
-                            <div className="bg-black/30 rounded-lg p-4 border border-gray-800">
-                              <h4 className="text-cyan-400 font-mono text-sm mb-3 flex items-center">
-                                <FaLink className="mr-2" />
-                                Project Links
-                              </h4>
-                              <div className="space-y-3 ml-4">
-                                {team.projectSubmission.liveDemo && (
-                                  <a
-                                    href={team.projectSubmission.liveDemo}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-gray-300 font-mono text-sm hover:text-cyan-400 flex items-center"
-                                  >
-                                    <FaRocket className="mr-2" />
-                                    Live Demo
-                                  </a>
-                                )}
-                                {team.projectSubmission.videoWalkthrough && (
-                                  <a
-                                    href={team.projectSubmission.videoWalkthrough}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-gray-300 font-mono text-sm hover:text-cyan-400 flex items-center"
-                                  >
-                                    <FaVideo className="mr-2" />
-                                    Video Walkthrough
-                                  </a>
-                                )}
-                                {team.projectSubmission.presentationUrl && (
-                                  <a
-                                    href={team.projectSubmission.presentationUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-gray-300 font-mono text-sm hover:text-cyan-400 flex items-center"
-                                  >
-                                    <FaFileAlt className="mr-2" />
-                                    Presentation
-                                  </a>
-                                )}
-                                {team.githubRepo && (
-                                  <a
-                                    href={team.githubRepo.repoUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-gray-300 font-mono text-sm hover:text-cyan-400 flex items-center"
-                                  >
-                                    <FaCode className="mr-2" />
-                                    GitHub Repository
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Additional Details Section */}
-                          {team.projectSubmission && (
-                            <div className="bg-black/30 rounded-lg p-4 border border-gray-800">
-                              <h4 className="text-cyan-400 font-mono text-sm mb-3 flex items-center">
-                                <FaClipboardList className="mr-2" />
-                                Additional Details
-                              </h4>
-                              <div className="space-y-4 ml-4">
-                                {team.projectSubmission.documentation && (
-                                  <div>
-                                    <h5 className="text-purple-400 font-mono text-xs mb-1">Documentation:</h5>
-                                    <p className="text-gray-300 font-mono text-sm">
-                                      {team.projectSubmission.documentation}
-                                    </p>
-                                  </div>
-                                )}
-                                {team.projectSubmission.challenges && (
-                                  <div>
-                                    <h5 className="text-purple-400 font-mono text-xs mb-1">Challenges:</h5>
-                                    <p className="text-gray-300 font-mono text-sm">
-                                      {team.projectSubmission.challenges}
-                                    </p>
-                                  </div>
-                                )}
-                                {team.projectSubmission.learnings && (
-                                  <div>
-                                    <h5 className="text-purple-400 font-mono text-xs mb-1">Learnings:</h5>
-                                    <p className="text-gray-300 font-mono text-sm">
-                                      {team.projectSubmission.learnings}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                        );
+                      })()}
                     </motion.div>
-                  )}
+                  )
+                  }
                 </motion.div>
               ))}
             </div>
