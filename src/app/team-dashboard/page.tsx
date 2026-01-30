@@ -27,7 +27,7 @@ interface ProjectSubmission {
   techStack?: string;
   liveUrl?: string;
   liveDemo?: string;
-  videoUrl?: string;
+  demoVideoUrl?: string;
   presentationUrl?: string;
   codeRepository?: string;
   problemStatement?: string;
@@ -97,6 +97,7 @@ export default function TeamDashboard() {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<ProjectSubmission>({
     liveDemo: '',
+    demoVideoUrl: '',
     presentationUrl: '',
     codeRepository: '',
     documentation: '',
@@ -121,6 +122,27 @@ export default function TeamDashboard() {
   const [currentQuote, setCurrentQuote] = useState(0);
   const [adminBroadcast, setAdminBroadcast] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [problemCounts, setProblemCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const teamsRef = ref(db, 'teams');
+    const unsubscribe = onValue(teamsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const counts: Record<string, number> = {};
+
+        Object.values(data).forEach((team: any) => {
+          const ps = team.projectSubmission?.problemStatement;
+          if (ps) {
+            counts[ps] = (counts[ps] || 0) + 1;
+          }
+        });
+        setProblemCounts(counts);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Sync modal visibility with alerts
   useEffect(() => {
@@ -796,11 +818,25 @@ export default function TeamDashboard() {
                         onChange={handleProblemStatementChange}
                         className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                       >
-                        {problemStatements.map((statement, index) => (
-                          <option key={index} value={statement} className="bg-gray-900 text-gray-300 text-lg">
-                            {statement.split(':')[0]}
-                          </option>
-                        ))}
+                        {problemStatements.map((statement, index) => {
+                          const count = problemCounts[statement] || 0;
+                          const isFull = count >= 11;
+                          const isSelected = formData.problemStatement === statement;
+
+                          // Disable if full AND not currently selected (so they don't lose their own selection)
+                          const isDisabled = isFull && !isSelected;
+
+                          return (
+                            <option
+                              key={index}
+                              value={statement}
+                              disabled={isDisabled}
+                              className={`bg-gray-900 text-lg ${isDisabled ? 'text-gray-600' : 'text-gray-300'}`}
+                            >
+                              {statement.split(':')[0]} {isFull ? '(FULL)' : `(${count}/11)`}
+                            </option>
+                          );
+                        })}
                       </select>
                       <p className="mt-2 text-xs text-gray-500 font-mono">
                         {formData.problemStatement || problemStatements[0]}
@@ -848,6 +884,19 @@ export default function TeamDashboard() {
                           className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="https://github.com/..."
                           required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
+                          {`> Demo_Video_URL:`}
+                        </label>
+                        <input
+                          type="url"
+                          name="demoVideoUrl"
+                          value={formData.demoVideoUrl}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
+                          placeholder="https://youtu.be/..."
                         />
                       </div>
                       <div>
@@ -967,6 +1016,10 @@ export default function TeamDashboard() {
                           {teamData?.projectSubmission?.liveDemo && (
                             <a href={teamData.projectSubmission.liveDemo} target="_blank" rel="noopener noreferrer"
                               className="text-cyan-400 hover:text-cyan-300"><FaRocket size={20} /></a>
+                          )}
+                          {teamData?.projectSubmission?.demoVideoUrl && (
+                            <a href={teamData.projectSubmission.demoVideoUrl} target="_blank" rel="noopener noreferrer"
+                              className="text-cyan-400 hover:text-cyan-300"><FaVideo size={20} /></a>
                           )}
                           {teamData?.projectSubmission?.codeRepository && (
                             <a href={teamData.projectSubmission.codeRepository} target="_blank" rel="noopener noreferrer"
