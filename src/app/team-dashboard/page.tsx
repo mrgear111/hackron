@@ -119,7 +119,15 @@ export default function TeamDashboard() {
   const [submissionUrl, setSubmissionUrl] = useState('');
   const [isSubmittingUrl, setIsSubmittingUrl] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(0);
-  const [adminBroadcast, setAdminBroadcast] = useState<{ text: string, isUrgent: boolean, timestamp?: string } | null>(null);
+  const [adminBroadcast, setAdminBroadcast] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Sync modal visibility with alerts
+  useEffect(() => {
+    if (adminBroadcast || showAlert) {
+      setIsModalOpen(true);
+    }
+  }, [adminBroadcast, showAlert]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -369,85 +377,116 @@ export default function TeamDashboard() {
           </motion.div>
         )}
 
-        {/* Checkpoint Alert Popup */}
+        {/* Checkpoint Alert Modal */}
         <AnimatePresence>
-          {(showAlert || adminBroadcast) && (
+          {isModalOpen && (adminBroadcast || showAlert) && (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mb-8 mx-6 relative bg-gradient-to-r from-purple-900/40 to-cyan-900/40 border-2 border-cyan-400/40 rounded-2xl p-8 overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
             >
-              {/* Glow border effect */}
-              <motion.div
-                className="absolute inset-0 opacity-40"
-                animate={{
-                  background: [
-                    'linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent)',
-                    'linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent)',
-                  ]
+              {/* Backdrop */}
+              <div
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                onClick={() => {
+                  if (!adminBroadcast?.isUrgent) {
+                    setIsModalOpen(false);
+                    setShowAlert(false);
+                  }
                 }}
-                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
               />
 
-              {/* Close button - Only show if it's NOT an urgent broadcast */}
-              {(!adminBroadcast?.isUrgent) && (
-                <button
-                  onClick={() => setShowAlert(false)}
-                  className="absolute top-4 right-4 text-cyan-300 hover:text-tekron-pink-neon transition-colors z-10"
-                >
-                  <FaTimes className="text-xl" />
-                </button>
-              )}
-
-              {/* Alert content */}
-              <div className="flex items-start space-x-4 relative z-10">
-                <div className="relative">
-                  <FaBell className="text-cyan-400 h-7 w-7" />
+              {/* Modal Content */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-2xl bg-gradient-to-br from-tekron-purple-deep via-black/90 to-cyan-900/40 border-2 border-cyan-400/40 rounded-2xl p-8 overflow-hidden shadow-2xl shadow-cyan-500/20"
+              >
+                {/* Glow border effect */}
+                <div className="absolute inset-0 pointer-events-none">
                   <motion.div
-                    className="absolute inset-0 bg-cyan-400 filter blur-lg"
-                    animate={{ opacity: [0.4, 0.7, 0.4] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="absolute inset-0 opacity-40"
+                    animate={{
+                      background: [
+                        'linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent)',
+                        'linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent)',
+                      ]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
                   />
                 </div>
 
-                <div className="flex-1">
-                  <h3 className={`font-pixel text-2xl mb-3 tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                    ? 'text-red-400 animate-pulse'
-                    : 'text-cyan-300'
-                    }`}>
-                    {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                      ? `> URGENT_ALERT`
-                      : `> SYSTEM_MESSAGE`}
-                  </h3>
-                  <p className={`text-gray-300 font-mono text-base whitespace-pre-line leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                    ? 'text-red-300'
-                    : 'text-gray-300'
-                    }`}>
-                    {adminBroadcast ? adminBroadcast.text : motivationalQuotes[currentQuote].text}
-                  </p>
-                  <p className="text-cyan-500/50 font-mono text-xs mt-3">
-                    {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleString() : new Date().toLocaleString()}
-                  </p>
-                  {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent) && (
+                {/* Close button - Always visible now */}
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setShowAlert(false);
+                  }}
+                  className="absolute top-4 right-4 text-cyan-500/50 hover:text-tekron-pink-neon transition-colors z-20 p-2 transform hover:scale-110"
+                >
+                  <FaTimes className="text-xl" />
+                </button>
+
+                {/* Alert content */}
+                <div className="flex items-start space-x-6 relative z-10">
+                  <div className="relative shrink-0">
+                    <FaBell className="text-cyan-400 h-10 w-10" />
                     <motion.div
-                      animate={{
-                        opacity: [1, 0.5, 1],
-                        scale: [1, 1.02, 1]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity
-                      }}
-                      className="mt-3 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-md"
-                    >
-                      <p className="text-red-400 font-mono text-xs">
-                        ⚡ Take immediate action to ensure your team's participation!
-                      </p>
-                    </motion.div>
-                  )}
+                      className="absolute inset-0 bg-cyan-400 filter blur-xl"
+                      animate={{ opacity: [0.4, 0.7, 0.4] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-pixel text-2xl mb-4 tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                      ? 'text-red-400 animate-pulse'
+                      : 'text-cyan-300'
+                      }`}>
+                      {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                        ? `> URGENT_ALERT`
+                        : `> SYSTEM_MESSAGE`}
+                    </h3>
+                    <p className={`font-mono text-base whitespace-pre-line leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                      ? 'text-red-300'
+                      : 'text-gray-300'
+                      }`}>
+                      {adminBroadcast ? adminBroadcast.text : motivationalQuotes[currentQuote].text}
+                    </p>
+                    <p className="text-cyan-500 font-mono text-xl mt-6 border-t border-cyan-500/20 pt-4">
+                      {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleString() : new Date().toLocaleString()}
+                    </p>
+
+                    {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent) && (
+                      <motion.div
+                        animate={{
+                          opacity: [1, 0.5, 1],
+                          scale: [1, 1.02, 1]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity
+                        }}
+                        className="mt-6 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg"
+                      >
+                        <div className="flex flex-col gap-4">
+                          <button
+                            onClick={() => {
+                              setIsModalOpen(false);
+                              setShowAlert(false);
+                            }}
+                            className="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/50 text-red-400 font-pixel py-3 rounded text-sm tracking-wider transition-all hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                          >
+                            [ ACKNOWLEDGE_&_DISMISS ]
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -520,6 +559,49 @@ export default function TeamDashboard() {
             </div>
           </motion.div>
         </div>
+
+        {/* Last Message Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mb-10 px-6"
+        >
+          <div className="relative group">
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-500/30 to-emerald-600/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
+
+            <div className="relative bg-gradient-to-br from-tekron-purple-deep/70 via-black/60 to-green-900/40 backdrop-blur-xl border-2 border-green-400/40 rounded-2xl p-6 hover:border-green-400/60 transition-all duration-300">
+              <div className="flex items-start gap-4">
+                <div className="mt-1">
+                  <FaBell className={`text-2xl ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                    ? 'text-red-400 animate-pulse'
+                    : 'text-green-400'
+                    }`} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className={`font-pixel text-lg tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                      ? 'text-red-300'
+                      : 'text-green-300'
+                      }`}>
+                      LAST_MESSAGE
+                    </h3>
+                    <span className="text-gray-500 font-mono text-sm">
+                      // {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <p className={`font-mono text-lg leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                    ? 'text-red-300'
+                    : 'text-gray-300'
+                    }`}>
+                    {adminBroadcast ? adminBroadcast.text : motivationalQuotes[currentQuote].text}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Dashboard Grid */}
         <div className="px-6">
@@ -608,10 +690,10 @@ export default function TeamDashboard() {
                   </form>
                 )}
               </div>
-            </motion.div>
+            </motion.div >
 
             {/* URL Submission Box */}
-            <motion.div
+            < motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -669,21 +751,21 @@ export default function TeamDashboard() {
                   </form>
                 )}
               </div>
-            </motion.div>
+            </motion.div >
 
             {/* Project Submission Section */}
-            <motion.div
+            < motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
             >
               {/* Header with glowing accent */}
-              <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
+              < div className="relative bg-black/60 p-6 border-b border-purple-500/20" >
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-mono text-purple-400 flex items-center">
-                    <FaFileAlt className="mr-3 text-purple-500" />
+                  <h2 className="text-2xl font-mono text-purple-400 flex items-center">
+                    <FaFileAlt className="mr-3 text-purple-500 text-2xl" />
                     {teamData?.projectSubmission && !isEditMode ?
                       `> Congrats! You have successfully submitted your project.` :
                       `> Project_Submission`}
@@ -700,22 +782,22 @@ export default function TeamDashboard() {
                     </motion.button>
                   )}
                 </div>
-              </div>
+              </div >
               <div className="p-6">
                 {showForm ? (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Problem Statement Selection */}
                     <div>
-                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                      <label className="block text-cyan-400 font-mono text-lg mb-2">
                         {`> Problem_Statement:`}
                       </label>
                       <select
                         value={formData.problemStatement || problemStatements[0]}
                         onChange={handleProblemStatementChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                       >
                         {problemStatements.map((statement, index) => (
-                          <option key={index} value={statement} className="bg-gray-900 text-gray-300">
+                          <option key={index} value={statement} className="bg-gray-900 text-gray-300 text-lg">
                             {statement.split(':')[0]}
                           </option>
                         ))}
@@ -728,7 +810,7 @@ export default function TeamDashboard() {
                     {/* URLs Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Live_Demo_URL:`} <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -736,13 +818,13 @@ export default function TeamDashboard() {
                           name="liveDemo"
                           value={formData.liveDemo}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="https://..."
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Presentation_URL:`}
                         </label>
                         <input
@@ -750,12 +832,12 @@ export default function TeamDashboard() {
                           name="presentationUrl"
                           value={formData.presentationUrl}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="https://..."
                         />
                       </div>
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Code_Repository:`} <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -763,13 +845,13 @@ export default function TeamDashboard() {
                           name="codeRepository"
                           value={formData.codeRepository}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="https://github.com/..."
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Documentation_URL:`}
                         </label>
                         <input
@@ -777,7 +859,7 @@ export default function TeamDashboard() {
                           name="documentation"
                           value={formData.documentation}
                           onChange={handleChange}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="https://..."
                         />
                       </div>
@@ -786,7 +868,7 @@ export default function TeamDashboard() {
                     {/* Text Areas */}
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Solution_Description:`}
                         </label>
                         <textarea
@@ -794,12 +876,12 @@ export default function TeamDashboard() {
                           value={formData.solution}
                           onChange={handleChange}
                           rows={4}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="Describe your solution..."
                         />
                       </div>
                       <div>
-                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        <label className="block text-cyan-400 font-mono text-lg mb-2">
                           {`> Tech_Stack:`}
                         </label>
                         <textarea
@@ -807,13 +889,13 @@ export default function TeamDashboard() {
                           value={formData.techStack}
                           onChange={handleChange}
                           rows={2}
-                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           placeholder="React, Next.js, Firebase, etc..."
                         />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          <label className="block text-cyan-400 font-mono text-lg mb-2">
                             {`> Challenges_Faced:`}
                           </label>
                           <textarea
@@ -821,12 +903,12 @@ export default function TeamDashboard() {
                             value={formData.challenges}
                             onChange={handleChange}
                             rows={3}
-                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                             placeholder="What challenges did you face?"
                           />
                         </div>
                         <div>
-                          <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          <label className="block text-cyan-400 font-mono text-lg mb-2">
                             {`> Key_Learnings:`}
                           </label>
                           <textarea
@@ -834,7 +916,7 @@ export default function TeamDashboard() {
                             value={formData.learnings}
                             onChange={handleChange}
                             rows={3}
-                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                             placeholder="What did you learn?"
                           />
                         </div>
@@ -854,7 +936,7 @@ export default function TeamDashboard() {
                         type="submit"
                         disabled={isSubmitting}
                         className="bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 
-                        text-cyan-400 font-mono px-8 py-3 rounded-lg flex items-center gap-2
+                        text-cyan-400 font-mono px-8 py-3 rounded-lg flex items-center gap-2 text-lg
                         transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
@@ -904,10 +986,10 @@ export default function TeamDashboard() {
                   </div>
                 )}
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </motion.div >
+          </div >
+        </div >
+      </div >
+    </div >
   );
 }
