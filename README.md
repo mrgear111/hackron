@@ -1,8 +1,8 @@
 # HACKRON - 24-Hour Hackathon Platform
 
-A cyberpunk-themed hackathon management platform for NST 24-hour coding competition.
+A cyberpunk-themed hackathon management platform for NST 24-hour coding competition, featuring a terminal-style interface and real-time dashboard.
 
-![Hackron Banner](public/hackron-banner.png)
+![Hackron Banner](public/banner.png)
 
 
 ## 🚀 Features
@@ -10,28 +10,49 @@ A cyberpunk-themed hackathon management platform for NST 24-hour coding competit
 ### For Teams
 - **Team Registration & Login**
   - Secure authentication system
-  - Team dashboard access
-  - Real-time project submission
+  - Cyberpunk-themed user interface
+- **Interactive Team Dashboard**
+  - Real-time status updates
+  - **Live Broadcast System:** Receive urgent alerts and admin messages instantly via a modal overlay
+  - **Project Submission Portal:** Detailed submission form with validation for GitHub repos, demo URLs, and tech stack
+  - GitHub Repository tracking
+  - Gamified stats display
 
 ### For Admins
 - **Admin Control Panel**
   - Secure admin registration with special key
   - Team management & oversight
+  - **Broadcast System:** Send real-time alerts to all connected teams
   - Submission tracking
 
 ### Event Details
-- 24-Hour Non-Stop Coding
-- Date: 5th March
-- Venue: Lab 1 & 2
-- Eligible: UG Students
-- Prize Pool: 80k
+- **Event:** 24-Hour Non-Stop Coding Hackathon
+- **Date:** 31st Jan - 1st Feb 2026
+- **Venue:** Lab 1 & 2, School of Management, ADYPU
+- **Participants:** UG Students
+- **Prize Pool:** ₹75,000
 
 ## 💻 Tech Stack
-- Next.js 14 (App Router)
-- Firebase (Auth & Realtime DB)
-- Tailwind CSS
-- Framer Motion
-- TypeScript
+- **Framework:** Next.js (App Router)
+- **Backend:** Firebase (Authentication & Realtime Database)
+- **Styling:** Tailwind CSS
+- **Animations:** Framer Motion
+- **Language:** TypeScript
+
+## 📅 Event Timeline
+
+### Day 1: January 31st
+- **09:00 AM - 10:00 AM:** Onboarding
+- **10:00 AM - 12:00 PM:** Workshop + Briefing
+- **12:00 PM:** Hackathon Starts & Problem Statement Release
+- **04:00 PM - 06:00 PM:** Checkpoint 1
+- **06:30 PM - 09:00 PM:** Break (Concert Optional)
+
+### Day 2: February 1st
+- **01:00 AM - 03:00 AM:** Checkpoint 2
+- **09:00 AM - 10:00 AM:** Submission Window
+- **10:00 AM - 12:30 PM:** Evaluation (Top 10)
+- **01:00 PM - 03:00 PM:** Final Presentation & Prize Distribution
 
 ## 🛠️ Setup
 
@@ -49,6 +70,9 @@ NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_FIREBASE_DATABASE_URL=your_database_url
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
 
 3. **Run Development Server**
@@ -58,48 +82,26 @@ npm run dev
 
 ## 📱 Key Pages
 
-- `/` - Landing page with event details
+- `/` - Landing page
 - `/register` - Team registration
-- `/team-dashboard` - Project submission portal
-- `/admin-dashboard` - Admin control panel
-
-## 🔐 Authentication Flows
-
-### Team Registration
-1. Register with team name & email
-2. Access team dashboard
-3. Submit project details
-
-### Admin Access
-1. Register with admin key
-2. Access admin dashboard
-3. Manage teams & submissions
+- `/team-dashboard` - Main hub for participants
+- `/admin-dashboard` - Admin controls
 
 ## 🎨 UI Features
 
-- Cyberpunk-themed design
-- Animated components
-- Responsive layout
-- Terminal-style interface
-
-## 📅 Event Timeline
-
-- 07:00 AM - Participant Reporting
-- 08:30 AM - Briefing Session
-- 09:00 AM - Hackathon Begins
-- 09:30 PM - Security Check
+- **Pixelated Aesthetic:** Neon contrasts, pixel fonts, and glassmorphism.
+- **Micro-interactions:** Hovers, glows, and smooth transitions.
+- **Responsive Design:** Optimized for all devices.
+- **Dynamic Animations:** Powered by Framer Motion for immersive experience.
 
 ## 📊 Judging Criteria
 
-- Problem Statement
+- Problem Statement Alignment
 - Approach & Implementation
 - Solution Analysis
-- Presentation
-- Innovation
+- Presentation Quality
+- Innovation Factor
 
 ## 📝 License
 
-MIT License - feel free to use and modify!
-
----
-Built with love for NST's Hackathon
+MIT License - Built with love for NST's Hackathon
