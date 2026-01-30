@@ -283,8 +283,8 @@ export default function Home() {
             <motion.div
               className="absolute inset-0 z-20"
               animate={{
-                x: (windowSize.width / 2 - mousePosition.x) * 0.03,
-                y: (windowSize.height - mousePosition.y) * 0.03
+                x: ((windowSize.width / 2 - mousePosition.x) * 0.07) + 'px',
+                y: ((windowSize.height - mousePosition.y) * 0.07) + 'px'
               }}
             >
               <Image
@@ -303,8 +303,8 @@ export default function Home() {
             <motion.div
               className="absolute inset-0 z-10"
               animate={{
-                x: (windowSize.width / 2 - mousePosition.x) * 0.02,
-                y: (windowSize.height / 2 - mousePosition.y) * 0.02
+                x: ((windowSize.width / 2 - mousePosition.x) * 0.06) + 'px',
+                y: ((windowSize.height / 2 - mousePosition.y) * 0.06) + 'px'
               }}
             >
               <Image
@@ -345,26 +345,25 @@ export default function Home() {
                   <h3 className="text-2xl font-pixel text-tekron-pink-neon mb-2">&gt; ORGANIZED_BY</h3>
                 </div>
                 <div className="flex items-center justify-center gap-8">
-                  {/* Newton School of Technology Logo */}
-                  <div className="relative">
-                    <img
-                      src="/images/NST.png"
-                      alt="Newton School of Technology"
-                      className="h-16 md:h-20 w-auto object-contain"
-                      style={{ filter: 'drop-shadow(0 0 10px rgba(160, 107, 255, 0.3))' }}
-                    />
-                  </div>
-
-                  {/* X Separator */}
-                  <div className="text-5xl md:text-7xl font-bold text-tekron-pink-neon opacity-60">
-                    ×
-                  </div>
 
                   {/* Ajeenkya DY Patil University Logo */}
                   <div className="relative">
                     <img
                       src="/images/adypu.png"
                       alt="Ajeenkya DY Patil University"
+                      className="h-16 md:h-20 w-auto object-contain"
+                      style={{ filter: 'drop-shadow(0 0 10px rgba(160, 107, 255, 0.3))' }}
+                    />
+                  </div>
+                  {/* X Separator */}
+                  <div className="text-5xl md:text-7xl font-bold text-tekron-pink-neon opacity-60">
+                    ×
+                  </div>
+                  {/* Newton School of Technology Logo */}
+                  <div className="relative">
+                    <img
+                      src="/images/NST.png"
+                      alt="Newton School of Technology"
                       className="h-16 md:h-20 w-auto object-contain"
                       style={{ filter: 'drop-shadow(0 0 10px rgba(160, 107, 255, 0.3))' }}
                     />
@@ -617,14 +616,14 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon/10 to-tekron-purple-accent/10 rounded-2xl blur-xl" />
                   <div className="relative bg-tekron-purple-deep/40 backdrop-blur-md border-2 border-tekron-pink-neon/30 rounded-2xl p-8 h-full">
                     <div className="mb-4">
-                      <div className=" bg-tekron-purple-deep/40 inline-flex items-center gap-2 bg-tekron-pink-neon border border-tekron-pink-neon/40 rounded-full px-4 py-2">
-                        <span className="text-tekron-pink-neon bg-tekron-purple-deep/40 font-pixel text-sm">THIS_YEAR // 2026</span>
+                      <div className=" text-tekron-pink-neon-300 bg-purple-200 inline-flex items-center gap-2 bg-tekron-pink-neon border border-tekron-pink-neon/40 rounded-full px-4 py-2">
+                        <span className="text-pink-500 font-pixel">THIS_YEAR // 2026</span>
                       </div>
                     </div>
-                    <p className="text-gray-300 text-2xl leading-relaxed mb-6">
+                    <p className="text-gray-300 text-3xl leading-relaxed mb-6">
                       <span className="text-tekron-pink-neon font-bold">HACKRON</span> is back again with another banger event! Building on last year's incredible success, we're scaling up to create an even more impactful experience.
                     </p>
-                    <p className="text-gray-300 text-2xl leading-relaxed">
+                    <p className="text-gray-300 text-3xl leading-relaxed">
                       Get ready for 24 hours of innovation, collaboration, and breakthrough solutions. This year, we're bringing together the brightest minds, cutting-edge challenges, and amazing prizes to push the boundaries of what's possible.
                     </p>
                   </div>
@@ -715,19 +714,19 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon/10 to-tekron-purple-accent/10 rounded-2xl blur-xl" />
                   <div className="relative bg-tekron-purple-deep/40 backdrop-blur-md border-2 border-tekron-pink-neon/30 rounded-2xl p-8 h-full">
                     <div className="mb-4">
-                      <div className="inline-flex items-center gap-2 bg-red-500 border border-red-500/40 rounded-full px-4 py-2">
+                      <div className="inline-flex items-center gap-2 border border-white-500/40 rounded-full px-4 py-2">
                         <span className="text-white-400 font-pixel text-sm">LAST_YEAR // 2025</span>
                       </div>
                     </div>
                     <div className="space-y-6">
                       <div>
-                        <p className="text-gray-300 text-2xl leading-relaxed">
+                        <p className="text-gray-300 text-3xl leading-relaxed">
                           <span className="text-tekron-pink-neon font-bold">Hackron</span> is not just an event—it is a continuously evolving tech ecosystem. Built on innovation, collaboration, and scale, Hackron has established itself as a platform where ideas meet execution and talent meets opportunity.
                         </p>
                       </div>
 
                       <div>
-                        <p className="text-gray-300 text-2xl leading-relaxed">
+                        <p className="text-gray-300 text-3xl leading-relaxed">
                           With strong year-on-year growth, multi-college participation, and large-scale digital outreach, <span className="text-cyan-400">Hackron has created a legacy</span>. Over the past editions, the event has successfully positioned its impact—connecting brands with a highly engaged, future-ready audience of engineers, developers, creators, and innovators.
                         </p>
                       </div>
@@ -834,7 +833,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="text-cyan-300 font-pixel text-xl mb-3 tracking-wider">DATE</div>
-                  <div className="text-white font-bold text-2xl">5th March 2026</div>
+                  <div className="text-white font-bold text-3xl mb-10">31st Jan - 1st Feb 2026</div>
                 </div>
               </motion.div>
 
@@ -853,7 +852,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="text-purple-300 font-pixel text-xl mb-3 tracking-wider">VENUE</div>
-                  <div className="text-white font-bold text-2xl">Lab 1 & 2</div>
+                  <div className="text-white font-bold text-3xl mb-2">4th and 5th Floor, <br /> School of Management , ADYPU</div>
                 </div>
               </motion.div>
 
@@ -872,7 +871,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="text-pink-300 font-pixel text-xl mb-3 tracking-wider">DURATION</div>
-                  <div className="text-white font-bold text-2xl">24 Hours</div>
+                  <div className="text-white font-bold text-3xl mb-20">24 Hours</div>
                 </div>
               </motion.div>
 
@@ -891,7 +890,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="text-yellow-300 font-pixel text-xl mb-3 tracking-wider">PRIZE_POOL</div>
-                  <div className="text-white font-bold text-2xl">₹75,000</div>
+                  <div className="text-white font-bold text-3xl mb-20">₹75,000</div>
                 </div>
               </motion.div>
             </motion.div>
@@ -923,7 +922,7 @@ export default function Home() {
                 <p className="text-gray-300 text-retro text-lg">Your 24-hour adventure roadmap</p>
                 <div className="mt-4 inline-flex items-center gap-2 bg-tekron-purple-deep/60 border border-tekron-pink-neon/30 rounded-full px-6 py-2">
                   <div className="w-2 h-2 rounded-full bg-tekron-pink-neon animate-pulse" />
-                  <span className="text-tekron-pink-neon font-pixel text-sm">15 LEVELS TO CONQUER</span>
+                  <span className="text-tekron-pink-neon font-pixel text-sm">9 LEVELS TO CONQUER</span>
                 </div>
               </div>
 
@@ -977,7 +976,7 @@ export default function Home() {
                 </svg>
 
                 {/* Timeline Items */}
-                <div className="relative space-y-20 py-12" style={{ zIndex: 1 }}>
+                <div className="relative space-y-32 py-12" style={{ zIndex: 1 }}>
                   {eventDetails.timeline.map((item, index) => {
                     const isLeft = index % 2 === 0;
 
@@ -999,34 +998,24 @@ export default function Home() {
                         </div>
 
                         {/* Level Card */}
-                        <div className={`relative group ${isLeft ? 'mr-auto pr-8 md:pr-16' : 'ml-auto pl-8 md:pl-16'} w-full md:w-[48%]`}>
+                        <div className={`relative group ${isLeft ? 'mr-auto pr-8 md:pr-16' : 'ml-auto pl-8 md:pl-16'} w-full md:w-[55%]`}>
                           {/* Glow Effect */}
-                          <div className="absolute -inset-2 bg-gradient-to-br from-tekron-pink-neon/20 via-tekron-purple-accent/20 to-cyan-500/20 rounded-3xl blur-xl opacity-60" />
+                          <div className="absolute -inset-3 bg-gradient-to-br from-tekron-pink-neon/30 via-tekron-purple-accent/30 to-cyan-500/30 rounded-3xl blur-2xl opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
 
                           {/* Level Card Container */}
-                          <div className="relative bg-gradient-to-br from-purple-900/95 via-indigo-900/90 to-purple-800/95 backdrop-blur-xl border-2 border-cyan-400/40 rounded-2xl p-8 shadow-2xl hover:border-cyan-400/70 transition-all duration-300">
+                          <div className="relative bg-gradient-to-br from-purple-900/98 via-indigo-900/95 to-purple-800/98 backdrop-blur-xl border-2 border-cyan-400/50 rounded-3xl p-10 shadow-2xl hover:border-cyan-400/80 hover:shadow-cyan-400/20 transition-all duration-300">
+                            {/* Inner glow */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 via-transparent to-purple-500/5 rounded-3xl" />
 
                             {/* Corner Accents */}
-                            <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-lg" />
-                            <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-lg" />
-                            <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-lg" />
-                            <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-cyan-400/60 rounded-br-lg" />
-
-                            {/* Level Number Badge */}
-                            <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? '-right-12' : '-left-12'}`}>
-                              <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-tekron-pink-neon to-tekron-purple-accent rounded-full blur-md opacity-75" />
-                                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-tekron-pink-neon via-purple-500 to-tekron-purple-accent flex items-center justify-center border-4 border-tekron-purple-deep shadow-2xl shadow-tekron-pink-neon/60">
-                                  <span className="text-white font-pixel text-xl drop-shadow-lg">
-                                    {String(index + 1).padStart(2, '0')}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
+                            <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-cyan-400/70 rounded-tl-lg" />
+                            <div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-cyan-400/70 rounded-tr-lg" />
+                            <div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-cyan-400/70 rounded-bl-lg" />
+                            <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-cyan-400/70 rounded-br-lg" />
 
                             {/* Level Icon - Task Specific */}
-                            <div className="flex justify-center mb-6">
-                              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-400/30 to-purple-600/30 border-2 border-cyan-400/60 flex items-center justify-center backdrop-blur-sm shadow-lg shadow-cyan-400/20">
+                            <div className="flex justify-center mb-7 relative z-10">
+                              <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-cyan-400/40 to-purple-600/40 border-2 border-cyan-400/70 flex items-center justify-center backdrop-blur-sm shadow-xl shadow-cyan-400/30 hover:scale-105 transition-transform duration-300">
                                 {index === 0 ? <FaBullhorn className="text-cyan-400 text-4xl" /> :
                                   index === 1 ? <FaCode className="text-purple-400 text-4xl" /> :
                                     index === 2 ? <FaSearch className="text-cyan-400 text-4xl" /> :
@@ -1050,33 +1039,20 @@ export default function Home() {
                             </div>
 
                             {/* Event Title */}
-                            <h3 className="text-center text-2xl font-bold text-white mb-3 font-pixel tracking-wide">
+                            <h3 className="text-center text-3xl font-bold text-white mb-4 font-pixel tracking-wider relative z-10" style={{ textShadow: '0 0 20px rgba(34, 211, 238, 0.3)' }}>
                               {item.event}
                             </h3>
 
                             {/* Day Label */}
                             {item.desc && (
-                              <div className="flex justify-center">
-                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/30 to-pink-500/30 border border-purple-400/50 rounded-full px-4 py-2 backdrop-blur-sm">
-                                  <span className="text-purple-200 font-mono text-sm font-semibold">
+                              <div className="flex justify-center relative z-10">
+                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/40 to-pink-500/40 border border-purple-400/60 rounded-full px-5 py-2.5 backdrop-blur-sm shadow-lg">
+                                  <span className="text-purple-100 font-mono text-base font-bold tracking-wide">
                                     {item.desc}
                                   </span>
                                 </div>
                               </div>
                             )}
-                            {/* Level Progress Indicator */}
-                            <div className="flex justify-center gap-1.5 mb-4">
-                              {[...Array(3)].map((_, i) => (
-                                <div key={i} className="w-2 h-2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
-                              ))}
-                            </div>
-
-                            {/* Progress Bar */}
-                            <div className="mt-5 mb-4">
-                              <div className="h-1.5 bg-purple-950/50 rounded-full overflow-hidden border border-cyan-400/20">
-                                <div className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 w-full shadow-lg shadow-cyan-400/30" />
-                              </div>
-                            </div>
 
                             {/* Level Status */}
                             <div className="mt-4 text-center">
@@ -1177,12 +1153,11 @@ export default function Home() {
         </motion.section >
 
         {/* Add Login Modal */}
-        < LoginModal
+        <LoginModal
           isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)
-          }
+          onClose={() => setIsLoginModalOpen(false)}
         />
-      </main >
-    </div >
+      </main>
+    </div>
   );
 }

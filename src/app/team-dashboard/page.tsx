@@ -8,25 +8,31 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
-import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaRocket, FaFileCode, FaBell, FaTimes } from 'react-icons/fa';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
   email: string;
-  createdAt: string;
-  projectSubmission?: ProjectSubmission;
-  githubRepo?: GitHubRepo;
+  createdAt?: string;
+  members?: any[];
+  githubUrl?: string;
   submissionUrl?: string;
+  githubRepo?: GitHubRepo;
+  projectSubmission?: ProjectSubmission;
 }
 
 interface ProjectSubmission {
-  liveDemo: string;
+  projectName?: string;
+  description?: string;
+  techStack?: string;
+  liveUrl?: string;
+  liveDemo?: string;
+  videoUrl?: string;
   presentationUrl?: string;
-  codeRepository: string;
-  documentation?: string;
+  codeRepository?: string;
   problemStatement?: string;
   solution?: string;
-  techStack?: string;
+  documentation?: string;
   challenges?: string;
   learnings?: string;
 }
@@ -311,19 +317,19 @@ export default function TeamDashboard() {
     <div className="min-h-screen bg-black">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
+      <div className="w-full pt-24">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-4"
+          className="mb-6 px-6"
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 font-mono text-sm transition-colors duration-300"
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-tekron-pink-neon font-pixel text-base transition-colors duration-300 tracking-wider"
           >
-            <span className="text-cyan-400">{'<'}</span>
-            {`Return_To_Homepage`}
+            <span className="text-tekron-pink-neon">{'<'}</span>
+            {`RETURN_TO_HOMEPAGE`}
           </Link>
         </motion.div>
 
@@ -331,14 +337,20 @@ export default function TeamDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-black/50 backdrop-blur-sm border border-cyan-500/20 rounded-lg p-6 mb-8"
+          className="relative bg-gradient-to-br from-tekron-purple-deep/60 via-black/80 to-tekron-purple-deep/60 backdrop-blur-xl border-2 border-tekron-pink-neon/30 rounded-2xl p-8 mb-10 overflow-hidden"
         >
-          <div className="flex items-center gap-4">
+          {/* Glow Effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-tekron-pink-neon/20 to-tekron-purple-accent/20 blur-xl opacity-50" />
+
+          <div className="relative flex items-center gap-4">
             <div className="flex-1">
-              <h1 className="text-2xl font-mono text-cyan-400">
-                {`> Welcome_Back ${teamData?.teamName}`}
+              <h1 className="text-4xl font-pixel text-tekron-pink-neon tracking-wider mb-3" style={{ textShadow: '0 0 20px rgba(255, 0, 110, 0.5)' }}>
+                {`> WELCOME_BACK`}
               </h1>
-              <p className="text-gray-400 font-mono mt-2">
+              <p className="text-2xl font-pixel text-cyan-400 mb-2 tracking-wide">
+                {teamData?.teamName}
+              </p>
+              <p className="text-gray-400 font-mono text-base mt-2">
                 {teamData?.email}
               </p>
             </div>
@@ -347,9 +359,14 @@ export default function TeamDashboard() {
 
         {/* Success Message */}
         {successMessage && (
-          <div className="mb-4 text-green-400 font-mono">
-            {successMessage}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 mx-6 relative bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-2 border-green-400/50 rounded-xl p-5 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-green-400/5 blur-xl" />
+            <p className="relative text-green-300 font-pixel text-lg tracking-wide">{successMessage}</p>
+          </motion.div>
         )}
 
         {/* Checkpoint Alert Popup */}
@@ -359,15 +376,15 @@ export default function TeamDashboard() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 relative bg-gradient-to-r from-purple-900/20 to-cyan-900/20 border border-cyan-500/30 rounded-lg p-6 overflow-hidden"
+              className="mb-8 mx-6 relative bg-gradient-to-r from-purple-900/40 to-cyan-900/40 border-2 border-cyan-400/40 rounded-2xl p-8 overflow-hidden"
             >
-              {/* Glowing border effect */}
+              {/* Glow border effect */}
               <motion.div
-                className="absolute inset-0 opacity-30"
+                className="absolute inset-0 opacity-40"
                 animate={{
                   background: [
-                    'linear-gradient(90deg, transparent, rgba(34,211,238,0.2), transparent)',
-                    'linear-gradient(90deg, transparent, rgba(168,85,247,0.2), transparent)',
+                    'linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent)',
+                    'linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent)',
                   ]
                 }}
                 transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
@@ -377,33 +394,33 @@ export default function TeamDashboard() {
               {(!adminBroadcast?.isUrgent) && (
                 <button
                   onClick={() => setShowAlert(false)}
-                  className="absolute top-4 right-4 text-cyan-400 hover:text-cyan-300 transition-colors"
+                  className="absolute top-4 right-4 text-cyan-300 hover:text-tekron-pink-neon transition-colors z-10"
                 >
-                  <FaTimes />
+                  <FaTimes className="text-xl" />
                 </button>
               )}
 
               {/* Alert content */}
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 relative z-10">
                 <div className="relative">
-                  <FaBell className="text-cyan-400 h-6 w-6" />
+                  <FaBell className="text-cyan-400 h-7 w-7" />
                   <motion.div
-                    className="absolute inset-0 bg-cyan-500 filter blur-md"
-                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    className="absolute inset-0 bg-cyan-400 filter blur-lg"
+                    animate={{ opacity: [0.4, 0.7, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
                 </div>
 
                 <div className="flex-1">
-                  <h3 className={`font-mono text-lg mb-2 ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                  <h3 className={`font-pixel text-2xl mb-3 tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
                     ? 'text-red-400 animate-pulse'
-                    : 'text-cyan-400'
+                    : 'text-cyan-300'
                     }`}>
                     {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
-                      ? `> Urgent_Alert`
-                      : `> System_Alert`}
+                      ? `> URGENT_ALERT`
+                      : `> SYSTEM_MESSAGE`}
                   </h3>
-                  <p className={`font-mono text-sm whitespace-pre-line ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                  <p className={`text-gray-300 font-mono text-base whitespace-pre-line leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
                     ? 'text-red-300'
                     : 'text-gray-300'
                     }`}>
@@ -435,389 +452,460 @@ export default function TeamDashboard() {
           )}
         </AnimatePresence>
 
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* GitHub Repository Section */}
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 px-6">
+          {/* USER Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className={`col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br 
-              ${githubRepo
-                ? 'from-green-900/20 to-black border-green-500/30'
-                : 'from-gray-900 to-black border-purple-500/30'} 
-              backdrop-blur-sm border rounded-lg overflow-hidden 
-              shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6`}
+            className="relative group"
           >
-            <div className={`relative bg-black/60 p-6 border-b 
-              ${githubRepo ? 'border-green-500/20' : 'border-purple-500/20'}`}
-            >
-              <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r 
-                from-transparent 
-                ${githubRepo ? 'via-green-500/50' : 'via-purple-500/50'} 
-                to-transparent`}
-              />
-              <h2 className={`text-xl font-mono ${githubRepo ? 'text-green-400' : 'text-purple-400'} 
-                flex items-center`}
-              >
-                <FaCode className={`mr-3 ${githubRepo ? 'text-green-500' : 'text-purple-500'}`} />
-                {`> GitHub_Repository`}
-                {githubRepo && (
-                  <motion.span
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="ml-2 text-sm text-green-400/70"
-                  >
-                    (Connected)
-                  </motion.span>
-                )}
-              </h2>
-            </div>
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 to-blue-600/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
 
-            <div className="p-6">
-              {githubRepo ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-mono text-cyan-400">Repository Details:</h3>
-                    <button
-                      onClick={() => {
-                        setGithubRepo(null);
-                        setRepoUrl('');
-                      }}
-                      className="text-red-400 hover:text-red-300 font-mono text-sm underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
-                    <p className="text-gray-300 font-mono text-sm break-all">{githubRepo.repoUrl}</p>
-                    <p className="text-gray-500 font-mono text-xs mt-2">
-                      Last updated: {new Date(githubRepo.lastUpdated).toLocaleString()}
-                    </p>
-                  </div>
+            <div className="relative bg-gradient-to-br from-tekron-purple-deep/70 via-black/60 to-cyan-900/40 backdrop-blur-xl border-2 border-cyan-400/40 rounded-2xl p-6 hover:border-cyan-400/60 transition-all duration-300">
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaUser className="text-cyan-400 text-2xl" />
+                  <h3 className="text-cyan-300 font-pixel text-base tracking-wider">USER</h3>
                 </div>
-              ) : (
-                <form onSubmit={handleAddRepo} className="space-y-4">
-                  <div>
-                    <label className="block text-cyan-400 font-mono text-sm mb-2">
-                      {`> Repository_URL:`}
-                    </label>
-                    <input
-                      type="url"
-                      value={repoUrl}
-                      onChange={(e) => setRepoUrl(e.target.value)}
-                      placeholder="https://github.com/username/repo"
-                      className="w-full bg-black/30 border border-green-500/30 rounded px-4 py-2 text-green-400 font-mono focus:outline-none focus:border-green-500 placeholder-green-500/30"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isAddingRepo}
-                    className="w-full bg-green-500/10 hover:bg-green-500/20 border border-green-500/50 text-green-400 font-mono py-2 rounded transition-all duration-300"
-                  >
-                    {isAddingRepo ? 'Connecting...' : '> Connect_Repository'}
-                  </button>
-                </form>
-              )}
+                <div className="text-3xl font-pixel text-cyan-300 mb-2">$ {teamData?.teamName || 'N/A'}</div>
+                <p className="text-gray-400 font-mono text-sm">~/{teamData?.email?.split('@')[0] || 'user'}</p>
+              </div>
             </div>
           </motion.div>
 
-          {/* URL Submission Box */}
+          {/* STATUS Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+            className="relative group"
           >
-            <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-              <h2 className="text-xl font-mono text-purple-400 flex items-center">
-                <FaLink className="mr-3 text-purple-500" />
-                {`> URL_Submission`}
-              </h2>
-            </div>
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/30 to-pink-600/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
 
-            <div className="p-6">
-              {submissionUrl ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-mono text-cyan-400">Submission URL:</h3>
-                    <button
-                      onClick={() => {
-                        setSubmissionUrl('');
-                        // Optional: update DB to remove url
-                      }}
-                      className="text-red-400 hover:text-red-300 font-mono text-sm underline"
-                    >
-                      Change
-                    </button>
-                  </div>
-                  <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
-                    <p className="text-gray-300 font-mono text-sm break-all">{submissionUrl}</p>
-                  </div>
+            <div className="relative bg-gradient-to-br from-tekron-purple-deep/70 via-black/60 to-purple-900/40 backdrop-blur-xl border-2 border-purple-400/40 rounded-2xl p-6 hover:border-purple-400/60 transition-all duration-300">
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaClipboardCheck className="text-purple-400 text-2xl" />
+                  <h3 className="text-purple-300 font-pixel text-base tracking-wider">STATUS</h3>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmitUrl} className="space-y-4">
-                  <div>
-                    <label className="block text-cyan-400 font-mono text-sm mb-2">
-                      {`> Project_URL:`}
-                    </label>
-                    <input
-                      type="url"
-                      value={submissionUrl}
-                      onChange={(e) => setSubmissionUrl(e.target.value)}
-                      placeholder="https://..."
-                      className="w-full bg-black/30 border border-purple-500/30 rounded px-4 py-2 text-purple-400 font-mono focus:outline-none focus:border-purple-500 placeholder-purple-500/30"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isSubmittingUrl}
-                    className="w-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/50 text-purple-400 font-mono py-2 rounded transition-all duration-300"
-                  >
-                    {isSubmittingUrl ? 'Submitting...' : '> Submit_URL'}
-                  </button>
-                </form>
-              )}
+                <div className="text-3xl font-pixel text-purple-300 mb-2">$ {teamData?.projectSubmission ? 'SUBMITTED' : 'PENDING'}</div>
+                <p className="text-gray-400 font-mono text-sm">~/{teamData?.projectSubmission ? 'uploaded' : 'await_upload'}</p>
+              </div>
             </div>
           </motion.div>
 
-          {/* Project Submission Section */}
+          {/* GIT_REMOTE Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+            transition={{ delay: 0.3 }}
+            className="relative group"
           >
-            {/* Header with glowing accent */}
-            <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-mono text-purple-400 flex items-center">
-                  <FaFileAlt className="mr-3 text-purple-500" />
-                  {teamData?.projectSubmission && !isEditMode ?
-                    `> Congrats! You have successfully submitted your project.` :
-                    `> Project_Submission`}
-                </h2>
-                {teamData?.projectSubmission && !showForm && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleEditSubmission}
-                    className="px-4 py-1 bg-cyan-600/80 text-white rounded font-mono text-sm flex items-center"
-                  >
-                    <FaClipboardCheck className="mr-2" />
-                    Edit Submission
-                  </motion.button>
-                )}
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/30 to-rose-600/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
+
+            <div className="relative bg-gradient-to-br from-tekron-purple-deep/70 via-black/60 to-pink-900/40 backdrop-blur-xl border-2 border-tekron-pink-neon/40 rounded-2xl p-6 hover:border-tekron-pink-neon/60 transition-all duration-300">
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaGithub className="text-tekron-pink-neon text-2xl" />
+                  <h3 className="text-pink-300 font-pixel text-base tracking-wider">GIT_REMOTE</h3>
+                </div>
+                <div className="text-3xl font-pixel text-pink-300 mb-2">$ {teamData?.githubRepo ? 'CONNECTED' : 'DISCONNECTED'}</div>
+                <p className="text-gray-400 font-mono text-sm">~/{teamData?.githubRepo ? 'repo_linked' : 'not_yet_uploaded'}</p>
               </div>
             </div>
-            <div className="p-6">
-              {showForm ? (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Problem Statement Selection */}
-                  <div>
-                    <label className="block text-cyan-400 font-mono text-sm mb-2">
-                      {`> Problem_Statement:`}
-                    </label>
-                    <select
-                      value={formData.problemStatement || problemStatements[0]}
-                      onChange={handleProblemStatementChange}
-                      className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+          </motion.div>
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="px-6">
+          <div className="grid grid-cols-1 gap-6">
+            {/* GitHub Repository Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className={`col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br 
+              ${githubRepo
+                  ? 'from-green-900/20 to-black border-green-500/30'
+                  : 'from-gray-900 to-black border-purple-500/30'} 
+              backdrop-blur-sm border rounded-lg overflow-hidden 
+              shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6`}
+            >
+              <div className={`relative bg-black/60 p-6 border-b 
+              ${githubRepo ? 'border-green-500/20' : 'border-purple-500/20'}`}
+              >
+                <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r 
+                from-transparent 
+                ${githubRepo ? 'via-green-500/50' : 'via-purple-500/50'} 
+                to-transparent`}
+                />
+                <h2 className={`text-xl font-mono ${githubRepo ? 'text-green-400' : 'text-purple-400'} 
+                flex items-center`}
+                >
+                  <FaCode className={`mr-3 ${githubRepo ? 'text-green-500' : 'text-purple-500'}`} />
+                  {`> GitHub_Repository`}
+                  {githubRepo && (
+                    <motion.span
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="ml-2 text-sm text-green-400/70"
                     >
-                      {problemStatements.map((statement, index) => (
-                        <option key={index} value={statement} className="bg-gray-900 text-gray-300">
-                          {statement.split(':')[0]}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="mt-2 text-xs text-gray-500 font-mono">
-                      {formData.problemStatement || problemStatements[0]}
-                    </p>
-                  </div>
+                      (Connected)
+                    </motion.span>
+                  )}
+                </h2>
+              </div>
 
-                  {/* URLs Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Live_Demo_URL:`} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="url"
-                        name="liveDemo"
-                        value={formData.liveDemo}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="https://..."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Presentation_URL:`}
-                      </label>
-                      <input
-                        type="url"
-                        name="presentationUrl"
-                        value={formData.presentationUrl}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Code_Repository:`} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="url"
-                        name="codeRepository"
-                        value={formData.codeRepository}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="https://github.com/..."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Documentation_URL:`}
-                      </label>
-                      <input
-                        type="url"
-                        name="documentation"
-                        value={formData.documentation}
-                        onChange={handleChange}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="https://..."
-                      />
-                    </div>
-                  </div>
-
-                  {/* Text Areas */}
+              <div className="p-6">
+                {githubRepo ? (
                   <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-mono text-cyan-400">Repository Details:</h3>
+                      <button
+                        onClick={() => {
+                          setGithubRepo(null);
+                          setRepoUrl('');
+                        }}
+                        className="text-red-400 hover:text-red-300 font-mono text-sm underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
+                      <p className="text-gray-300 font-mono text-sm break-all">{githubRepo.repoUrl}</p>
+                      <p className="text-gray-500 font-mono text-xs mt-2">
+                        Last updated: {new Date(githubRepo.lastUpdated).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleAddRepo} className="space-y-4">
                     <div>
                       <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Solution_Description:`}
+                        {`> Repository_URL:`}
                       </label>
-                      <textarea
-                        name="solution"
-                        value={formData.solution}
-                        onChange={handleChange}
-                        rows={4}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="Describe your solution..."
+                      <input
+                        type="url"
+                        value={repoUrl}
+                        onChange={(e) => setRepoUrl(e.target.value)}
+                        placeholder="https://github.com/username/repo"
+                        className="w-full bg-black/30 border border-green-500/30 rounded px-4 py-2 text-green-400 font-mono focus:outline-none focus:border-green-500 placeholder-green-500/30"
+                        required
                       />
                     </div>
+                    <button
+                      type="submit"
+                      disabled={isAddingRepo}
+                      className="w-full bg-green-500/10 hover:bg-green-500/20 border border-green-500/50 text-green-400 font-mono py-2 rounded transition-all duration-300"
+                    >
+                      {isAddingRepo ? 'Connecting...' : '> Connect_Repository'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+
+            {/* URL Submission Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+            >
+              <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+                <h2 className="text-xl font-mono text-purple-400 flex items-center">
+                  <FaLink className="mr-3 text-purple-500" />
+                  {`> URL_Submission`}
+                </h2>
+              </div>
+
+              <div className="p-6">
+                {submissionUrl ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-mono text-cyan-400">Submission URL:</h3>
+                      <button
+                        onClick={() => {
+                          setSubmissionUrl('');
+                          // Optional: update DB to remove url
+                        }}
+                        className="text-red-400 hover:text-red-300 font-mono text-sm underline"
+                      >
+                        Change
+                      </button>
+                    </div>
+                    <div className="bg-black/30 p-4 rounded-lg border border-cyan-500/30">
+                      <p className="text-gray-300 font-mono text-sm break-all">{submissionUrl}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmitUrl} className="space-y-4">
                     <div>
                       <label className="block text-cyan-400 font-mono text-sm mb-2">
-                        {`> Tech_Stack:`}
+                        {`> Project_URL:`}
                       </label>
-                      <textarea
-                        name="techStack"
-                        value={formData.techStack}
-                        onChange={handleChange}
-                        rows={2}
-                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                        placeholder="React, Next.js, Firebase, etc..."
+                      <input
+                        type="url"
+                        value={submissionUrl}
+                        onChange={(e) => setSubmissionUrl(e.target.value)}
+                        placeholder="https://..."
+                        className="w-full bg-black/30 border border-purple-500/30 rounded px-4 py-2 text-purple-400 font-mono focus:outline-none focus:border-purple-500 placeholder-purple-500/30"
+                        required
                       />
                     </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingUrl}
+                      className="w-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/50 text-purple-400 font-mono py-2 rounded transition-all duration-300"
+                    >
+                      {isSubmittingUrl ? 'Submitting...' : '> Submit_URL'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Project Submission Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-purple-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(8,145,178,0.15)] mb-6"
+            >
+              {/* Header with glowing accent */}
+              <div className="relative bg-black/60 p-6 border-b border-purple-500/20">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-mono text-purple-400 flex items-center">
+                    <FaFileAlt className="mr-3 text-purple-500" />
+                    {teamData?.projectSubmission && !isEditMode ?
+                      `> Congrats! You have successfully submitted your project.` :
+                      `> Project_Submission`}
+                  </h2>
+                  {teamData?.projectSubmission && !showForm && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleEditSubmission}
+                      className="px-4 py-1 bg-cyan-600/80 text-white rounded font-mono text-sm flex items-center"
+                    >
+                      <FaClipboardCheck className="mr-2" />
+                      Edit Submission
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+              <div className="p-6">
+                {showForm ? (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Problem Statement Selection */}
+                    <div>
+                      <label className="block text-cyan-400 font-mono text-sm mb-2">
+                        {`> Problem_Statement:`}
+                      </label>
+                      <select
+                        value={formData.problemStatement || problemStatements[0]}
+                        onChange={handleProblemStatementChange}
+                        className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                      >
+                        {problemStatements.map((statement, index) => (
+                          <option key={index} value={statement} className="bg-gray-900 text-gray-300">
+                            {statement.split(':')[0]}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-2 text-xs text-gray-500 font-mono">
+                        {formData.problemStatement || problemStatements[0]}
+                      </p>
+                    </div>
+
+                    {/* URLs Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-cyan-400 font-mono text-sm mb-2">
-                          {`> Challenges_Faced:`}
+                          {`> Live_Demo_URL:`} <span className="text-red-500">*</span>
                         </label>
-                        <textarea
-                          name="challenges"
-                          value={formData.challenges}
+                        <input
+                          type="url"
+                          name="liveDemo"
+                          value={formData.liveDemo}
                           onChange={handleChange}
-                          rows={3}
                           className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                          placeholder="What challenges did you face?"
+                          placeholder="https://..."
+                          required
                         />
                       </div>
                       <div>
                         <label className="block text-cyan-400 font-mono text-sm mb-2">
-                          {`> Key_Learnings:`}
+                          {`> Presentation_URL:`}
                         </label>
-                        <textarea
-                          name="learnings"
-                          value={formData.learnings}
+                        <input
+                          type="url"
+                          name="presentationUrl"
+                          value={formData.presentationUrl}
                           onChange={handleChange}
-                          rows={3}
                           className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
-                          placeholder="What did you learn?"
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Code_Repository:`} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="url"
+                          name="codeRepository"
+                          value={formData.codeRepository}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="https://github.com/..."
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Documentation_URL:`}
+                        </label>
+                        <input
+                          type="url"
+                          name="documentation"
+                          value={formData.documentation}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="https://..."
                         />
                       </div>
                     </div>
-                  </div>
 
-                  {/* Error Message */}
-                  {error && (
-                    <div className="text-red-400 font-mono text-sm">
-                      {`> Error: ${error}`}
-                    </div>
-                  )}
-
-                  {/* Submit Button */}
-                  <div className="flex justify-end pt-4">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 
-                        text-cyan-400 font-mono px-8 py-3 rounded-lg flex items-center gap-2
-                        transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <motion.span
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          >
-                            ⟳
-                          </motion.span>
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <FaRocket />
-                          {`> Submit_Project`}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className="space-y-6">
-                  <div className="bg-black/30 p-6 rounded-lg border border-cyan-500/30">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-mono text-cyan-400">{teamData?.projectSubmission?.problemStatement?.split(':')[0]}</h3>
-                      <div className="flex gap-2">
-                        {teamData?.projectSubmission?.liveDemo && (
-                          <a href={teamData.projectSubmission.liveDemo} target="_blank" rel="noopener noreferrer"
-                            className="text-cyan-400 hover:text-cyan-300"><FaRocket size={20} /></a>
-                        )}
-                        {teamData?.projectSubmission?.codeRepository && (
-                          <a href={teamData.projectSubmission.codeRepository} target="_blank" rel="noopener noreferrer"
-                            className="text-cyan-400 hover:text-cyan-300"><FaCode size={20} /></a>
-                        )}
+                    {/* Text Areas */}
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Solution_Description:`}
+                        </label>
+                        <textarea
+                          name="solution"
+                          value={formData.solution}
+                          onChange={handleChange}
+                          rows={4}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="Describe your solution..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-cyan-400 font-mono text-sm mb-2">
+                          {`> Tech_Stack:`}
+                        </label>
+                        <textarea
+                          name="techStack"
+                          value={formData.techStack}
+                          onChange={handleChange}
+                          rows={2}
+                          className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                          placeholder="React, Next.js, Firebase, etc..."
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-cyan-400 font-mono text-sm mb-2">
+                            {`> Challenges_Faced:`}
+                          </label>
+                          <textarea
+                            name="challenges"
+                            value={formData.challenges}
+                            onChange={handleChange}
+                            rows={3}
+                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                            placeholder="What challenges did you face?"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-cyan-400 font-mono text-sm mb-2">
+                            {`> Key_Learnings:`}
+                          </label>
+                          <textarea
+                            name="learnings"
+                            value={formData.learnings}
+                            onChange={handleChange}
+                            rows={3}
+                            className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-2 text-gray-300 font-mono focus:outline-none focus:border-cyan-500"
+                            placeholder="What did you learn?"
+                          />
+                        </div>
                       </div>
                     </div>
-                    <p className="text-gray-300 font-mono text-sm mb-4">{teamData?.projectSubmission?.solution}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {teamData?.projectSubmission?.techStack?.split(',').map((tech, i) => (
-                        <span key={i} className="px-2 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded text-xs text-cyan-400 font-mono">
-                          {tech.trim()}
-                        </span>
-                      ))}
+
+                    {/* Error Message */}
+                    {error && (
+                      <div className="text-red-400 font-mono text-sm">
+                        {`> Error: ${error}`}
+                      </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <div className="flex justify-end pt-4">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 
+                        text-cyan-400 font-mono px-8 py-3 rounded-lg flex items-center gap-2
+                        transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <motion.span
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            >
+                              ⟳
+                            </motion.span>
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <FaRocket />
+                            {`> Submit_Project`}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="bg-black/30 p-6 rounded-lg border border-cyan-500/30">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-xl font-mono text-cyan-400">{teamData?.projectSubmission?.problemStatement?.split(':')[0]}</h3>
+                        <div className="flex gap-2">
+                          {teamData?.projectSubmission?.liveDemo && (
+                            <a href={teamData.projectSubmission.liveDemo} target="_blank" rel="noopener noreferrer"
+                              className="text-cyan-400 hover:text-cyan-300"><FaRocket size={20} /></a>
+                          )}
+                          {teamData?.projectSubmission?.codeRepository && (
+                            <a href={teamData.projectSubmission.codeRepository} target="_blank" rel="noopener noreferrer"
+                              className="text-cyan-400 hover:text-cyan-300"><FaCode size={20} /></a>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-gray-300 font-mono text-sm mb-4">{teamData?.projectSubmission?.solution}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {teamData?.projectSubmission?.techStack?.split(',').map((tech, i) => (
+                          <span key={i} className="px-2 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded text-xs text-cyan-400 font-mono">
+                            {tech.trim()}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>
