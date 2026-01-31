@@ -418,6 +418,78 @@ export default function Home() {
                   <div className="text-sm text-retro text-text-muted uppercase tracking-wider">Prize Pool</div>
                 </div>
               </motion.div>
+
+              {/* CTA Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
+              >
+                {/* Primary CTA - Team Login */}
+                <Link href="/team-dashboard">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative group px-8 py-4 bg-gradient-to-r from-primary-purple to-accent-cyan rounded-lg font-pixel text-white text-lg overflow-hidden shadow-lg shadow-tekron-pink-neon/50"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      <FaRocket className="text-xl" />
+                      TEAM_LOGIN
+                    </span>
+                    {/* Animated background */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-purple-600 to-tekron-pink-neon"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "0%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-tekron-pink-neon/20 blur-xl group-hover:blur-2xl transition-all" />
+                  </motion.button>
+                </Link>
+
+                {/* Secondary CTA - View RULEBOOK */}
+                <Link href="/docs">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative group px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-lg font-pixel text-white text-lg overflow-hidden shadow-lg shadow-yellow-500/50"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      <FaCode className="text-xl" />
+                      VIEW_RULEBOOK
+                    </span>
+                    {/* Animated background */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-500"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "0%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-yellow-500/20 blur-xl group-hover:blur-2xl transition-all" />
+                  </motion.button>
+                </Link>
+
+                {/* Tertiary CTA - View Problems */}
+                <Link href="/problems">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative group px-8 py-4 border-2 border-cyan-400 bg-cyan-400/10 backdrop-blur-sm rounded-lg font-pixel text-cyan-400 text-lg overflow-hidden shadow-lg shadow-cyan-400/30 hover:bg-cyan-400/20 transition-all"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      <FaBolt className="text-xl" />
+                      VIEW_PROBLEMS
+                    </span>
+                    {/* Scan line effect */}
+                    <motion.div
+                      
+                    />
+                  </motion.button>
+                </Link>
+              </motion.div>
             </div>
           </div>
 
@@ -687,7 +759,7 @@ export default function Home() {
 
                       <div>
                         <p className="text-gray-300 text-3xl leading-relaxed">
-                          With strong year-on growth, multi-college participation, and large-scale digital outreach, HACKRON last year was a banger event. Over the past edition, the event successfully positioned its impact by connecting with blinkit and solving their porblem statements in 24 Hours and was a huge success.
+                          With strong year-on growth, multi-college participation, and large-scale digital outreach, HACKRON last year was a banger event. Over the past edition, the event successfully positioned its impact by connecting with <span className="text-yellow-500 font-bold text-4xl">BLINKIT</span> and solving their porblem statements in 24 Hours and was a huge success.
                         </p>
                       </div>
 
@@ -855,7 +927,7 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Hackathon Playbook CTA */}
+            {/* Hackathon RULEBOOK CTA */}
             <motion.div
               variants={fadeInUp}
               className="mb-20"
@@ -877,7 +949,7 @@ export default function Home() {
 
                     {/* Title */}
                     <h3 className="text-4xl md:text-5xl font-pixel text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 mb-4">
-                      📖 HACKATHON PLAYBOOK
+                      📖 HACKATHON RULEBOOK
                     </h3>
 
                     {/* Description */}
