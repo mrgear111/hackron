@@ -146,7 +146,7 @@ const Navbar = () => {
               className="flex items-center"
             >
               <Link href="/" className="flex items-center gap-3">
-                <div className="relative">
+                <div className="relative" suppressHydrationWarning>
                   {/* HACKRON Text */}
                   <div className="relative flex items-center">
                     {/* Terminal Prompt - Subtle */}

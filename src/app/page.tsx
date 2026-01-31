@@ -149,6 +149,7 @@ export default function Home() {
           animate={{ opacity: loading ? 1 : 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
+          suppressHydrationWarning
         >
           <div className="relative flex flex-col items-center">
             {/* Animated Logo */}
@@ -485,7 +486,7 @@ export default function Home() {
                     </span>
                     {/* Scan line effect */}
                     <motion.div
-                      
+
                     />
                   </motion.button>
                 </Link>

@@ -18,70 +18,66 @@ export default function Problems() {
   const [isProblemsVisible, setIsProblemsVisible] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState<typeof problemStatements[0] | null>(null);
   const [problemCounts, setProblemCounts] = useState<Record<number, number>>({});
+  const [configError, setConfigError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Listen to problem visibility setting
-    const settingsRef = ref(db, 'admin/settings/problemsVisible');
-    const unsubSettings = onValue(settingsRef, (snapshot) => {
-      setIsProblemsVisible(snapshot.val() || false);
-    });
-
-    // ... existing auth check ...
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        console.log("No user found, redirecting to home");
-        router.push('/');
-        return;
-      }
-
+    // Safety check for Firebase initialization
+    if (!auth || !db) {
+      console.error("Firebase not initialized");
+      setConfigError(true);
       setLoading(false);
+      return;
+    }
 
-      try {
-        const adminRef = ref(db, `admins/${user.uid}`);
-        const adminSnapshot = await get(adminRef);
+    // Listen to problem visibility setting
+    try {
+      const settingsRef = ref(db, 'admin/settings/problemsVisible');
+      const unsubSettings = onValue(settingsRef, (snapshot) => {
+        setIsProblemsVisible(snapshot.val() || false);
+      }, (error) => {
+        console.error("Error fetching settings:", error);
+      });
 
-        if (adminSnapshot.exists()) {
-          setIsAdmin(true);
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          console.log("No user found");
+          setIsLoggedIn(false);
+          setLoading(false);
+          return;
         }
-      } catch (error) {
-        console.error("Error checking admin status:", error);
-      }
-    });
 
-    return () => {
-      unsubscribe();
-      unsubSettings();
-    };
+        setIsLoggedIn(true);
+        // Don't set loading to false yet, wait for admin check
+
+        try {
+          const adminRef = ref(db, `admins/${user.uid}`);
+          const adminSnapshot = await get(adminRef);
+
+          if (adminSnapshot.exists()) {
+            setIsAdmin(true);
+          }
+        } catch (error) {
+          console.error("Error checking admin status:", error);
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      return () => {
+        unsubscribe();
+        unsubSettings();
+      };
+    } catch (error) {
+      console.error("Error setting up listeners:", error);
+      setConfigError(true);
+      setLoading(false);
+    }
   }, [router]);
 
-  // View for when problems are locked/hidden
-  if (!loading && !isProblemsVisible && !isAdmin) {
-    return (
-      <div className="min-h-screen bg-black text-white font-mono">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 pt-24 h-[80vh] flex flex-col items-center justify-center text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-900/50 p-12 rounded-xl border border-gray-800 backdrop-blur-sm"
-          >
-            <FaLock className="text-6xl text-gray-600 mb-6 mx-auto" />
-            <h1 className="text-3xl font-bold text-gray-400 mb-4">{`> ACCESS_DENIED`}</h1>
-            <p className="text-gray-500 text-xl max-w-lg mx-auto">
-              Problem statements are currently encrypted and hidden by the administrators.
-            </p>
-            <div className="mt-8 flex justify-center gap-2">
-              <span className="animate-pulse text-purple-500">_</span>
-              <span className="animate-pulse delay-75 text-cyan-500">_</span>
-              <span className="animate-pulse delay-150 text-emerald-500">_</span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
   useEffect(() => {
+    if (!db) return;
+
     // Fetch counts for all authenticated users from public node
     const selectionsRef = ref(db, 'problem_selections');
     const unsubscribe = onValue(selectionsRef, (snapshot) => {
@@ -113,6 +109,80 @@ export default function Problems() {
 
     return () => unsubscribe();
   }, []); // Run once on mount
+
+  // View for configuration error
+  if (configError) {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 pt-24 h-[80vh] flex flex-col items-center justify-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-900/20 p-12 rounded-xl border border-red-500/50 backdrop-blur-sm"
+          >
+            <FaExclamationCircle className="text-6xl text-red-500 mb-6 mx-auto" />
+            <h1 className="text-3xl font-bold text-red-400 mb-4">{`> SYSTEM_ERROR`}</h1>
+            <p className="text-gray-400 text-xl max-w-lg mx-auto">
+              Database configuration missing. Please report this to the administrators.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // View for unauthenticated users
+  if (!loading && !isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 pt-24 h-[80vh] flex flex-col items-center justify-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900/50 p-12 rounded-xl border border-gray-800 backdrop-blur-sm"
+          >
+            <FaLock className="text-6xl text-cyan-600 mb-6 mx-auto" />
+            <h1 className="text-3xl font-bold text-cyan-400 mb-4">{`> ACCESS_RESTRICTED`}</h1>
+            <p className="text-gray-500 text-xl max-w-lg mx-auto mb-8">
+              You must be logged in to view problem statements.
+            </p>
+            <div className="text-sm text-gray-600">
+              {`> Please use the Team Login button in the navbar.`}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // View for when problems are locked/hidden
+  if (!loading && !isProblemsVisible && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 pt-24 h-[80vh] flex flex-col items-center justify-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900/50 p-12 rounded-xl border border-gray-800 backdrop-blur-sm"
+          >
+            <FaLock className="text-6xl text-gray-600 mb-6 mx-auto" />
+            <h1 className="text-3xl font-bold text-gray-400 mb-4">{`> ACCESS_DENIED`}</h1>
+            <p className="text-gray-500 text-xl max-w-lg mx-auto">
+              Problem statements are currently encrypted and hidden by the administrators.
+            </p>
+            <div className="mt-8 flex justify-center gap-2">
+              <span className="animate-pulse text-purple-500">_</span>
+              <span className="animate-pulse delay-75 text-cyan-500">_</span>
+              <span className="animate-pulse delay-150 text-emerald-500">_</span>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -269,7 +339,7 @@ export default function Problems() {
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 md:p-8">
+                <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
                   <div className="bg-white/5 rounded-xl p-6 border border-white/5">
                     <h4 className="text-sm font-mono text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2">
                       <FaExclamationCircle className="text-cyan-400" />
