@@ -125,20 +125,25 @@ export default function TeamDashboard() {
   const [problemCounts, setProblemCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    const teamsRef = ref(db, 'teams');
-    const unsubscribe = onValue(teamsRef, (snapshot) => {
+    // Listen to the public problem_selections node which is readable by everyone
+    const selectionsRef = ref(db, 'problem_selections');
+    const unsubscribe = onValue(selectionsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const counts: Record<string, number> = {};
 
-        Object.values(data).forEach((team: any) => {
-          const ps = team.projectSubmission?.problemStatement;
-          if (ps) {
+        Object.values(data).forEach((ps: any) => {
+          // The value is just the problem statement string
+          if (typeof ps === 'string') {
             counts[ps] = (counts[ps] || 0) + 1;
           }
         });
         setProblemCounts(counts);
+      } else {
+        setProblemCounts({});
       }
+    }, (error) => {
+      console.error("Error fetching problem counts:", error);
     });
 
     return () => unsubscribe();
@@ -240,6 +245,13 @@ export default function TeamDashboard() {
     try {
       const submissionRef = ref(db, `teams/${auth.currentUser?.uid}/projectSubmission`);
       await set(submissionRef, formData);
+
+      // Also update the public problem_selections node for counting
+      // We store just the problem statement string
+      if (formData.problemStatement) {
+        const publicSelectionRef = ref(db, `problem_selections/${auth.currentUser?.uid}`);
+        await set(publicSelectionRef, formData.problemStatement);
+      }
 
       // Update team data after submission
       setTeamData(prev => ({

@@ -95,9 +95,9 @@ export default function Problems() {
   }, [router]);
 
   useEffect(() => {
-    // Fetch counts for all authenticated users
-    const teamsRef = ref(db, 'teams');
-    const unsubscribe = onValue(teamsRef, (snapshot) => {
+    // Fetch counts for all authenticated users from public node
+    const selectionsRef = ref(db, 'problem_selections');
+    const unsubscribe = onValue(selectionsRef, (snapshot) => {
       const data = snapshot.val();
 
       const counts: Record<number, number> = {};
@@ -105,15 +105,14 @@ export default function Problems() {
       problemStatements.forEach(p => counts[p.id] = 0);
 
       if (data) {
-        Object.values(data).forEach((team: any) => {
-          const submission = team.projectSubmission;
-          if (submission?.problemStatement) {
+        Object.values(data).forEach((submissionTitle: any) => {
+          if (typeof submissionTitle === 'string') {
             // The saved string format in team-dashboard is "Title: Description"
             // We split by ':' to get the title part safely
-            const submissionTitle = submission.problemStatement.split(':')[0].trim();
+            const titlePart = submissionTitle.split(':')[0].trim();
 
             const matchedProblem = problemStatements.find(p =>
-              p.title.trim() === submissionTitle
+              p.title.trim() === titlePart
             );
 
             if (matchedProblem) {
