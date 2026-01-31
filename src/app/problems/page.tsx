@@ -188,12 +188,6 @@ export default function Problems() {
                   Select a challenge to solve. Analyze the requirements carefully and choose the one that best fits your team's expertise.
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 font-mono text-sm flex items-center gap-2 whitespace-nowrap">
-                  <FaLock size={12} />
-                  ADMIN ACCESS ONLY
-                </div>
-              </div>
             </div>
           </div>
 

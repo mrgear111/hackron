@@ -12,10 +12,6 @@ const Footer = () => {
       { name: 'Rulebook', href: '/docs' },
       { name: 'Leaderboard', href: '/leaderboard' },
     ],
-    resources: [
-      { name: 'Admin Dashboard', href: '/admin-dashboard' },
-      { name: 'Register', href: '/register' },
-    ],
     connect: [
       { name: 'Prabhav', href: 'https://github.com/Prabhav1437', icon: FaGithub },
       { name: 'Daksh', href: 'https://github.com/mrgear111', icon: FaGithub },
@@ -35,13 +31,13 @@ const Footer = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="py-16 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           {/* Brand Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-6"
+            className="space-y-6 flex flex-col items-center md:items-start"
           >
             <div className="flex items-center space-x-3 mb-4">
               <FaTrophy className="text-yellow-400 text-4xl" />
@@ -55,7 +51,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-text-soft-lavender text-lg">
                 <FaMapMarkerAlt className="text-accent-cyan text-xl" />
-                <span>Lab 1 & 2, NST Campus</span>
+                <span>4th & 5th Floor, NST Campus,ADYPU</span>
               </div>
               <div className="flex items-center space-x-3 text-text-soft-lavender text-lg">
                 <FaEnvelope className="text-accent-cyan text-xl" />
@@ -70,7 +66,7 @@ const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="space-y-4"
+            className="space-y-4 flex flex-col items-center md:items-start"
           >
             <h4 className="text-2xl font-pixel text-accent-cyan mb-4">
               <span className="text-tekron-pink-neon">&gt;</span> EVENT
@@ -96,45 +92,13 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Resources Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="space-y-4"
-          >
-            <h4 className="text-2xl font-pixel text-accent-cyan mb-4">
-              <span className="text-tekron-pink-neon">&gt;</span> RESOURCES
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.href}
-                    className="text-text-soft-lavender hover:text-accent-cyan transition-colors duration-200 text-lg flex items-center group"
-                  >
-                    <motion.span
-                      className="text-tekron-pink-neon/50 mr-2 group-hover:text-tekron-pink-neon text-xl"
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
-                    >
-                      &gt;
-                    </motion.span>
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
           {/* Connect Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="space-y-4"
+            className="space-y-4 flex flex-col items-center md:items-start"
           >
             <h4 className="text-2xl font-pixel text-accent-cyan mb-4">
               <span className="text-tekron-pink-neon">&gt;</span> CONNECT
