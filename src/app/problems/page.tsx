@@ -30,6 +30,14 @@ export default function Problems() {
       return;
     }
 
+    // Safety timeout in case DB/Auth is unresponsive
+    const safetyTimeout = setTimeout(() => {
+      if (loading) {
+        console.warn("Loading timed out");
+        setLoading(false);
+      }
+    }, 15000);
+
     // Listen to problem visibility setting
     try {
       const settingsRef = ref(db, 'admin/settings/problemsVisible');
@@ -40,6 +48,8 @@ export default function Problems() {
       });
 
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        clearTimeout(safetyTimeout); // Clear timeout on auth state change
+
         if (!user) {
           console.log("No user found");
           setIsLoggedIn(false);

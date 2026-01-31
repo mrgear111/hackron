@@ -48,10 +48,6 @@ interface GitHubRepo {
 
 const motivationalQuotes = [
   {
-    text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. And some teams have update broken links Please fix this immediately to avoid disqualification. ⚠️⏳",
-    isUrgent: true
-  },
-  {
     text: "Keep pushing forward, warrior! 🚀\nYou've come too far to give up now. The code flows through you - embrace the challenge and make something legendary!",
     timestamp: new Date().toLocaleString()
   },
@@ -83,7 +79,7 @@ export default function TeamDashboard() {
     presentationUrl: '',
     codeRepository: '',
     documentation: '',
-    problemStatement: '',
+    problemStatement: problemStatements[0].title,
     solution: '',
     techStack: '',
     challenges: '',
@@ -244,10 +240,9 @@ export default function TeamDashboard() {
 
       // Also update the public problem_selections node for counting
       // We store just the problem statement string
-      if (formData.problemStatement) {
-        const publicSelectionRef = ref(db, `problem_selections/${auth.currentUser?.uid}`);
-        await set(publicSelectionRef, formData.problemStatement);
-      }
+      const statementToSave = formData.problemStatement || problemStatements[0].title;
+      const publicSelectionRef = ref(db, `problem_selections/${auth.currentUser?.uid}`);
+      await set(publicSelectionRef, statementToSave);
 
       // Update team data after submission
       setTeamData(prev => ({
@@ -486,15 +481,15 @@ export default function TeamDashboard() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h3 className={`font-pixel text-2xl mb-4 tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                    <h3 className={`font-pixel text-2xl mb-4 tracking-wider ${adminBroadcast?.isUrgent
                       ? 'text-red-400 animate-pulse'
                       : 'text-cyan-300'
                       }`}>
-                      {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                      {adminBroadcast?.isUrgent
                         ? `> URGENT_ALERT`
                         : `> SYSTEM_MESSAGE`}
                     </h3>
-                    <p className={`font-mono text-base whitespace-pre-line leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                    <p className={`font-mono text-base whitespace-pre-line leading-relaxed ${adminBroadcast?.isUrgent
                       ? 'text-red-300'
                       : 'text-gray-300'
                       }`}>
@@ -504,7 +499,7 @@ export default function TeamDashboard() {
                       {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleString() : new Date().toLocaleString()}
                     </p>
 
-                    {(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent) && (
+                    {adminBroadcast?.isUrgent && (
                       <motion.div
                         animate={{
                           opacity: [1, 0.5, 1],
@@ -619,14 +614,14 @@ export default function TeamDashboard() {
             <div className="relative bg-gradient-to-br from-tekron-purple-deep/70 via-black/60 to-green-900/40 backdrop-blur-xl border-2 border-green-400/40 rounded-2xl p-6 hover:border-green-400/60 transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="mt-1">
-                  <FaBell className={`text-2xl ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                  <FaBell className={`text-2xl ${adminBroadcast?.isUrgent
                     ? 'text-red-400 animate-pulse'
                     : 'text-green-400'
                     }`} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className={`font-pixel text-lg tracking-wider ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                    <h3 className={`font-pixel text-lg tracking-wider ${adminBroadcast?.isUrgent
                       ? 'text-red-300'
                       : 'text-green-300'
                       }`}>
@@ -636,7 +631,7 @@ export default function TeamDashboard() {
                       // {adminBroadcast && adminBroadcast.timestamp ? new Date(adminBroadcast.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}
                     </span>
                   </div>
-                  <p className={`font-mono text-lg leading-relaxed ${(adminBroadcast ? adminBroadcast.isUrgent : motivationalQuotes[currentQuote].isUrgent)
+                  <p className={`font-mono text-lg leading-relaxed ${adminBroadcast?.isUrgent
                     ? 'text-red-300'
                     : 'text-gray-300'
                     }`}>
