@@ -111,23 +111,28 @@ export default function TeamDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [problemCounts, setProblemCounts] = useState<Record<string, number>>({});
   const [isProblemsVisible, setIsProblemsVisible] = useState(false);
+  const [configError, setConfigError] = useState(false);
 
   useEffect(() => {
-    // Listen to problem visibility setting
+    if (!auth || !db) {
+      console.error("Firebase not initialized");
+      setConfigError(true);
+      setLoading(false);
+      return;
+    }
+
+    // Global listeners (independent of user)
     const settingsRef = ref(db, 'admin/settings/problemsVisible');
     const unsubSettings = onValue(settingsRef, (snapshot) => {
       setIsProblemsVisible(snapshot.val() || false);
     });
 
-    // Listen to the public problem_selections node which is readable by everyone
     const selectionsRef = ref(db, 'problem_selections');
-    const unsubscribe = onValue(selectionsRef, (snapshot) => {
+    const unsubSelections = onValue(selectionsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const counts: Record<string, number> = {};
-
         Object.values(data).forEach((ps: any) => {
-          // The value is just the problem statement string (Title)
           if (typeof ps === 'string') {
             counts[ps] = (counts[ps] || 0) + 1;
           }
@@ -136,46 +141,31 @@ export default function TeamDashboard() {
       } else {
         setProblemCounts({});
       }
-    }, (error) => {
-      console.error("Error fetching problem counts:", error);
     });
 
-    return () => unsubscribe();
-  }, []);
+    // User-specific listeners
+    let teamUnsub: (() => void) | undefined;
+    let notifUnsub: (() => void) | undefined;
 
-  // Sync modal visibility with alerts
-  useEffect(() => {
-    if (adminBroadcast || showAlert) {
-      setIsModalOpen(true);
-    }
-  }, [adminBroadcast, showAlert]);
+    const authUnsub = onAuthStateChanged(auth, (user) => {
+      // Clean up previous user listeners if any
+      if (teamUnsub) { teamUnsub(); teamUnsub = undefined; }
+      if (notifUnsub) { notifUnsub(); notifUnsub = undefined; }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
-    }, 300000); // Changes every 5 minutes
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        setLoading(false); // Stop loading even if redirecting
         router.push('/');
         return;
       }
 
-      // Fetch team data first to check submission status
+      // 1. Team Data Listener
       const teamRef = ref(db, `teams/${user.uid}`);
-      onValue(teamRef, (snapshot) => {
+      teamUnsub = onValue(teamRef, (snapshot) => {
         const data = snapshot.val();
 
-        // Set showForm based on whether submission exists
         setShowForm(!data?.projectSubmission);
-
         setTeamData(data);
 
-        // Also get GitHub repo data if it exists
         if (data && data.githubRepo) {
           setGithubRepo(data.githubRepo);
           setRepoUrl(data.githubRepo.repoUrl);
@@ -188,22 +178,16 @@ export default function TeamDashboard() {
         setLoading(false);
       });
 
-      // Listen for notifications
+      // 2. Notification Listener
       const notificationRef = ref(db, 'admin/notification');
-      onValue(notificationRef, (snapshot) => {
+      notifUnsub = onValue(notificationRef, (snapshot) => {
         const data = snapshot.val();
         if (data && data.active && data.text) {
-          // Override the current quote with the broadcast message
           const adminQuote = {
             text: data.text,
             isUrgent: data.isUrgent || false,
             timestamp: data.lastUpdated
           };
-
-          // We'll put this in a special state or override the quotes array
-          // Here I'll add it as a high-priority quote and freeze the rotation
-          // or handle it via a new state variable. 
-          // Let's use a new state variable for Admin Broadcast to take precedence.
           setAdminBroadcast(adminQuote);
         } else {
           setAdminBroadcast(null);
@@ -211,7 +195,14 @@ export default function TeamDashboard() {
       });
     });
 
-    return () => unsubscribe();
+    // Cleanup all listeners on unmount
+    return () => {
+      unsubSettings();
+      unsubSelections();
+      authUnsub();
+      if (teamUnsub) teamUnsub();
+      if (notifUnsub) notifUnsub();
+    };
   }, [router]);
 
   const handleEditSubmission = () => {
@@ -334,6 +325,21 @@ export default function TeamDashboard() {
       setIsSubmittingUrl(false);
     }
   };
+
+  // View for configuration error
+  if (configError) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <Navbar />
+        <div className="bg-red-900/20 p-8 rounded-xl border border-red-500/50 backdrop-blur-sm text-center max-w-lg">
+          <h1 className="text-2xl font-bold text-red-400 mb-4 font-pixel">{`> SYSTEM_ERROR`}</h1>
+          <p className="text-gray-400 text-lg font-mono">
+            Database configuration missing. Please report this to the administrators.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
