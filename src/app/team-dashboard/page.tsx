@@ -10,6 +10,8 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket, FaLightbulb, FaLock, FaBook } from 'react-icons/fa';
 
+import { problemStatements } from '@/lib/problemStatements';
+
 interface TeamData {
   teamName: string;
   email: string;
@@ -42,23 +44,7 @@ interface GitHubRepo {
   lastUpdated: string;
 }
 
-const problemStatements = [
-  "City-Wide Dark Store Network Projection: Develop a system for analyzing and projecting the expansion of dark stores across a city. It may involve demand forecasting, geographical analysis, and optimal placement for maximum efficiency and customer reach.",
-
-  "Smart Inventory Theft Detection System: A system that uses AI, IoT, and data analytics to detect theft in inventory management. It could involve real-time monitoring, anomaly detection, and alert mechanisms to prevent unauthorized access or theft.",
-
-  "Smart Dynamic Pricing System: Create a pricing system that adjusts product prices dynamically based on various factors like demand, stock levels, competitor pricing, and customer behavior, potentially using AI or machine learning for optimization.",
-
-  "Dark Store Management Platform: Design a comprehensive platform for managing dark stores, which includes inventory tracking, order management, staff coordination, and logistical planning. It should streamline operations for better efficiency.",
-
-  "Real-Time Inventory Auditing System: Build a system that allows for continuous, real-time auditing of inventory levels in warehouses or stores, minimizing the need for manual stock-taking and improving accuracy in inventory data.",
-
-  "Expiry-Based Dynamic Discount System: A system that automatically applies dynamic discounts to products nearing their expiration date, encouraging sales while reducing waste. It could integrate with inventory systems to monitor expiration and adjust pricing accordingly.",
-
-  "Waste Management Automation in Dark Stores: Create a solution to automate waste management processes in dark stores, including the efficient disposal, recycling, and reduction of waste. This might involve IoT integration, AI for predictive waste patterns, and sustainability features.",
-
-  "Heatmap-Based Store Placement Analysis: Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores."
-];
+// Remove local problemStatements definition
 
 const motivationalQuotes = [
   {
@@ -110,7 +96,8 @@ export default function TeamDashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [selectedProblemStatement, setSelectedProblemStatement] = useState(problemStatements[0]);
+  // Use first problem title as default
+  const [selectedProblemStatement, setSelectedProblemStatement] = useState(problemStatements[0].title);
   const [showForm, setShowForm] = useState(true);
   const [githubRepo, setGithubRepo] = useState<GitHubRepo | null>(null);
   const [repoUrl, setRepoUrl] = useState('');
@@ -123,8 +110,15 @@ export default function TeamDashboard() {
   const [adminBroadcast, setAdminBroadcast] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [problemCounts, setProblemCounts] = useState<Record<string, number>>({});
+  const [isProblemsVisible, setIsProblemsVisible] = useState(false);
 
   useEffect(() => {
+    // Listen to problem visibility setting
+    const settingsRef = ref(db, 'admin/settings/problemsVisible');
+    const unsubSettings = onValue(settingsRef, (snapshot) => {
+      setIsProblemsVisible(snapshot.val() || false);
+    });
+
     // Listen to the public problem_selections node which is readable by everyone
     const selectionsRef = ref(db, 'problem_selections');
     const unsubscribe = onValue(selectionsRef, (snapshot) => {
@@ -133,7 +127,7 @@ export default function TeamDashboard() {
         const counts: Record<string, number> = {};
 
         Object.values(data).forEach((ps: any) => {
-          // The value is just the problem statement string
+          // The value is just the problem statement string (Title)
           if (typeof ps === 'string') {
             counts[ps] = (counts[ps] || 0) + 1;
           }
@@ -641,33 +635,48 @@ export default function TeamDashboard() {
         <div className="px-6">
           <div className="grid grid-cols-1 gap-6">
             {/* Problem Statements Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-cyan-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(34,211,238,0.15)] mb-6"
-            >
-              <div className="relative bg-black/60 p-6 border-b border-cyan-500/20">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
-                <h2 className="text-xl font-mono text-cyan-400 flex items-center">
-                  <FaLightbulb className="mr-3 text-cyan-500" />
-                  {`> Problem_Statements`}
-                </h2>
-              </div>
+            {isProblemsVisible ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-cyan-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(34,211,238,0.15)] mb-6"
+              >
+                <div className="relative bg-black/60 p-6 border-b border-cyan-500/20">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+                  <h2 className="text-xl font-mono text-cyan-400 flex items-center">
+                    <FaLightbulb className="mr-3 text-cyan-500" />
+                    {`> Problem_Statements`}
+                  </h2>
+                </div>
 
-              <div className="p-6">
-                <a
-                  href="https://hackron.tekronfest.com/problems"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-mono py-4 rounded transition-all duration-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
-                >
-                  <span className="flex items-center justify-center gap-2 text-lg">
-                    {`> VIEW_ALL_PROBLEMS`}
-                    <span className="transform group-hover:translate-x-1 transition-transform">→</span>
-                  </span>
-                </a>
-              </div>
-            </motion.div>
+                <div className="p-6">
+                  <a
+                    href="https://hackron.tekronfest.com/problems"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full text-center bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-mono py-4 rounded transition-all duration-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
+                  >
+                    <span className="flex items-center justify-center gap-2 text-lg">
+                      {`> VIEW_ALL_PROBLEMS`}
+                      <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                    </span>
+                  </a>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900/50 to-black backdrop-blur-sm border border-gray-700/30 rounded-lg p-8 mb-6 text-center"
+              >
+                <FaLock className="mx-auto text-4xl text-gray-600 mb-4" />
+                <h2 className="text-xl font-mono text-gray-400 mb-2">{`> Problem_Statements_Locked`}</h2>
+                <p className="font-mono text-gray-600 text-sm">
+                  The problem statements are currently hidden by the administrators.
+                  <br />They will be revealed soon.
+                </p>
+              </motion.div>
+            )}
 
             {/* GitHub Repository Section */}
             <motion.div
@@ -865,11 +874,25 @@ export default function TeamDashboard() {
                         </div>
                       </div>
 
-                      {teamData?.projectSubmission?.problemStatement ? (
+                      {/* Show LOCKED state if a problem statement is ALREADY submitted in Firebase (teamData) */}
+                      {/* OR if global visibility is turned OFF (and they haven't submitted yet) */}
+                      {!isProblemsVisible && !teamData?.projectSubmission?.problemStatement ? (
                         <div className="relative">
                           <input
                             type="text"
-                            value={teamData.projectSubmission.problemStatement.split(':')[0]}
+                            value="SELECTION LOCKED BY ADMIN"
+                            disabled
+                            className="w-full bg-black/30 border border-gray-700 rounded px-4 py-3 text-gray-500 font-mono text-lg cursor-not-allowed"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-500 text-xs font-mono">
+                            <FaLock /> HIDDEN
+                          </div>
+                        </div>
+                      ) : teamData?.projectSubmission?.problemStatement ? (
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={teamData.projectSubmission.problemStatement}
                             disabled
                             className="w-full bg-black/30 border border-purple-500/30 rounded px-4 py-3 text-gray-400 font-mono text-lg cursor-not-allowed"
                           />
@@ -879,37 +902,40 @@ export default function TeamDashboard() {
                           <p className="mt-2 text-xs text-red-400 font-mono">
                             * Problem statement selection cannot be changed once submitted.
                           </p>
+                          {/* Hidden input to keep formData consistent during submit even if locked */}
+                          <input
+                            type="hidden"
+                            name="problemStatement"
+                            value={teamData.projectSubmission.problemStatement}
+                          />
                         </div>
                       ) : (
                         <>
                           <select
-                            value={formData.problemStatement || problemStatements[0]}
+                            value={formData.problemStatement || problemStatements[0].title}
                             onChange={handleProblemStatementChange}
                             className="w-full bg-black/30 border border-cyan-500/30 rounded px-4 py-3 text-gray-300 font-mono text-lg focus:outline-none focus:border-cyan-500"
                           >
-                            {problemStatements.map((statement, index) => {
-                              const count = problemCounts[statement] || 0;
+                            {problemStatements.map((problem) => {
+                              const count = problemCounts[problem.title] || 0;
                               const isFull = count >= 11;
-                              const isSelected = formData.problemStatement === statement;
+                              const isSelected = formData.problemStatement === problem.title;
 
                               // Disable if full AND not currently selected (so they don't lose their own selection)
                               const isDisabled = isFull && !isSelected;
 
                               return (
                                 <option
-                                  key={index}
-                                  value={statement}
+                                  key={problem.id}
+                                  value={problem.title}
                                   disabled={isDisabled}
                                   className={`bg-gray-900 text-lg ${isDisabled ? 'text-gray-600' : 'text-gray-300'}`}
                                 >
-                                  {statement.split(':')[0]} {isFull ? '(FULL)' : `(${count}/11)`}
+                                  {problem.title} {isFull ? '(FULL)' : `(${count}/11)`}
                                 </option>
                               );
                             })}
                           </select>
-                          <p className="mt-2 text-xs text-gray-500 font-mono">
-                            {formData.problemStatement || problemStatements[0]}
-                          </p>
                         </>
                       )}
                     </div>

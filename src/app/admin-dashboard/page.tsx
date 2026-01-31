@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, get, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FirebaseError } from 'firebase/app';
-import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList, FaBell, FaSave, FaCheckCircle, FaEdit, FaCalculator, FaExclamationTriangle } from 'react-icons/fa';
+import { FaCode, FaLink, FaVideo, FaFileAlt, FaUser, FaFileCode, FaRocket, FaClipboardList, FaBell, FaSave, FaCheckCircle, FaEdit, FaCalculator, FaExclamationTriangle, FaLightbulb } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -266,6 +266,32 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error updating notification:', error);
       alert('Failed to update notification');
+    }
+  };
+
+  // Global Settings State
+  const [isProblemsVisible, setIsProblemsVisible] = useState(false);
+
+  // Fetch initial settings
+  useEffect(() => {
+    const settingsRef = ref(db, 'admin/settings/problemsVisible');
+    onValue(settingsRef, (snapshot) => {
+      setIsProblemsVisible(snapshot.val() || false);
+    });
+  }, []);
+
+  const toggleProblemsVisibility = async () => {
+    console.log("Toggling visibility...");
+    try {
+      const newValue = !isProblemsVisible;
+      console.log("Setting to:", newValue);
+      const settingsRef = ref(db, 'admin/settings/problemsVisible');
+      await set(settingsRef, newValue);
+      console.log("Full Success");
+      // State updates automatically via listener
+    } catch (error) {
+      console.error("Error updating problems visibility:", error);
+      alert("Failed to update visibility setting.");
     }
   };
 
@@ -549,51 +575,87 @@ export default function AdminDashboard() {
             />
           </motion.div>
 
-          {/* Notification Console */}
-          <div className="bg-black/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
-            <h2 className="text-xl font-mono text-cyan-400 mb-4 flex items-center gap-2">
-              <FaBell className="text-cyan-500" />
-              <span>{`> Notification_Console`}</span>
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-500 font-mono text-sm mb-2">Message Content:</label>
-                <textarea
-                  value={notificationMsg}
-                  onChange={(e) => setNotificationMsg(e.target.value)}
-                  className="w-full bg-black/30 border border-cyan-500/30 rounded-lg p-3 text-gray-300 font-mono focus:outline-none focus:border-cyan-500 h-24"
-                  placeholder="Enter notification message..."
-                />
+          {/* Notification Console & Settings */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Notification Console */}
+            <div className="bg-black/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
+              <h2 className="text-xl font-mono text-cyan-400 mb-4 flex items-center gap-2">
+                <FaBell className="text-cyan-500" />
+                <span>{`> Notification_Console`}</span>
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-gray-500 font-mono text-sm mb-2">Message Content:</label>
+                  <textarea
+                    value={notificationMsg}
+                    onChange={(e) => setNotificationMsg(e.target.value)}
+                    className="w-full bg-black/30 border border-cyan-500/30 rounded-lg p-3 text-gray-300 font-mono focus:outline-none focus:border-cyan-500 h-24"
+                    placeholder="Enter notification message..."
+                  />
+                </div>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isUrgent}
+                      onChange={(e) => setIsUrgent(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
+                    />
+                    <span className={`font-mono text-sm ${isUrgent ? 'text-red-400' : 'text-gray-400'}`}>
+                      Mark as Urgent
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={(e) => setIsActive(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
+                    />
+                    <span className={`font-mono text-sm ${isActive ? 'text-green-400' : 'text-gray-400'}`}>
+                      Active
+                    </span>
+                  </label>
+                  <button
+                    onClick={handleUpdateNotification}
+                    className="ml-auto px-6 py-2 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/50 rounded-lg text-cyan-400 font-mono text-sm transition-all"
+                  >
+                    {`> Update`}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isUrgent}
-                    onChange={(e) => setIsUrgent(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
-                  />
-                  <span className={`font-mono text-sm ${isUrgent ? 'text-red-400' : 'text-gray-400'}`}>
-                    Mark as Urgent
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-600 bg-black/30 text-cyan-500 focus:ring-cyan-500/50"
-                  />
-                  <span className={`font-mono text-sm ${isActive ? 'text-green-400' : 'text-gray-400'}`}>
-                    Active (Visible to Teams)
-                  </span>
-                </label>
-                <button
-                  onClick={handleUpdateNotification}
-                  className="ml-auto px-6 py-2 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/50 rounded-lg text-cyan-400 font-mono text-sm transition-all"
-                >
-                  {`> Update_Broadcast`}
-                </button>
+            </div>
+
+            {/* Global Settings Console */}
+            <div className="bg-black/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
+              <h2 className="text-xl font-mono text-purple-400 mb-4 flex items-center gap-2">
+                <FaCalculator className="text-purple-500" />
+                <span>{`> Global_Settings`}</span>
+              </h2>
+              <div className="space-y-6">
+                {/* Problems Visibility Toggle */}
+                <div className="flex items-center justify-between p-4 bg-gray-900/40 rounded-lg border border-gray-800">
+                  <div>
+                    <h3 className="text-gray-300 font-mono text-lg flex items-center gap-2">
+                      <FaLightbulb className={isProblemsVisible ? "text-yellow-400" : "text-gray-600"} />
+                      Problem Statements Visibility
+                    </h3>
+                    <p className="text-gray-500 text-sm font-mono mt-1">
+                      {isProblemsVisible
+                        ? "Currently VISIBLE to all teams."
+                        : "Currently HIDDEN (Locked) for teams."}
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={isProblemsVisible}
+                      onChange={toggleProblemsVisibility}
+                    />
+                    <div className="w-14 h-7 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                  </label>
+                </div>
               </div>
             </div>
           </div>

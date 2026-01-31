@@ -9,65 +9,24 @@ import { ref, get, onValue } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import { FaLightbulb, FaLock, FaTimes, FaExclamationCircle, FaArrowRight, FaUsers } from 'react-icons/fa';
 
-const problemStatements = [
-  {
-    id: 1,
-    title: "City-Wide Dark Store Network Projection",
-    description: "Develop a system for analyzing and projecting the expansion of dark stores across a city. It may involve demand forecasting, geographical analysis, and optimal placement for maximum efficiency and customer reach.",
-    domain: "Logistics & AI"
-  },
-  {
-    id: 2,
-    title: "Smart Inventory Theft Detection System",
-    description: "A system that uses AI, IoT, and data analytics to detect theft in inventory management. It could involve real-time monitoring, anomaly detection, and alert mechanisms to prevent unauthorized access or theft.",
-    domain: "IoT & Security"
-  },
-  {
-    id: 3,
-    title: "Smart Dynamic Pricing System",
-    description: "Create a pricing system that adjusts product prices dynamically based on various factors like demand, stock levels, competitor pricing, and customer behavior, potentially using AI or machine learning for optimization.",
-    domain: "FinTech & ML"
-  },
-  {
-    id: 4,
-    title: "Dark Store Management Platform",
-    description: "Design a comprehensive platform for managing dark stores, which includes inventory tracking, order management, staff coordination, and logistical planning. It should streamline operations for better efficiency.",
-    domain: "Management Systems"
-  },
-  {
-    id: 5,
-    title: "Real-Time Inventory Auditing System",
-    description: "Build a system that allows for continuous, real-time auditing of inventory levels in warehouses or stores, minimizing the need for manual stock-taking and improving accuracy in inventory data.",
-    domain: "Data Analytics"
-  },
-  {
-    id: 6,
-    title: "Expiry-Based Dynamic Discount System",
-    description: "A system that automatically applies dynamic discounts to products nearing their expiration date, encouraging sales while reducing waste. It could integrate with inventory systems to monitor expiration and adjust pricing accordingly.",
-    domain: "Retail Tech"
-  },
-  {
-    id: 7,
-    title: "Waste Management Automation in Dark Stores",
-    description: "Create a solution to automate waste management processes in dark stores, including the efficient disposal, recycling, and reduction of waste. This might involve IoT integration, AI for predictive waste patterns, and sustainability features.",
-    domain: "Sustainability & IoT"
-  },
-  {
-    id: 8,
-    title: "Heatmap-Based Store Placement Analysis",
-    description: "Develop an analytical tool that uses heatmaps to optimize store placements in a region. The system would analyze foot traffic, population density, and demand patterns to suggest ideal locations for new stores.",
-    domain: "Data Science"
-  }
-];
+import { problemStatements } from '@/lib/problemStatements';
 
 export default function Problems() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isProblemsVisible, setIsProblemsVisible] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState<typeof problemStatements[0] | null>(null);
   const [problemCounts, setProblemCounts] = useState<Record<number, number>>({});
 
   useEffect(() => {
+    // Listen to problem visibility setting
+    const settingsRef = ref(db, 'admin/settings/problemsVisible');
+    const unsubSettings = onValue(settingsRef, (snapshot) => {
+      setIsProblemsVisible(snapshot.val() || false);
+    });
+
+    // ... existing auth check ...
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         console.log("No user found, redirecting to home");
@@ -75,10 +34,8 @@ export default function Problems() {
         return;
       }
 
-      // Allow access to all authenticated users
       setLoading(false);
 
-      // Check admin status for UI purposes only (no redirect)
       try {
         const adminRef = ref(db, `admins/${user.uid}`);
         const adminSnapshot = await get(adminRef);
@@ -91,8 +48,38 @@ export default function Problems() {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      unsubSettings();
+    };
   }, [router]);
+
+  // View for when problems are locked/hidden
+  if (!loading && !isProblemsVisible && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 pt-24 h-[80vh] flex flex-col items-center justify-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900/50 p-12 rounded-xl border border-gray-800 backdrop-blur-sm"
+          >
+            <FaLock className="text-6xl text-gray-600 mb-6 mx-auto" />
+            <h1 className="text-3xl font-bold text-gray-400 mb-4">{`> ACCESS_DENIED`}</h1>
+            <p className="text-gray-500 text-xl max-w-lg mx-auto">
+              Problem statements are currently encrypted and hidden by the administrators.
+            </p>
+            <div className="mt-8 flex justify-center gap-2">
+              <span className="animate-pulse text-purple-500">_</span>
+              <span className="animate-pulse delay-75 text-cyan-500">_</span>
+              <span className="animate-pulse delay-150 text-emerald-500">_</span>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     // Fetch counts for all authenticated users from public node
@@ -107,12 +94,9 @@ export default function Problems() {
       if (data) {
         Object.values(data).forEach((submissionTitle: any) => {
           if (typeof submissionTitle === 'string') {
-            // The saved string format in team-dashboard is "Title: Description"
-            // We split by ':' to get the title part safely
-            const titlePart = submissionTitle.split(':')[0].trim();
-
+            // The value is just the title string now
             const matchedProblem = problemStatements.find(p =>
-              p.title.trim() === titlePart
+              p.title === submissionTitle
             );
 
             if (matchedProblem) {
@@ -291,8 +275,8 @@ export default function Problems() {
                       <FaExclamationCircle className="text-cyan-400" />
                       Description
                     </h4>
-                    <p className="text-gray-300 leading-relaxed text-lg">
-                      {selectedProblem.description}
+                    <p className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">
+                      {selectedProblem.fullDescription || selectedProblem.description}
                     </p>
                   </div>
                 </div>
