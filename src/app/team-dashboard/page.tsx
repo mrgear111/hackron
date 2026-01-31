@@ -628,6 +628,35 @@ export default function TeamDashboard() {
         {/* Dashboard Grid */}
         <div className="px-6">
           <div className="grid grid-cols-1 gap-6">
+            {/* Problem Statements Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-br from-gray-900 to-black backdrop-blur-sm border border-cyan-500/30 rounded-lg overflow-hidden shadow-[0_0_15px_rgba(34,211,238,0.15)] mb-6"
+            >
+              <div className="relative bg-black/60 p-6 border-b border-cyan-500/20">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+                <h2 className="text-xl font-mono text-cyan-400 flex items-center">
+                  <FaLightbulb className="mr-3 text-cyan-500" />
+                  {`> Problem_Statements`}
+                </h2>
+              </div>
+
+              <div className="p-6">
+                <a
+                  href="https://hackron.tekronfest.com/problems"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-mono py-4 rounded transition-all duration-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
+                >
+                  <span className="flex items-center justify-center gap-2 text-lg">
+                    {`> VIEW_ALL_PROBLEMS`}
+                    <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                  </span>
+                </a>
+              </div>
+            </motion.div>
+
             {/* GitHub Repository Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
