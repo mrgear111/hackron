@@ -339,7 +339,7 @@ export default function Problems() {
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                <div className="p-6 md:p-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
                   <div className="bg-white/5 rounded-xl p-6 border border-white/5">
                     <h4 className="text-sm font-mono text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2">
                       <FaExclamationCircle className="text-cyan-400" />
