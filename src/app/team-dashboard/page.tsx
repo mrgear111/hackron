@@ -158,9 +158,19 @@ export default function TeamDashboard() {
         return;
       }
 
+      // Safety timeout in case DB is unresponsive
+      const safetyTimeout = setTimeout(() => {
+        if (loading) {
+          console.warn("Data loading timed out");
+          setLoading(false);
+          // Optional: Show a warning/error message to the user?
+        }
+      }, 15000); // 15 seconds timeout
+
       // 1. Team Data Listener
       const teamRef = ref(db, `teams/${user.uid}`);
       teamUnsub = onValue(teamRef, (snapshot) => {
+        clearTimeout(safetyTimeout); // Data received, clear timeout
         const data = snapshot.val();
 
         setShowForm(!data?.projectSubmission);
@@ -176,6 +186,11 @@ export default function TeamDashboard() {
         }
 
         setLoading(false);
+      }, (error) => {
+        clearTimeout(safetyTimeout);
+        console.error("Error fetching team data:", error);
+        setLoading(false);
+        // We could set a specific error state here if needed
       });
 
       // 2. Notification Listener
@@ -203,7 +218,7 @@ export default function TeamDashboard() {
       if (teamUnsub) teamUnsub();
       if (notifUnsub) notifUnsub();
     };
-  }, [router]);
+  }, [router, loading]); // Added loading to dependency array if needed, but mostly router is fine. Actually better to keep it minimal.
 
   const handleEditSubmission = () => {
     setShowForm(true);
