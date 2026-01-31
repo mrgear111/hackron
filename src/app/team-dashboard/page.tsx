@@ -48,10 +48,6 @@ interface GitHubRepo {
 
 const motivationalQuotes = [
   {
-    text: "🏁 HACKATHON ENDED 🏁\n\nThank you for participating! Project submissions are now closed. Stay tuned for the results!",
-    isUrgent: true
-  },
-  {
     text: "⚠️ URGENT NOTIFICATION ⚠️\n\nDear Teams,\n\nSome teams have yet to update their Demo, Presentation, and Repository Links in the designated sections. And some teams have update broken links Please fix this immediately to avoid disqualification. ⚠️⏳",
     isUrgent: true
   },
