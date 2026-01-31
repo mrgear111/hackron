@@ -417,47 +417,6 @@ export default function Home() {
                   <div className="text-sm text-retro text-text-muted uppercase tracking-wider">Prize Pool</div>
                 </div>
               </motion.div>
-
-              {/* Sponsor Banner */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="mb-12"
-              >
-                <div className="relative bg-gradient-to-r from-tekron-purple-deep via-tekron-purple-mid to-tekron-purple-deep border-2 border-tekron-pink-neon/30 rounded-2xl p-8 overflow-hidden">
-                  {/* Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-tekron-pink-neon/10 via-transparent to-tekron-pink-neon/10 blur-xl" />
-
-                  {/* Content */}
-                  <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
-                    {/* Left Side - Powered By */}
-                    <div className="flex-1 text-center md:text-left">
-                      <div className="inline-block bg-tekron-purple-deep/60 border border-tekron-pink-neon/30 rounded-full px-4 py-1 mb-3">
-                        <span className="text-gray-400 font-pixel text-xs">Powered by</span>
-                      </div>
-                      <h2 className="text-3xl md:text-4xl font-bold font-pixel text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 mb-2">
-                        PLACEHOLDER x HACKRON
-                      </h2>
-                      <p className="text-gray-400 text-sm">Delivering Innovation at Lightning Speed</p>
-                    </div>
-
-                    {/* Right Side - Logo Placeholder */}
-                    <div className="flex-shrink-0">
-                      <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-lg shadow-yellow-500/30">
-                        <div className="text-center">
-                          <div className="text-4xl md:text-5xl font-bold text-black font-pixel">SP</div>
-                          <div className="text-xs text-black/70 font-bold">SPONSOR</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 left-0 w-32 h-32 bg-tekron-pink-neon/5 rounded-full blur-3xl" />
-                  <div className="absolute bottom-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl" />
-                </div>
-              </motion.div>
             </div>
           </div>
 
@@ -894,6 +853,53 @@ export default function Home() {
                 </div>
               </motion.div>
             </motion.div>
+
+            {/* Hackathon Playbook CTA */}
+            <motion.div
+              variants={fadeInUp}
+              className="mb-20"
+            >
+              <Link href="/docs">
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="relative group cursor-pointer max-w-4xl mx-auto"
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500/50 via-orange-500/50 to-yellow-500/50 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-all duration-300" />
+                  <div className="relative bg-gradient-to-br from-yellow-900/80 via-orange-900/70 to-yellow-900/80 backdrop-blur-xl border-2 border-yellow-500/50 rounded-2xl p-12 hover:border-yellow-400/80 transition-all text-center shadow-2xl">
+                    {/* Icon */}
+                    <div className="flex justify-center mb-6">
+                      <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-yellow-400/30 to-orange-600/30 border-2 border-yellow-400/50 flex items-center justify-center">
+                        <FaCode className="text-yellow-400 text-5xl" />
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-4xl md:text-5xl font-pixel text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 mb-4">
+                      📖 HACKATHON PLAYBOOK
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-gray-200 text-lg md:text-xl mb-6 max-w-2xl mx-auto leading-relaxed">
+                      Complete guide to rules, tech stack, evaluation workflow, and everything you need to know for the hackathon
+                    </p>
+
+                    {/* Button */}
+                    <div className="inline-flex items-center gap-3 bg-yellow-500/20 border-2 border-yellow-400/50 rounded-full px-8 py-4 group-hover:bg-yellow-500/30 transition-all">
+                      <span className="text-yellow-300 font-pixel text-lg">READ_NOW</span>
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="text-yellow-400 text-xl"
+                      >
+                        →
+                      </motion.span>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
+            </motion.div>
+
             <motion.div
               variants={fadeInUp}
               className="relative py-12 my-8"

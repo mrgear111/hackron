@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
-import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket, FaLightbulb, FaLock } from 'react-icons/fa';
+import { FaLink, FaFileAlt, FaCode, FaVideo, FaClipboardList, FaUser, FaClipboardCheck, FaGithub, FaCheckCircle, FaBell, FaTimes, FaUserFriends, FaRocket, FaLightbulb, FaLock, FaBook } from 'react-icons/fa';
 
 interface TeamData {
   teamName: string;
@@ -814,9 +814,14 @@ export default function TeamDashboard() {
                         <label className="block text-cyan-400 font-mono text-lg">
                           {`> Problem_Statement:`}
                         </label>
-                        <Link href="/problems" target="_blank" className="text-sm font-mono text-cyan-500 hover:text-cyan-400 flex items-center gap-1 hover:underline">
-                          <FaLightbulb size={12} /> View Detailed Problems
-                        </Link>
+                        <div className="flex items-center gap-3">
+                          <Link href="/problems" target="_blank" className="text-sm font-mono text-cyan-500 hover:text-cyan-400 flex items-center gap-1 hover:underline">
+                            <FaLightbulb size={12} /> View Detailed Problems
+                          </Link>
+                          <Link href="/docs" target="_blank" className="text-sm font-mono text-yellow-500 hover:text-yellow-400 flex items-center gap-1 hover:underline">
+                            <FaBook size={12} /> Playbook
+                          </Link>
+                        </div>
                       </div>
 
                       {teamData?.projectSubmission?.problemStatement ? (

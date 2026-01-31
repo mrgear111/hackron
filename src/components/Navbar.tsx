@@ -295,6 +295,32 @@ const Navbar = () => {
                         </Link>
                       </motion.div>
 
+                      {/* Docs Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Link
+                          href="/docs"
+                          className="relative group px-4 py-2 text-sm font-mono"
+                        >
+                          <span className="relative z-10 text-yellow-400">
+                            {`> Guidelines`}
+                          </span>
+                          <motion.div
+                            className="absolute inset-0 border border-yellow-500/30 rounded-md"
+                            animate={{
+                              boxShadow: [
+                                "0 0 10px rgba(234,179,8,0.2)",
+                                "0 0 20px rgba(234,179,8,0.1)",
+                                "0 0 10px rgba(234,179,8,0.2)",
+                              ],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </Link>
+                      </motion.div>
+
                       {/* Logout Button */}
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <button
