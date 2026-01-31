@@ -48,23 +48,23 @@ interface GitHubRepo {
 
 const motivationalQuotes = [
   {
-    text: "Keep pushing forward, warrior! 🚀\nYou've come too far to give up now. The code flows through you - embrace the challenge and make something legendary!",
+    text: "",
     timestamp: new Date().toLocaleString()
   },
   {
-    text: "In the matrix of possibilities, you are the chosen one! 💻\nEvery bug you fix makes you stronger. Every feature you ship brings you closer to greatness!",
+    text: "",
     timestamp: new Date().toLocaleString()
   },
   {
-    text: "Debug like a warrior, deploy like a boss! ⚡\nYour code is your weapon, your logic is your shield. The future belongs to those who build it!",
+    text: "",
     timestamp: new Date().toLocaleString()
   },
   {
-    text: "The best code is yet to come! 🎯\nEvery line of code you write is a step towards innovation. Keep pushing the boundaries of what's possible!",
+    text: "",
     timestamp: new Date().toLocaleString()
   },
   {
-    text: "You're not just coding, you're crafting the future! 🌟\nEmbrace the challenges, celebrate the victories, and let your creativity flow through your keystrokes!",
+    text: "",
     timestamp: new Date().toLocaleString()
   }
 ];
