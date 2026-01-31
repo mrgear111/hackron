@@ -29,15 +29,16 @@ export default function Home() {
       { icon: "💰", label: "Prize Pool", value: "75k" },
     ],
     timeline: [
-      { time: "09:00 AM - 10:00 AM", event: "Onboarding", desc: "Day 1: Jan 31" },
-      { time: "10:00 AM - 12:00 PM", event: "Workshop + Briefing", desc: "Day 1: Jan 31" },
-      { time: "12:00 PM", event: "Hackathon Starts & Problem Statement Release", desc: "Day 1: Jan 31" },
-      { time: "04:00 PM - 06:00 PM", event: "Checkpoint 1", desc: "Day 1: Jan 31" },
-      { time: "06:30 PM - 09:00 PM", event: "Break (Concert Optional)", desc: "Day 1: Jan 31" },
-      { time: "01:00 AM - 03:00 AM", event: "Checkpoint 2", desc: "Day 2: Feb 1" },
-      { time: "09:00 AM - 10:00 AM", event: "Submission Window", desc: "Day 2: Feb 1" },
-      { time: "10:00 AM - 12:30 PM", event: "Evaluation (Top 10)", desc: "Day 2: Feb 1" },
-      { time: "01:00 PM - 03:00 PM", event: "Final Presentation & Prize Distribution", desc: "Day 2: Feb 1" },
+      { time: "9:00 AM", event: "Onboarding", desc: "Registration and check-in for participants" },
+      { time: "10:00 AM - 10:30 AM", event: "Briefing", desc: "Welcome, introduction of judges and mentors, and overview of the hackathon rules" },
+      { time: "10:30 AM - 11:45 AM", event: "Workshop", desc: "Agentic AI Workshop" },
+      { time: "12:00 PM", event: "Hackathon Start & Problem Statement Release", desc: "The official start of the coding period and the release of the problem statement" },
+      { time: "3:00 PM - 6:00 PM", event: "First Evaluation", desc: "Initial review of project ideas and progress by the mentors and submission of github repo link" },
+      { time: "1:00 AM - 4:00 AM", event: "Second Evaluation", desc: "Mid-point check-in and technical evaluation" },
+      { time: "9:00 AM - 10:00 AM", event: "Final Submission Window", desc: "Teams must upload their final deliverables to the designated platform" },
+      { time: "10:00 AM - 12:30 PM", event: "Final Evaluation", desc: "Judges review all final submissions" },
+      { time: "12:30 PM - 3:00 PM", event: "Top 10 Presentations", desc: "Demo and Q&A session with the panel of judges for the top 10 selected teams" },
+      { time: "3:00 PM - 3:30 PM", event: "Announcement of Winners", desc: "Final results and closing remarks" },
     ],
     judgingCriteria: [
       { title: "Problem Statement", desc: "Complexity & Relevance" },
@@ -1009,7 +1010,7 @@ export default function Home() {
                           <div className="absolute -inset-3 bg-gradient-to-br from-tekron-pink-neon/30 via-tekron-purple-accent/30 to-cyan-500/30 rounded-3xl blur-2xl opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
 
                           {/* Level Card Container */}
-                          <div className="relative bg-gradient-to-br from-purple-900/98 via-indigo-900/95 to-purple-800/98 backdrop-blur-xl border-2 border-cyan-400/50 rounded-3xl p-10 shadow-2xl hover:border-cyan-400/80 hover:shadow-cyan-400/20 transition-all duration-300">
+                          <div className="relative bg-gradient-to-br from-purple-900/98 via-indigo-900/95 to-purple-800/98 backdrop-blur-xl border-2 border-cyan-400/50 rounded-3xl p-8 shadow-2xl hover:border-cyan-400/80 hover:shadow-cyan-400/20 transition-all duration-300">
                             {/* Inner glow */}
                             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 via-transparent to-purple-500/5 rounded-3xl" />
 
@@ -1020,49 +1021,50 @@ export default function Home() {
                             <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-cyan-400/70 rounded-br-lg" />
 
                             {/* Level Icon - Task Specific */}
-                            <div className="flex justify-center mb-7 relative z-10">
-                              <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-cyan-400/40 to-purple-600/40 border-2 border-cyan-400/70 flex items-center justify-center backdrop-blur-sm shadow-xl shadow-cyan-400/30 hover:scale-105 transition-transform duration-300">
-                                {index === 0 ? <FaBullhorn className="text-cyan-400 text-4xl" /> :
-                                  index === 1 ? <FaCode className="text-purple-400 text-4xl" /> :
-                                    index === 2 ? <FaSearch className="text-cyan-400 text-4xl" /> :
-                                      index === 3 ? <FaMicrophone className="text-pink-400 text-4xl" /> :
-                                        index === 4 ? <FaSearch className="text-cyan-400 text-4xl" /> :
-                                          index === 5 ? <FaBoxOpen className="text-green-400 text-4xl" /> :
-                                            index === 6 ? <FaTrophy className="text-yellow-400 text-4xl" /> :
-                                              index === 7 ? <FaMicrophone className="text-purple-400 text-4xl" /> :
-                                                <FaTrophy className="text-yellow-400 text-4xl" />}
+                            <div className="flex justify-center mb-5 relative z-10">
+                              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/40 to-purple-600/40 border-2 border-cyan-400/70 flex items-center justify-center backdrop-blur-sm shadow-xl shadow-cyan-400/30 hover:scale-105 transition-transform duration-300">
+                                {index === 0 ? <FaBullhorn className="text-cyan-400 text-3xl" /> :
+                                  index === 1 ? <FaCode className="text-purple-400 text-3xl" /> :
+                                    index === 2 ? <FaSearch className="text-cyan-400 text-3xl" /> :
+                                      index === 3 ? <FaMicrophone className="text-pink-400 text-3xl" /> :
+                                        index === 4 ? <FaSearch className="text-cyan-400 text-3xl" /> :
+                                          index === 5 ? <FaMoon className="text-purple-400 text-3xl" /> :
+                                            index === 6 ? <FaBoxOpen className="text-green-400 text-3xl" /> :
+                                              index === 7 ? <FaTrophy className="text-yellow-400 text-3xl" /> :
+                                                index === 8 ? <FaMicrophone className="text-purple-400 text-3xl" /> :
+                                                  <FaTrophy className="text-yellow-400 text-3xl" />}
                               </div>
                             </div>
 
                             {/* Time Badge */}
-                            <div className="flex justify-center mb-5">
-                              <div className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-400/30 to-blue-600/30 border-2 border-cyan-400/60 rounded-full px-6 py-3 backdrop-blur-sm shadow-md">
-                                <FaClock className="text-cyan-300 text-lg" />
-                                <span className="text-cyan-100 font-mono font-bold text-base tracking-wide">
+                            <div className="flex justify-center mb-4">
+                              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400/30 to-blue-600/30 border-2 border-cyan-400/60 rounded-full px-5 py-2 backdrop-blur-sm shadow-md">
+                                <FaClock className="text-cyan-300 text-sm" />
+                                <span className="text-cyan-100 font-mono font-bold text-sm tracking-wide">
                                   {item.time}
                                 </span>
                               </div>
                             </div>
 
                             {/* Event Title */}
-                            <h3 className="text-center text-3xl font-bold text-white mb-4 font-pixel tracking-wider relative z-10" style={{ textShadow: '0 0 20px rgba(34, 211, 238, 0.3)' }}>
+                            <h3 className="text-center text-2xl font-bold text-white mb-4 font-pixel tracking-wider relative z-10 leading-tight" style={{ textShadow: '0 0 20px rgba(34, 211, 238, 0.3)' }}>
                               {item.event}
                             </h3>
 
-                            {/* Day Label */}
+                            {/* Description - Now in a larger text area */}
                             {item.desc && (
-                              <div className="flex justify-center relative z-10">
-                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/40 to-pink-500/40 border border-purple-400/60 rounded-full px-5 py-2.5 backdrop-blur-sm shadow-lg">
-                                  <span className="text-purple-100 font-mono text-base font-bold tracking-wide">
+                              <div className="relative z-10 mb-4">
+                                <div className="bg-gradient-to-r from-purple-500/20 via-purple-600/20 to-pink-500/20 border border-purple-400/40 rounded-2xl px-5 py-4 backdrop-blur-sm">
+                                  <p className="text-purple-100 text-center text-2xl leading-relaxed">
                                     {item.desc}
-                                  </span>
+                                  </p>
                                 </div>
                               </div>
                             )}
 
                             {/* Level Status */}
-                            <div className="mt-4 text-center">
-                              <div className="inline-flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/30 rounded-full px-5 py-2">
+                            <div className="text-center">
+                              <div className="inline-flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/30 rounded-full px-4 py-1.5">
                                 <span className="text-cyan-300 font-pixel text-xs tracking-wider">
                                   LEVEL {index + 1}/{eventDetails.timeline.length}
                                 </span>
